@@ -1,34 +1,12 @@
+
 export type UserId = string
 
 export type RoleCode = string
 
 export type PermissionCode = string
 
-/**
- * 授权作用域。
- *
- * system:
- *   整个平台
- *
- * organization:
- *   指定组织
- *
- * project:
- *   指定项目
- */
-export type AuthorizationScope =
-  | {
-      type: "system"
-    }
-  | {
-      type: "organization"
-      organizationId: string
-    }
-  | {
-      type: "project"
-      projectId: string
-      organizationId?: string
-    }
+
+
 
 /**
  * 当前认证用户的基础信息。
@@ -37,11 +15,30 @@ export type AuthorizationScope =
  * 不把 Supabase User 整个对象传进来。
  */
 export interface AuthUser {
-  id: UserId
+  /**
+   * Supabase auth.users.id
+   */
+  userId: UserId
 
-  email?: string
+  email: string | null
 
-  displayName?: string
+  /**
+   * 显示姓名
+   */
+  displayName: string
+
+    /**
+   * 头像地址
+   */
+  avatarUrl?: string | null
+
+}
+
+
+
+export interface AuthorizationResult {
+  roles: readonly RoleCode[]
+  permissions: readonly PermissionCode[]
 }
 
 /**
@@ -52,13 +49,13 @@ export interface AuthUser {
  * packages/auth 不负责数据库访问。
  */
 export interface AuthContext {
-  user: AuthUser
-
-  scope: AuthorizationScope
+  user: AuthUser 
 
   roles: readonly RoleCode[]
 
   permissions: readonly PermissionCode[]
+
+
 }
 
 /**
@@ -67,9 +64,9 @@ export interface AuthContext {
 export interface CreateAuthContextInput {
   user: AuthUser
 
-  scope: AuthorizationScope
 
   roles?: readonly RoleCode[]
 
   permissions?: readonly PermissionCode[]
 }
+

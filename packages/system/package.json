@@ -1,0 +1,17 @@
+{
+  "name": "@workspace/system",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./role": "./src/iam/role/index.ts",
+    "./menu": "./src/menu/index.ts"
+  },
+  "dependencies": {
+    "@workspace/supabase": "workspace:*",
+    "@workspace/errors": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "zod": "^4.0.0"
+  }
+}

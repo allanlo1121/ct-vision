@@ -10,7 +10,7 @@ export async function createClient(): Promise<SupabaseServerClient> {
 
   return createSupabaseServerClient({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    publicKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    publicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
 
     cookies: {
       getAll() {

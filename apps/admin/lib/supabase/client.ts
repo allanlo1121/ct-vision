@@ -6,6 +6,6 @@ import {
 export function createClient(): SupabaseBrowserClient {
   return createSupabaseBrowserClient({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    publicKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    publicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
   })
 }

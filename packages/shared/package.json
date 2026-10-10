@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./pagination": "./src/pagination.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+   "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "^5"
+  }
+}

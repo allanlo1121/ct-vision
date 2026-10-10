@@ -1,0 +1,17 @@
+{
+  "name": "@workspace/hrm",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./employee": "./src/employee/index.ts",
+    "./organization": "./src/organization/index.ts"
+  },
+  "dependencies": {
+    "@workspace/supabase": "workspace:*",
+    "@workspace/errors": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "zod": "^4.0.0"
+  }
+}

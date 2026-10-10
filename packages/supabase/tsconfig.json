@@ -1,10 +1,10 @@
 {
-  "extends": "@workspace/typescript-config/base.json",
+  "extends": "@workspace/typescript-config/library.json",
   "compilerOptions": {
     "paths": {
       "@workspace/supabase/*": ["./src/*"]
     }
   },
-  "include": ["."],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

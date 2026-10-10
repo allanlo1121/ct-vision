@@ -1,14 +1,17 @@
 {
   "name": "@workspace/auth",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./types": "./src/types.ts",
-    "./context": "./src/context.ts",
-    "./authorization": "./src/authorization.ts",
-    "./errors": "./src/errors.ts"
+    "./constants": "./src/constants/index.ts",
+    "./context": "./src/context/index.ts"
+  },
+  "dependencies": {
+    "@workspace/shared": "workspace:*",
+    "@workspace/errors": "workspace:*",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@workspace/typescript-config": "workspace:*",

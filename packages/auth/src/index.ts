@@ -1,33 +1,28 @@
 export type {
   AuthContext,
   AuthUser,
-  AuthorizationScope,
+  AuthorizationResult,
   CreateAuthContextInput,
   PermissionCode,
   RoleCode,
   UserId,
-} from "./types.js"
+} from "./context"
+
+export { createAuthContext } from "./context"
 
 export {
-  createAuthContext,
-} from "./context.js"
-
-export {
-  hasAllPermissions,
-  hasAllRoles,
-  hasAnyPermission,
-  hasAnyRole,
-  hasPermission,
-  hasRole,
   isAuthenticated,
+  requireAuthenticated,
+  hasAllRoles,
+  hasAnyRole,
+  hasRole,
+  hasAllPermissions,
+  hasAnyPermission,
+  hasPermission,
   requireAllPermissions,
   requireAnyPermission,
-  requireAuthenticated,
   requirePermission,
   requireRole,
-} from "./authorization.js"
+} from "./context"
 
-export {
-  ForbiddenError,
-  UnauthorizedError,
-} from "./errors.js"
+export { SUPER_ADMIN_ROLE } from "./constants"

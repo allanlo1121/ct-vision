@@ -5,9 +5,9 @@ export type {
   TablesInsert,
   TablesUpdate,
   Enums,
-} from "./database.types.js"
+} from "./database.types"
 
-export type { SupabasePublicConfig } from "./browser.js"
+export type { SupabasePublicConfig } from "./browser"
 
 export type {
   SupabaseCookie,
@@ -16,4 +16,4 @@ export type {
   SupabaseServerConfig,
 } from "./server.js"
 
-export type { SupabasePrivilegedConfig } from "./privileged.js"
+export type { SupabasePrivilegedConfig } from "./privileged"

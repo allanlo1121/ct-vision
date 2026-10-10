@@ -3,10 +3,10 @@ import {
   type CookieOptions,
 } from "@supabase/ssr"
 
-import type { Database } from "./database.types.js"
+import type { Database } from "./database.types"
 import type {
   SupabasePublicConfig,
-} from "./browser.js"
+} from "./browser"
 
 export type SupabaseServerClient = ReturnType<
   typeof createServerClient<Database>
