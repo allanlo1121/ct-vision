@@ -5,20 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "tsup src/main.ts --format esm --platform node --target node22 --bundle --out-dir dist",
+    "build": "tsup",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@supabase/supabase-js": "^2.117.2",
-    "@workspace/supabase": "workspace:*",
     "@workspace/errors": "workspace:*",
-    "@workspace/shared": "workspace:*",
-    "@workspace/system": "workspace:*",
     "@workspace/notification": "workspace:*",
-    "@workspace/tbm": "workspace:*",
     "@workspace/proj": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "@workspace/supabase": "workspace:*",
+    "@workspace/system": "workspace:*",
+    "@workspace/tbm": "workspace:*",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "dotenv": "^17.4.2",
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@types/node": "^26.1.2",
     "@types/pg": "^8.20.0",
+    "tsup": "^9.0.0",
     "tsx": "^4.23.8",
     "typescript": "^6.0.3"
   }

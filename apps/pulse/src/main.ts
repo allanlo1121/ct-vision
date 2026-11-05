@@ -3,7 +3,7 @@ import "dotenv/config"
 import Fastify from "fastify"
 import cors from "@fastify/cors"
 
-import { createSocketServer } from "./socket/socket.server"
+
 import { tbmContextManager } from "./context"
 import { startMqtt, stopMqtt } from "./mqtt/client"
 import { tbmRealtimeContextStore } from "./context/store"
@@ -32,8 +32,6 @@ async function bootstrap(): Promise<void> {
       }
     })
 
-    // 3. 初始化 Socket.IO
-    createSocketServer(app.server)
 
     // 4. 启动 HTTP 服务
     await app.listen({

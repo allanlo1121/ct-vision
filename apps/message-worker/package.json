@@ -5,22 +5,23 @@
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/index.ts",
-        "build": "tsup src/index.ts --format esm --platform node --target node22 --bundle --out-dir dist",
+        "build": "tsup",
         "start": "node dist/index.js",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
         "@supabase/supabase-js": "^2",
-        "dotenv": "^17",
-        "zod": "^4",
-        "@workspace/supabase": "workspace:*",
         "@workspace/errors": "workspace:*",
-        "@workspace/shared": "workspace:*",
+        "@workspace/hrm": "workspace:*",
         "@workspace/notification": "workspace:*",
-        "@workspace/hrm": "workspace:*"
+        "@workspace/shared": "workspace:*",
+        "@workspace/supabase": "workspace:*",
+        "dotenv": "^17",
+        "zod": "^4"
     },
     "devDependencies": {
         "@types/node": "^26.1.2",
+        "tsup": "^9.0.0",
         "tsx": "^4.23.8",
         "typescript": "^6.0.3"
     }

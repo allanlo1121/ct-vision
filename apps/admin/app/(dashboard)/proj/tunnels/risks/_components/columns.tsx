@@ -96,7 +96,7 @@ export function createColumns(): DataTableColumn<Risk>[] {
       enableSorting: true,
       enableHiding: false,
     }),
-    columnHelper.accessor("risk_level", {
+    columnHelper.accessor("risk_level_code", {
       meta: {
         label: "风险等级",
       },
@@ -105,7 +105,7 @@ export function createColumns(): DataTableColumn<Risk>[] {
       ),
       cell: ({ row }) => (
         <div className="max-w-[200px] truncate font-medium">
-          {row.getValue("risk_level")}
+          {row.getValue("risk_level_code")}
         </div>
       ),
       enableSorting: true,

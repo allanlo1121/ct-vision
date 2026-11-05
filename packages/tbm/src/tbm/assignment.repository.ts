@@ -3,7 +3,7 @@ import type {
   CreateTbmAssignmentInput,
   UpdateTbmAssignmentInput,
 } from "./assignment.schemas"
-import type { TbmAssignmentListRow, CurrentTbmAssignmentRow } from "./types"
+import type { TbmAssignmentListRow, TbmAssignmentContext } from "./types"
 
 export interface TbmAssignmentRepository {
   findById(id: string): Promise<TbmAssignment | null>
@@ -42,11 +42,11 @@ export interface TbmAssignmentListRepository {
 }
 
 export interface TbmAssignmentCurrentRepository {
-  findById(id: string): Promise<CurrentTbmAssignmentRow | null>
+  findById(id: string): Promise<TbmAssignmentContext | null>
 
-  findByTbmCode(tbmCode: string): Promise<CurrentTbmAssignmentRow | null>
+  findByTbmCode(tbmCode: string): Promise<TbmAssignmentContext| null>
 
-  findByTunnelId(tunnelId: string): Promise<CurrentTbmAssignmentRow | null>
+  findByTunnelId(tunnelId: string): Promise<TbmAssignmentContext| null>
 
-  list(): Promise<CurrentTbmAssignmentRow[]>
+  list(): Promise<TbmAssignmentContext[]>
 }

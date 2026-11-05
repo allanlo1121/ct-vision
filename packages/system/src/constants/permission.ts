@@ -28,6 +28,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   proj: "工程项目",
   equip: "设备管理",
   tbm: "盾构管理",
+  mqtt: "MQTT"
 }
 
 export const PERMISSION_ACTION_LABELS: Record<PermissionAction, string> = {

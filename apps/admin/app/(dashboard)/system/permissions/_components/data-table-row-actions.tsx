@@ -34,10 +34,6 @@ export function DataTableRowActions<TData extends RowData>({
   const [isUpdating, setIsUpdating] = useState(false)
   const { can } = useAuth()
   const router = useRouter()
-  const canEdit = can("iam.write")
-  const canDelete = can("iam.delete")
-
-  const hasManagePermission = canEdit || canDelete
 
   async function handleToggleDisabled() {
     if (isUpdating) return
@@ -132,12 +128,12 @@ export function DataTableRowActions<TData extends RowData>({
           <DropdownMenuItem>收藏</DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <Can permission="iam.write">
+          <Can permission={{ module: "iam", action: "write" }}>
             <DropdownMenuItem onClick={() => setEditOpen(true)}>
               编辑
             </DropdownMenuItem>
           </Can>
-          <Can permission="iam.write">
+          <Can permission={{ module: "iam", action: "write" }}>
             <DropdownMenuItem
               disabled={isUpdating}
               onClick={handleToggleDisabled}
@@ -145,7 +141,7 @@ export function DataTableRowActions<TData extends RowData>({
               {permission.is_disabled ? "启用" : "禁用"}
             </DropdownMenuItem>
           </Can>
-          <Can permission="iam.delete">
+          <Can permission={{ module: "iam", action: "delete" }}>
             <DropdownMenuItem onClick={handleDelete} variant="destructive">
               删除
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>

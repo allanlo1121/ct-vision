@@ -11,7 +11,7 @@ export const notificationEventRepository: Pick<
 > = {
 
   async create(input: CreateNotificationEventInput) {
-    console.log("CreateNotificationEventInput", input)
+    // console.log("CreateNotificationEventInput", input)
     const { data, error } = await supabase
       .schema("system")
       .from("notification_events")

@@ -1,12 +1,12 @@
 "use client"
 
 import { Tree } from "./tree"
-import type { TreeNode } from "./types"
+import type { TreeNode, TreeDataNode } from "./types"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTreeRuntime } from "./use-tree-runtime"
 
 interface TreeContainerProps {
-  data: TreeNode[]
+  data: TreeDataNode[]
   queryKey: string
   loading?: boolean
 }

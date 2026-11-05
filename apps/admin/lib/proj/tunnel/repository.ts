@@ -47,14 +47,14 @@ export const tunnelRepository: TunnelRepository = {
       },
     })
   },
-  async findBySectionId(sectionId: string): Promise<Tunnel[]> {
+  async findBySectionId(engineeringUnitId: string): Promise<Tunnel[]> {
     const supabase = await createClient()
 
     let query = supabase
       .schema("proj")
       .from("tunnels")
       .select("*")
-      .eq("section_id", sectionId)
+      .eq("engineering_unit_id", engineeringUnitId)
 
     const { data, error } = await query.order("sort_order", { ascending: true })
 

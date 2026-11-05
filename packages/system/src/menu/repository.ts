@@ -1,14 +1,12 @@
 import type { Menu, CreateMenuInput, UpdateMenuInput } from "./schemas"
 
 
-import { MenuOption } from "./types"
-
 export interface MenuRepository {
   findById(id: string): Promise<Menu | null>
 
   findByAppCode(appCode: string): Promise<Menu[]>
 
-  findOptions(appCode: string): Promise<MenuOption[]>
+  // findOptions(appCode: string): Promise<MenuOption[]>
 
   findAll(): Promise<Menu[]>
 

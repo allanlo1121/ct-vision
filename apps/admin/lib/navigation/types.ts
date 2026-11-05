@@ -1,5 +1,4 @@
-import { Database } from "@workspace/supabase/";
-// import { Camelize } from "@/lib/utils/case-converter";
+
 import { LucideIcon } from "lucide-react";
 
 export interface NavMainItem {
@@ -11,16 +10,7 @@ export interface NavMainItem {
   items?: NavMainItem[];
 }
 
-export type MenuScope =
-  | "global"
-  | "admin"
-  | "tunnel_workspace"
-  | "tbm_workspace"
-  | "project_workspace";
 
-export type MenuTreeRow = Database["system"]["Views"]["v_menu_tree"]["Row"];
-
-// export type MenuTreeItem = Camelize<MenuTreeRow>;
 
 export interface MenuNode {
   id: string;

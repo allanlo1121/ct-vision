@@ -3,67 +3,48 @@ import { createClient } from "@workspace/supabase/server"
 import { assertNoError } from "@workspace/supabase/errors"
 import { AppError } from "@workspace/errors"
 
+// import { MenuScope, MenuTreeRow } from "../system/navigation/types"
+
 import type {
-  MenuRepository,
-  CreateMenuInput,
-  UpdateMenuInput,
-  Menu,
+    MenuRepository,
+    MenuOption,
+    CreateMenuInput,
+    UpdateMenuInput,
+    Menu,
 } from "@workspace/system/menu"
-import { menuSchema } from "@workspace/system/menu"
-import { z } from "zod"
 
 export const menuRepository: MenuRepository = {
-  async findById(id) {
-    const supabase = await createClient()
+    async findById(id) {
+        const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .schema("system")
-      .from("menus")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle()
-      .overrideTypes<Menu>()
+        const { data, error } = await supabase
+            .schema("system")
+            .from("menus")
+            .select("*")
+            .eq("id", id)
+            .maybeSingle()
 
-    assertNoError(error)
+        assertNoError(error)
 
-    return data ? menuSchema.parse(data) : null
-  },
+        return data
+    },
 
-  async findByAppCode(appCode: string): Promise<Menu[]> {
-    const supabase = await createClient()
+    async findByAppCode(appCode) {
+        const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .schema("system")
-      .from("menus")
-      .select("*")
-      .eq("app_code", appCode)
-      .order("sort_order")
+        const { data, error } = await supabase
+            .schema("system")
+            .from("menus")
+            .select("*")
+            .eq("app_code", appCode)
+            .eq("is_visible", true)
+            .eq("is_disabled", false)
+            .order("sort_order")
 
-    assertNoError(error)
+        assertNoError(error)
 
-    return data ?? []
-  },
-
-  async findOptions(appCode: string) {
-    const supabase = await createClient()
-
-    const { data, error } = await supabase
-      .schema("system")
-      .from("menus")
-      .select("id, name,parent_id, sort_order")
-      .eq("app_code", appCode)
-      .order("sort_order")
-
-    assertNoError(error)
-
-    return (data ?? []).map((menu) => ({
-      id: menu.id,
-      name: menu.name,
-      parentId: menu.parent_id,
-      sortOrder: menu.sort_order,
-    }))
-  },
-
+        return data ?? []
+    },
   async findAll() {
     const supabase = await createClient()
 
@@ -78,60 +59,61 @@ export const menuRepository: MenuRepository = {
     return data ?? []
   },
 
-  async create(input: CreateMenuInput): Promise<Menu> {
-    const supabase = await createClient()
-    console.log("Creating permission with input:", input)
 
-    const { data, error } = await supabase
-      .schema("system")
-      .from("menus")
-      .insert(input)
-      .select("*")
-      .single()
 
-    console.log("Menu creation error:", error)
-    assertNoError(error)
 
-    if (!data) {
-      throw new AppError({
-        message: "创建菜单失败：数据库未返回记录",
-        code: "INTERNAL_ERROR",
-      })
-    }
+    async create(input: CreateMenuInput): Promise<Menu> {
+        const supabase = await createClient()
 
-    return menuSchema.parse(data)
-  },
-  async update(id: string, input: UpdateMenuInput): Promise<Menu> {
-    const supabase = await createClient()
+        const { data, error } = await supabase
+            .schema("system")
+            .from("menus")
+            .insert(input)
+            .select("*")
+            .single()
 
-    const { data, error } = await supabase
-      .schema("system")
-      .from("menus")
-      .update(input)
-      .eq("id", id)
-      .select("*")
-      .single()
+        assertNoError(error)
 
-    assertNoError(error)
+        if (!data) {
+            throw new AppError({
+                message: "创建菜单失败：数据库未返回记录",
+                code: "INTERNAL_ERROR",
+            })
+        }
 
-    if (!data) {
-      throw new AppError({
-        message: "更新菜单失败：记录不存在或未返回数据",
-        code: "INTERNAL_ERROR",
-      })
-    }
+        return data
+    },
+    async update(id: string, input: UpdateMenuInput): Promise<Menu> {
+        const supabase = await createClient()
 
-    return menuSchema.parse(data)
-  },
-  async delete(id) {
-    const supabase = await createClient()
+        const { data, error } = await supabase
+            .schema("system")
+            .from("menus")
+            .update(input)
+            .eq("id", id)
+            .select("*")
+            .single()
 
-    const { error } = await supabase
-      .schema("system")
-      .from("menus")
-      .delete()
-      .eq("id", id)
+        assertNoError(error)
 
-    assertNoError(error)
-  },
+        if (!data) {
+            throw new AppError({
+                message: "更新菜单失败：记录不存在或未返回数据",
+                code: "INTERNAL_ERROR",
+            })
+        }
+
+        return data
+    },
+    async delete(id) {
+        const supabase = await createClient()
+
+        const { error } = await supabase
+            .schema("system")
+            .from("menus")
+            .delete()
+            .eq("id", id)
+
+        assertNoError(error)
+    },
 }

@@ -1,11 +1,11 @@
-import { Parameter } from "."
+
 import type {
   TbmParameter,
   CreateTbmParameterInput,
   UpdateTbmParameterInput,
   ImportTbmParameterInput,
 } from "./tbm-parameter.schemas"
-import { TbmParameterWithBase } from "../tbm-parameter/types"
+import { TbmParameterWithBase } from "./types"
 
 export interface TbmParameterRepository {
   findById(id: number): Promise<TbmParameter | null>

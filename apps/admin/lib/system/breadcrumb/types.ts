@@ -1,48 +1,48 @@
-import { Database } from "@/lib/core/database/types";
-import { Camelize } from "@/lib/utils/case-converter";
-import { LucideIcon } from "lucide-react";
+// import { Database } from "@/lib/core/database/types";
+// import { Camelize } from "@/lib/utils/case-converter";
+// import { LucideIcon } from "lucide-react";
 
-export interface NavMainItem {
-  id: string;
-  title: string;
-  url: string;
-  icon?: LucideIcon;
-  isActive?: boolean;
-  items?: NavMainItem[];
-}
+// export interface NavMainItem {
+//   id: string;
+//   title: string;
+//   url: string;
+//   icon?: LucideIcon;
+//   isActive?: boolean;
+//   items?: NavMainItem[];
+// }
 
-export type MenuScope = "global" | "tunnel_workspace" | "tbm_workspace" | "project_workspace";
+// export type MenuScope = "global" | "tunnel_workspace" | "tbm_workspace" | "project_workspace";
 
-export type MenuTreeRow = Database["system"]["Views"]["v_menu_tree"]["Row"];
+// export type MenuTreeRow = Database["system"]["Views"]["v_menu_tree"]["Row"];
 
-export type MenuTreeItem = Camelize<MenuTreeRow>;
+// export type MenuTreeItem = Camelize<MenuTreeRow>;
 
-export interface MenuNode {
-  id: string;
+// export interface MenuNode {
+//   id: string;
 
-  parentId: string | null;
+//   parentId: string | null;
 
-  code: string;
+//   code: string;
 
-  name: string;
+//   name: string;
 
-  label: string;
+//   label: string;
 
-  icon: string | null;
+//   icon: string | null;
 
-  pathUrl: string;
+//   pathUrl: string;
 
-  level: number;
+//   level: number;
 
-  isLeaf: boolean;
+//   isLeaf: boolean;
 
-  children?: MenuNode[];
-}
+//   children?: MenuNode[];
+// }
 
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
-  active?: boolean;
-}
+// export interface BreadcrumbItem {
+//   label: string;
+//   href?: string;
+//   active?: boolean;
+// }
 
-export type BreadcrumbLabelMap = Record<string, string>;
+// export type BreadcrumbLabelMap = Record<string, string>;

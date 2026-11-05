@@ -19,7 +19,7 @@ export const tunnelBaseSchema = z.object({
     title: "所属工程单元ID",
   }),
 
-  name: nameSchema.nullable().meta({
+  name: nameSchema.meta({
     title: "隧道名称后缀",
     description: "隧道的名称,如XX左线,右线,上行线等",
   }),

@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form"
 import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
 import * as z from "zod"
-import type { CodeNameOption } from "@workspace/shared"
 
 import {
   Field,
@@ -17,14 +16,6 @@ import {
   FieldDescription,
 } from "@workspace/ui/components/field"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
 
 import {
   InputGroup,
@@ -57,7 +48,7 @@ export default function CreateForm({
     resolver: zodResolver(createTunnelSchema),
     defaultValues: {
       engineering_unit_id: unit.id,
-      name: null,
+      name: "",
       full_name: null,
       overview: null,
       chainage_prefix: "DK",

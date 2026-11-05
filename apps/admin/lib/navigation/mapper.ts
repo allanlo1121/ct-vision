@@ -1,43 +1,43 @@
-import { MenuNode, MenuTreeRow } from "./types"
+// import { MenuNode, MenuTreeRow } from "./types"
 
-export function buildMenuTree(rows: MenuTreeRow[]): MenuNode[] {
-  const map = new Map<string, MenuNode>()
+// export function buildMenuTree(rows: MenuTreeRow[]): MenuNode[] {
+//   const map = new Map<string, MenuNode>()
 
-  const roots: MenuNode[] = []
+//   const roots: MenuNode[] = []
 
-  for (const row of rows) {
-    if (!row.id) continue
+//   for (const row of rows) {
+//     if (!row.id) continue
 
-    map.set(row.id, {
-      id: row.id,
+//     map.set(row.id, {
+//       id: row.id,
 
-      parentId: row.parent_id,
+//       parentId: row.parent_id,
 
-      code: row.code ?? "",
+//       code: row.code ?? "",
 
-      name: row.name ?? "",
+//       name: row.name ?? "",
 
-      label: row.label ?? "",
+//       label: row.label ?? "",
 
-      icon: row.icon ?? null,
+//       icon: row.icon ?? null,
 
-      pathUrl: row.path_url ?? "#",
+//       pathUrl: row.path_url ?? "#",
 
-      level: row.level ?? 0,
+//       level: row.level ?? 0,
 
-      isLeaf: row.is_leaf ?? true,
+//       isLeaf: row.is_leaf ?? true,
 
-      children: [],
-    })
-  }
+//       children: [],
+//     })
+//   }
 
-  for (const node of map.values()) {
-    if (node.parentId) {
-      map.get(node.parentId)?.children?.push(node)
-    } else {
-      roots.push(node)
-    }
-  }
+//   for (const node of map.values()) {
+//     if (node.parentId) {
+//       map.get(node.parentId)?.children?.push(node)
+//     } else {
+//       roots.push(node)
+//     }
+//   }
 
-  return roots
-}
+//   return roots
+// }

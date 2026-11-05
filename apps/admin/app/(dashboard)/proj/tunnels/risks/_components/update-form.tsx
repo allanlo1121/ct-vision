@@ -49,7 +49,7 @@ function getDefaultValues(risk: Risk): UpdateRiskInput {
     name: risk.name,
     start_chainage: risk.start_chainage,
     end_chainage: risk.end_chainage,
-    risk_level: risk.risk_level,
+    risk_level_code: risk.risk_level_code,
     longitude: risk.longitude,
     latitude: risk.latitude,
     description: risk.description,
