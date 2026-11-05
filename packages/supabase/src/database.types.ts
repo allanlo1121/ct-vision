@@ -599,7 +599,13 @@ isOneToOne: false
                     "attempt_no"?: number,"error_message"?: string | null,"finished_at"?: string | null,"id"?: never,"outbox_id"?: number,"provider_message_id"?: string | null,"response_code"?: string | null,"started_at"?: string,"status"?: string
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "notification_attempts_outbox_id_fkey"
+      columns: ["outbox_id"]
+isOneToOne: false
+      referencedRelation: "notification_outbox"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"notification_event_types": {
                   Row: {
@@ -715,14 +721,14 @@ isOneToOne: false
                   ]
                 },"notification_subscriptions": {
                   Row: {
-                    "created_at": string,"created_by": string | null,"employee_id": string,"event_type_code": string,"id": number,"is_disabled": boolean,"min_level": string,"organization_id": string,"scope_type": string,"source_type_code": string,"updated_at": string | null,"updated_by": string | null
+                    "created_at": string,"created_by": string | null,"employee_id": string,"event_type_code": string,"id": number,"is_disabled": boolean,"min_level": string,"project_id": string,"source_type_code": string,"updated_at": string | null,"updated_by": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"employee_id": string,"event_type_code": string,"id"?: number,"is_disabled"?: boolean,"min_level"?: string,"organization_id": string,"scope_type"?: string,"source_type_code": string,"updated_at"?: string | null,"updated_by"?: string | null
+                    "created_at"?: string,"created_by"?: string | null,"employee_id": string,"event_type_code": string,"id"?: number,"is_disabled"?: boolean,"min_level"?: string,"project_id": string,"source_type_code": string,"updated_at"?: string | null,"updated_by"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string | null,"employee_id"?: string,"event_type_code"?: string,"id"?: number,"is_disabled"?: boolean,"min_level"?: string,"organization_id"?: string,"scope_type"?: string,"source_type_code"?: string,"updated_at"?: string | null,"updated_by"?: string | null
+                    "created_at"?: string,"created_by"?: string | null,"employee_id"?: string,"event_type_code"?: string,"id"?: number,"is_disabled"?: boolean,"min_level"?: string,"project_id"?: string,"source_type_code"?: string,"updated_at"?: string | null,"updated_by"?: string | null
                   }
                   Relationships: [
                     {
@@ -749,6 +755,20 @@ isOneToOne: false
                   }
                   Update: {
                     "body_template"?: string,"channel"?: string,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"id"?: never,"is_disabled"?: boolean,"name"?: string,"sort_order"?: number,"title_template"?: string | null,"updated_at"?: string | null,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"parameter_alarm_subscriptions": {
+                  Row: {
+                    "cooldown_minutes": number,"created_at": string,"created_by": string | null,"employee_id": string,"id": string,"is_disabled": boolean,"parameter_code": string,"severity_code": string | null,"tbm_code": string,"updated_at": string | null,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cooldown_minutes"?: number,"created_at"?: string,"created_by"?: string | null,"employee_id": string,"id"?: string,"is_disabled"?: boolean,"parameter_code": string,"severity_code"?: string | null,"tbm_code": string,"updated_at"?: string | null,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "cooldown_minutes"?: number,"created_at"?: string,"created_by"?: string | null,"employee_id"?: string,"id"?: string,"is_disabled"?: boolean,"parameter_code"?: string,"severity_code"?: string | null,"tbm_code"?: string,"updated_at"?: string | null,"updated_by"?: string | null
                   }
                   Relationships: [
                     
@@ -874,46 +894,6 @@ isOneToOne: false
       referencedColumns: ["code"]
     }
                   ]
-                },"operating_status": {
-                  Row: {
-                    "chainage": number | null,"created_at": string,"cutter_speed": number | null,"cutter_torque": number | null,"penetration_rate": number | null,"ring_no": number | null,"sampled_at": string,"tbm_code": string,"tbm_phase_type": string,"thrust_cylinder_stroke": number | null,"thrust_pressure": number | null,"thrust_speed": number | null,"total_thrust": number | null,"updated_at": string | null
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "chainage"?: number | null,"created_at"?: string,"cutter_speed"?: number | null,"cutter_torque"?: number | null,"penetration_rate"?: number | null,"ring_no"?: number | null,"sampled_at": string,"tbm_code": string,"tbm_phase_type": string,"thrust_cylinder_stroke"?: number | null,"thrust_pressure"?: number | null,"thrust_speed"?: number | null,"total_thrust"?: number | null,"updated_at"?: string | null
-                  }
-                  Update: {
-                    "chainage"?: number | null,"created_at"?: string,"cutter_speed"?: number | null,"cutter_torque"?: number | null,"penetration_rate"?: number | null,"ring_no"?: number | null,"sampled_at"?: string,"tbm_code"?: string,"tbm_phase_type"?: string,"thrust_cylinder_stroke"?: number | null,"thrust_pressure"?: number | null,"thrust_speed"?: number | null,"total_thrust"?: number | null,"updated_at"?: string | null
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "operating_status_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: true
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
-                },"operating_status_history": {
-                  Row: {
-                    "chainage": number | null,"created_at": string,"cutter_speed": number | null,"cutter_torque": number | null,"id": number,"penetration_rate": number | null,"ring_no": number | null,"sampled_at": string,"tbm_code": string,"tbm_phase_type": string,"thrust_cylinder_stroke": number | null,"thrust_pressure": number | null,"thrust_speed": number | null,"total_thrust": number | null,"updated_at": string | null
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "chainage"?: number | null,"created_at"?: string,"cutter_speed"?: number | null,"cutter_torque"?: number | null,"id"?: number,"penetration_rate"?: number | null,"ring_no"?: number | null,"sampled_at": string,"tbm_code": string,"tbm_phase_type": string,"thrust_cylinder_stroke"?: number | null,"thrust_pressure"?: number | null,"thrust_speed"?: number | null,"total_thrust"?: number | null,"updated_at"?: string | null
-                  }
-                  Update: {
-                    "chainage"?: number | null,"created_at"?: string,"cutter_speed"?: number | null,"cutter_torque"?: number | null,"id"?: number,"penetration_rate"?: number | null,"ring_no"?: number | null,"sampled_at"?: string,"tbm_code"?: string,"tbm_phase_type"?: string,"thrust_cylinder_stroke"?: number | null,"thrust_pressure"?: number | null,"thrust_speed"?: number | null,"total_thrust"?: number | null,"updated_at"?: string | null
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "operating_status_history_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: false
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
                 },"parameter_alarm_verifications": {
                   Row: {
                     "alarm_id": number,"id": number,"new_status": string,"previous_status": string,"remark": string | null,"verified_at": string,"verified_by": string
@@ -926,7 +906,13 @@ isOneToOne: false
                     "alarm_id"?: number,"id"?: never,"new_status"?: string,"previous_status"?: string,"remark"?: string | null,"verified_at"?: string,"verified_by"?: string
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "parameter_alarm_verifications_alarm_id_fkey"
+      columns: ["alarm_id"]
+isOneToOne: false
+      referencedRelation: "parameter_alarms"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"parameter_alarms": {
                   Row: {
@@ -988,46 +974,6 @@ isOneToOne: false
                   Relationships: [
                     {
       foreignKeyName: "ring_phase_records_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: false
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
-                },"ring_phase_status": {
-                  Row: {
-                    "ring_no": number,"started_at": string,"tbm_code": string,"tbm_phase_type": string,"tunnel_id": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "ring_no": number,"started_at": string,"tbm_code": string,"tbm_phase_type": string,"tunnel_id": string
-                  }
-                  Update: {
-                    "ring_no"?: number,"started_at"?: string,"tbm_code"?: string,"tbm_phase_type"?: string,"tunnel_id"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "ring_phase_status_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: true
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
-                },"ring_records": {
-                  Row: {
-                    "created_at": string,"end_chainage": number | null,"ended_at": string | null,"id": number,"ring_no": number,"start_chainage": number | null,"started_at": string | null,"tbm_code": string,"tunnel_id": string,"updated_at": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "created_at"?: string,"end_chainage"?: number | null,"ended_at"?: string | null,"id"?: never,"ring_no": number,"start_chainage"?: number | null,"started_at"?: string | null,"tbm_code": string,"tunnel_id": string,"updated_at"?: string
-                  }
-                  Update: {
-                    "created_at"?: string,"end_chainage"?: number | null,"ended_at"?: string | null,"id"?: never,"ring_no"?: number,"start_chainage"?: number | null,"started_at"?: string | null,"tbm_code"?: string,"tunnel_id"?: string,"updated_at"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "ring_records_tbm_code_fkey"
       columns: ["tbm_code"]
 isOneToOne: false
       referencedRelation: "tbms"
@@ -1128,38 +1074,12 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
-                },"tunnel_risk_states": {
-                  Row: {
-                    "chainage": number,"enter_distance": number,"exit_distance": number,"ring_no": number,"risk_id": string,"tbm_code": string,"updated_at": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "chainage": number,"enter_distance": number,"exit_distance": number,"ring_no": number,"risk_id": string,"tbm_code": string,"updated_at"?: string
-                  }
-                  Update: {
-                    "chainage"?: number,"enter_distance"?: number,"exit_distance"?: number,"ring_no"?: number,"risk_id"?: string,"tbm_code"?: string,"updated_at"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "tunnel_risk_states_risk_id_fkey"
-      columns: ["risk_id"]
-isOneToOne: false
-      referencedRelation: "v_tunnel_risk_states"
-      referencedColumns: ["risk_id"]
-    },{
-      foreignKeyName: "tunnel_risk_states_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: false
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
                 }
           }
           Views: {
             "v_current_assignments": {
                   Row: {
-                    "advance_direction": string | null,"end_chainage": number | null,"end_ring": number | null,"engineering_unit_id": string | null,"engineering_unit_name": string | null,"id": string | null,"organization_id": string | null,"organization_name": string | null,"project_id": string | null,"project_name": string | null,"start_chainage": number | null,"start_ring": number | null,"tbm_code": string | null,"tbm_name": string | null,"tunnel_id": string | null,"tunnel_name": string | null
+                    "advance_direction": string,"end_chainage": number,"end_ring": number,"engineering_unit_id": string,"engineering_unit_name": string,"id": string,"organization_id": string | null,"organization_name": string | null,"project_id": string,"project_name": string,"start_chainage": number,"start_ring": number,"tbm_code": string,"tbm_name": string,"tunnel_id": string,"tunnel_name": string
                   }
                   ComputedFields: never
                   Relationships: [
@@ -1173,7 +1093,7 @@ isOneToOne: false
                   ]
                 },"v_parameter_threshold_list": {
                   Row: {
-                    "created_at": string | null,"created_by": string | null,"custom_name": string | null,"custom_unit": string | null,"data_type": string | null,"end_ring": number | null,"id": number | null,"is_disabled": boolean | null,"min_record_delta": number | null,"min_record_interval_ms": number | null,"parameter_code": string | null,"parameter_name": string | null,"parameter_unit": string | null,"reference_value": number | null,"remark": string | null,"severity_code": string | null,"severity_name": string | null,"start_ring": number | null,"subsystem_code": string | null,"tbm_code": string | null,"tbm_parameter_id": number | null,"threshold_type": string | null,"threshold_value": number | null,"tunnel_id": string | null,"updated_at": string | null,"updated_by": string | null,"value_max": number | null,"value_min": number | null
+                    "created_at": string,"created_by": string | null,"data_type": string,"end_ring": number,"id": number,"is_disabled": boolean,"min_record_delta": number,"min_record_interval_ms": number,"parameter_code": string,"parameter_name": string | null,"parameter_unit": string | null,"reference_value": number | null,"remark": string | null,"severity_code": string,"severity_name": string | null,"start_ring": number,"subsystem_code": string,"tbm_code": string,"tbm_parameter_id": number,"threshold_type": string,"threshold_value": number,"tunnel_id": string | null,"updated_at": string | null,"updated_by": string | null,"value_max": number | null,"value_min": number | null
                   }
                   ComputedFields: never
                   Relationships: [
@@ -1205,21 +1125,7 @@ isOneToOne: false
                   ]
                 },"v_tbm_assignments_list": {
                   Row: {
-                    "advance_direction": string | null,"created_at": string | null,"created_by": string | null,"end_chainage": number | null,"end_date": string | null,"end_ring": number | null,"id": string | null,"project_name": string | null,"remark": string | null,"section_name": string | null,"start_chainage": number | null,"start_date": string | null,"start_ring": number | null,"tbm_code": string | null,"tbm_name": string | null,"tunnel_id": string | null,"tunnel_name": string | null,"updated_at": string | null,"updated_by": string | null
-                  }
-                  ComputedFields: never
-                  Relationships: [
-                    {
-      foreignKeyName: "assignments_tbm_code_fkey"
-      columns: ["tbm_code"]
-isOneToOne: false
-      referencedRelation: "tbms"
-      referencedColumns: ["code"]
-    }
-                  ]
-                },"v_tunnel_risk_states": {
-                  Row: {
-                    "advance_direction": string | null,"chainage": number | null,"end_chainage": number | null,"enter_distance": number | null,"exit_distance": number | null,"ring_no": number | null,"risk_id": string | null,"risk_name": string | null,"risk_status": string | null,"start_chainage": number | null,"tbm_code": string | null,"tunnel_id": string | null
+                    "advance_direction": string,"created_at": string,"created_by": string | null,"end_chainage": number | null,"end_date": string | null,"end_ring": number | null,"id": string,"project_name": string | null,"remark": string | null,"section_name": string | null,"start_chainage": number | null,"start_date": string,"start_ring": number | null,"tbm_code": string,"tbm_name": string | null,"tunnel_id": string,"tunnel_name": string | null,"updated_at": string | null,"updated_by": string | null
                   }
                   ComputedFields: never
                   Relationships: [
@@ -1239,33 +1145,14 @@ isOneToOne: false
                            },
 "apply_ring_phase":
 { Args: { "p_chainage": number,"p_phase_type": string,"p_ring_no": number,"p_started_at": string,"p_tbm_code": string,"p_tunnel_id": string }; Returns: Json
-                           } |
-{ Args: { "p_end_chainage": number,"p_phase_type": string,"p_ring_no": number,"p_start_chainage": number,"p_started_at": string,"p_tbm_code": string,"p_tunnel_id": string }; Returns: Json
-                           },
-"archive_ring_phase":
-{ Args: { "p_ended_at": string,"p_status": Omit<Database["tbm"]['Tables']["ring_phase_status"]['Row'], Database["tbm"]['Tables']["ring_phase_status"]['ComputedFields']> }; Returns: undefined
-                           },
-"get_notification_context":
-{ Args: { "p_tbm_code": string }; Returns: {
-              "engineering_unit_id": string,"organization_id": string,"project_id": string,"tbm_code": string,"tunnel_id": string
-            }[]
                            },
 "get_organization_context":
 { Args: { "p_tbm_code": string }; Returns: {
               "engineering_unit_id": string,"organization_id": string,"project_id": string,"tbm_code": string,"tunnel_id": string
             }[]
                            },
-"switch_ring_phase":
-{ Args: { "p_phase": string,"p_recorded_at": string,"p_ring_record_id": number,"p_tbm_code": string }; Returns: boolean
-                           },
 "sync_realdata_table":
 { Args: { "p_tbm_code": string }; Returns: string
-                           },
-"upsert_parameter_alarm":
-{ Args: { "p_alarm_value": number,"p_chainage"?: number,"p_parameter_code": string,"p_ring_no"?: number,"p_rule_snapshot": Json,"p_severity_code": string,"p_started_at": string,"p_tbm_code": string }; Returns: undefined
-                           },
-"upsert_ring_record":
-{ Args: { "p_chainage": number,"p_recorded_at": string,"p_ring_no": number,"p_tbm_code": string,"p_tunnel_id": string }; Returns: undefined
                            }
           }
           Enums: {

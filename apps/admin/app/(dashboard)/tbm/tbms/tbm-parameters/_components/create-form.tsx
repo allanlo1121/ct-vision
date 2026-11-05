@@ -23,7 +23,7 @@ import {
   InputGroupTextarea,
 } from "@workspace/ui/components/input-group"
 
-import { createTbmParameterSchema } from "@workspace/tbm/tbm-parameter"
+import { createTbmParameterSchema } from "@workspace/tbm/parameter"
 import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 

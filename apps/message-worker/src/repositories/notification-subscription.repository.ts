@@ -37,15 +37,18 @@ export const notificationSubcriptionRepository: NotificationSubscriptionReposito
   },
 
   async findRecipients(input): Promise<NotificationSubscription[]> {
+    // console.log("findRecipients",input)
     const { data, error } = await supabase
       .schema("system")
       .from("notification_subscriptions")
       .select("*")
       .eq("source_type_code", input.source_type_code)
       .eq("event_type_code", input.event_type_code)
-      .eq("organization_id", input.organization_id)
+      .eq("project_id", input.project_id)
       .in("min_level", getMatchingMinLevels(input.level))
       .eq("is_disabled", false)
+
+    // console.log("findRecipients",data,error)
     assertNoError(error)
 
 
@@ -64,7 +67,7 @@ export const notificationSubcriptionRepository: NotificationSubscriptionReposito
     return notificationSubscriptionSchema.array().parse(data) ?? []
   },
   async create(input: CreateNotificationSubscriptionInput) {
-    console.log("CreateNotificationSubcriptionInput", input)
+    // console.log("CreateNotificationSubcriptionInput", input)
     const { data, error } = await supabase
       .schema("system")
       .from("notification_subscriptions")
@@ -72,7 +75,7 @@ export const notificationSubcriptionRepository: NotificationSubscriptionReposito
       .select("*")
       .maybeSingle()
 
-    console.log(data, error)
+    // console.log(data, error)
 
     assertNoError(error)
   },

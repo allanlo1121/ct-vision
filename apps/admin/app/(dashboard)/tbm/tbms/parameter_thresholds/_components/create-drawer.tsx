@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import type { CodeNameOption } from "@workspace/shared"
+
 import type { ParameterThresholdOptions } from "@/lib/tbm/parameter-threshold/types"
 
 import { Button } from "@workspace/ui/components/button"

@@ -91,22 +91,13 @@ export const applyRingPhaseSchema = ringPhaseRecordBaseSchema
 export type ApplyRingPhaseInput = z.infer<typeof applyRingPhaseSchema>
 
 export const applyRingPhaseResultSchema = z.object({
-  changed: z.boolean(),
+  inserted: z.boolean(),
 
-  changeType: tbmPhaseChangeTypeSchema,
+  ringChanged: z.boolean(),
+  phaseChanged: z.boolean(),
+  ringDelta: z.number().nullable(),
+  error: z.string().nullable()
 
-  warning: tbmRingWarningTypeSchema.nullable(),
-  tbmCode: tbmCodeSchema,
-  tunnelId: uuidSchema,
-
-  previousRing: ringSchema.nullable(),
-  currentRing: ringSchema,
-  ringDifference: z.number().nullable(),
-
-  previousPhase: z.string().nullable(),
-  currentPhase: z.string(),
-  startedAt: z.string(),
-  chainage: chainageSchema.nullable(),
 })
 
 export type ApplyRingPhaseResult = z.infer<typeof applyRingPhaseResultSchema>

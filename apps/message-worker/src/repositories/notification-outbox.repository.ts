@@ -25,6 +25,7 @@ export const notificationOutboxRepository: NotificationOutboxRepository = {
   async enqueue(
     inputs: CreateNotificationOutboxInput[]
   ): Promise<void> {
+    console.log("start enqueue outbox",inputs)
     if (inputs.length === 0) return
 
     const { error } = await supabase

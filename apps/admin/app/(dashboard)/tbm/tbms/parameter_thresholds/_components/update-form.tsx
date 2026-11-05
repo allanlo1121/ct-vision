@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form"
 import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
 import type { z } from "zod"
-import { updateParameterThresholdSchema } from "@workspace/tbm/tbm-parameter"
+import { updateParameterThresholdSchema } from "@workspace/tbm/parameter"
 
 import {
   Field,
@@ -39,7 +39,7 @@ import { Button } from "@workspace/ui/components/button"
 
 import { updateParameterThreshold } from "@/lib/tbm/parameter-threshold/action"
 import { TITLE } from "../constants"
-import { ParameterThresholdListRow } from "@workspace/tbm/tbm-parameter"
+import { ParameterThresholdListRow } from "@workspace/tbm/parameter"
 import type { ParameterThresholdOptions } from "@/lib/tbm/parameter-threshold/types"
 import { thresholdTypeOptions, type ThresholdType } from "@workspace/shared"
 
@@ -61,12 +61,12 @@ function getDefaultValues(
   threshold: ParameterThresholdListRow
 ): UpdateParameterThresholdInput {
   return {
-    alert_severity_code: threshold.alert_severity_code!,
+    severity_code: threshold.severity_code!,
     threshold_type: threshold.threshold_type as ThresholdType,
     threshold_value: threshold.threshold_value ?? 0,
     reference_value: threshold.reference_value,
-    deadband: threshold.deadband ?? 0,
-    recovery_delay_ms: threshold.recovery_delay_ms ?? 0,
+    min_record_delta: threshold.min_record_delta ?? 0,
+    min_record_interval_ms: threshold.min_record_interval_ms ?? 0,
     remark: threshold.remark,
   }
 }
@@ -146,11 +146,11 @@ export default function UpdateForm({
     >
       <FieldGroup>
         <Controller
-          name="alert_severity_code"
+          name="severity_code"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="update-tbm-parameter-threshold-alert-severity-code">
+              <FieldLabel htmlFor="update-tbm-parameter-threshold-severity_code">
                 告警等级
               </FieldLabel>
 
@@ -160,7 +160,7 @@ export default function UpdateForm({
                 onValueChange={field.onChange}
               >
                 <SelectTrigger
-                  id="update-tbm-parameter-threshold-alert-severity-code"
+                  id="update-tbm-parameter-threshold-severity_code"
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
@@ -218,13 +218,13 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="update-tbm-parameter-threshold-reference-value">
+              <FieldLabel htmlFor="update-tbm-parameter-threshold-reference_value">
                 参考值
               </FieldLabel>
 
               <Input
                 {...field}
-                id="update-tbm-parameter-threshold-reference-value"
+                id="update-tbm-parameter-threshold-reference_value"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
@@ -251,13 +251,13 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="update-tbm-parameter-threshold-threshold-value">
+              <FieldLabel htmlFor="update-tbm-parameter-threshold-threshold_value">
                 阀值
               </FieldLabel>
 
               <Input
                 {...field}
-                id="update-tbm-parameter-threshold-threshold-value"
+                id="update-tbm-parameter-threshold-threshold_value"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
@@ -279,17 +279,17 @@ export default function UpdateForm({
           )}
         />
         <Controller
-          name="deadband"
+          name="min_record_delta"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="create-tbm-parameter-threshold-deadband">
-                报警滞回值
+              <FieldLabel htmlFor="create-tbm-parameter-threshold-min_record_delta">
+                报警最小波动值
               </FieldLabel>
 
               <Input
                 {...field}
-                id="create-tbm-parameter-threshold-deadband"
+                id="create-tbm-parameter-threshold-min_record_delta"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
@@ -311,17 +311,17 @@ export default function UpdateForm({
           )}
         />
         <Controller
-          name="recovery_delay_ms"
+          name="min_record_interval_ms"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="create-tbm-parameter-threshold-recovery_delay_ms">
-                恢复延时
+              <FieldLabel htmlFor="create-tbm-parameter-threshold-min_record_interval_ms">
+                报警最少间隔时间(毫秒)
               </FieldLabel>
 
               <Input
                 {...field}
-                id="create-tbm-parameter-threshold-recovery_delay_ms"
+                id="create-tbm-parameter-threshold-min_record_interval_ms"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}

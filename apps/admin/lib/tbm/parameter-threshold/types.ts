@@ -1,4 +1,4 @@
-import type { TbmParameter } from "@workspace/tbm/tbm-parameter"
+import type { TbmParameter } from "@workspace/tbm/parameter"
 
 import type { CodeNameOption } from "@workspace/shared"
 

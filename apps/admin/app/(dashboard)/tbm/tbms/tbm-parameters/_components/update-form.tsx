@@ -29,9 +29,8 @@ import { Button } from "@workspace/ui/components/button"
 import { Switch } from "@workspace/ui/components/switch"
 
 import {
-  TbmParameter,
   updateTbmParameterSchema,
-} from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
 
 import { updateTbmParameter } from "@/lib/tbm/tbm-parameter/action"
 import { TITLE } from "../constants"

@@ -1,7 +1,7 @@
 import type {
   TbmParameterWithBase,
   ImportTbmParameterInput,
-} from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
 import type { TbmParameterListItem, TbmParameterImportRow } from "./types"
 import type {} from "./types"
 

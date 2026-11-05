@@ -15,8 +15,7 @@ export const notificationSubscriptionBaseSchema = z.object({
   source_type_code: codeSchema,
   event_type_code: codeSchema,
   min_level: notificationEventLevelSchema,
-  organization_id: uuidSchema,
-  scope_type: scopeTypeSchema,
+  project_id: uuidSchema,
   is_disabled: isDisabledSchema
 
 
@@ -50,7 +49,7 @@ export const findNotificationRecipientsSchema = notificationSubscriptionBaseSche
   {
     source_type_code: true,
     event_type_code: true,
-    organization_id: true
+    project_id: true
   }
 ).safeExtend({
   level: notificationEventLevelSchema

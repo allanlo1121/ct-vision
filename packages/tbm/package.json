@@ -7,7 +7,6 @@
     ".": "./src/index.ts",
     "./tbm": "./src/tbm/index.ts",
     "./parameter": "./src/parameter/index.ts",
-    "./tbm-parameter": "./src/tbm-parameter/index.ts",
     "./runtime": "./src/runtime/index.ts",
     "./event":"./src/event/index.ts"
    

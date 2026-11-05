@@ -10,9 +10,9 @@ import type {
   UpdateParameterThresholdInput,
   ParameterThreshold,
   ParameterThresholdListRow,
-} from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
 
-import { parameterThresholdSchema } from "@workspace/tbm/tbm-parameter"
+import { parameterThresholdSchema } from "@workspace/tbm/parameter"
 
 export const parameterThresholdRepository: ParameterThresholdRepository = {
   async findById(id: number): Promise<ParameterThreshold | null> {
@@ -138,34 +138,3 @@ export const parameterThresholdRepository: ParameterThresholdRepository = {
   },
 }
 
-// async findByTbmCode(tbmCode: string): Promise<ParameterThreshold[]> {
-//   const supabase = await createClient()
-
-//   // 1. 查询 TBM 对应的参数 ID
-//   const { data: parameters, error: parameterError } = await supabase
-//     .schema("tbm")
-//     .from("tbm_parameters")
-//     .select("id")
-//     .eq("tbm_code", tbmCode)
-
-//   assertNoError(parameterError)
-
-//   if (!parameters?.length) {
-//     return []
-//   }
-
-//   const parameterIds = parameters.map((item) => item.id)
-
-//   // 2. 根据参数 ID 查询阈值
-//   const { data: thresholds, error: thresholdError } = await supabase
-//     .schema("tbm")
-//     .from("tbm_parameter_threshold_rules")
-//     .select("*")
-//     .in("tbm_parameter_id", parameterIds)
-
-//   assertNoError(thresholdError)
-
-//   return (thresholds ?? []).map((item) =>
-//     parameterThresholdSchema.parse(item)
-//   )
-// },

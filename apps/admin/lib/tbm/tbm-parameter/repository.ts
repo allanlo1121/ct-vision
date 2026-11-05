@@ -10,10 +10,10 @@ import type {
   UpdateTbmParameterInput,
   ImportTbmParameterInput,
   TbmParameter,
-} from "@workspace/tbm/tbm-parameter"
-import type { TbmParameterWithBase } from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
+import type { TbmParameterWithBase } from "@workspace/tbm/parameter"
 
-import { tbmParameterSchema } from "@workspace/tbm/tbm-parameter"
+import { tbmParameterSchema } from "@workspace/tbm/parameter"
 import { parameterBaseSchema } from "@workspace/tbm/parameter"
 
 export const tbmParameterRepository: TbmParameterRepository = {

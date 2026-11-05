@@ -5,7 +5,7 @@ import { ColumnDef, createColumnHelper, RowData } from "@tanstack/react-table"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import Link from "next/link"
 
-import type { ParameterThresholdListRow } from "@workspace/tbm/tbm-parameter"
+import type { ParameterThresholdListRow } from "@workspace/tbm/parameter"
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
@@ -75,8 +75,7 @@ export function createColumns(
       enableSorting: true,
       enableHiding: false,
     }),
-    columnHelper.accessor((row) => row.custom_name?.trim() || row.parameter_name, {
-      id: "name",
+    columnHelper.accessor("parameter_name", {   
       meta: {
         label: "参数名称",
       },
@@ -84,7 +83,7 @@ export function createColumns(
         <DataTableColumnHeader column={column} title="参数名称" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[200px] font-medium">{row.getValue("name")}</div>
+        <div className="max-w-[200px] font-medium">{row.getValue("parameter_name")}</div>
       ),
       enableSorting: true,
       enableHiding: false,
@@ -118,8 +117,7 @@ export function createColumns(
       enableSorting: true,
       enableHiding: false,
     }),
-    columnHelper.accessor((row) => row.custom_unit?.trim() || row.parameter_unit, {
-      id: "unit",
+    columnHelper.accessor("parameter_unit", {    
       meta: {
         label: "单位",
       },
@@ -127,7 +125,7 @@ export function createColumns(
         <DataTableColumnHeader column={column} title="单位" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[200px] font-medium">{row.getValue("unit")}</div>
+        <div className="max-w-[200px] font-medium">{row.getValue("parameter_unit")}</div>
       ),
       enableSorting: true,
       enableHiding: false,

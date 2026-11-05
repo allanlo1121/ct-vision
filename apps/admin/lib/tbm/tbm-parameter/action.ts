@@ -5,7 +5,7 @@ import type {
   CreateTbmParameterInput,
   UpdateTbmParameterInput,
   ImportTbmParameterInput,
-} from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
 import { tbmParameterRepository } from "./repository"
 
 export async function createTbmParameter(

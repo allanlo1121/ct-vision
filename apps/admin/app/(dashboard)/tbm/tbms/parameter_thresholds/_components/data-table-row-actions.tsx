@@ -26,7 +26,7 @@ import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
 import { deleteParameterThreshold } from "@/lib/tbm/parameter-threshold/action"
 
-import { ParameterThresholdListRow } from "@workspace/tbm/tbm-parameter"
+import { ParameterThresholdListRow } from "@workspace/tbm/parameter"
 // import { setApplicationDisabled ,deleteApplication } from "@/lib/system/permission/permission.action";
 
 interface DataTableRowActionsProps<TData extends RowData> {

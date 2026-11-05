@@ -4,7 +4,7 @@ import type { ActionResult } from "@workspace/shared"
 import type {
   CreateParameterThresholdInput,
   UpdateParameterThresholdInput,
-} from "@workspace/tbm/tbm-parameter"
+} from "@workspace/tbm/parameter"
 import { parameterThresholdRepository } from "./repository"
 
 export async function createParameterThreshold(

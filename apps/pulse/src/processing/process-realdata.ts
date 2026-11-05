@@ -32,6 +32,8 @@ export async function processRealdata(
 
   const { assignment, rules } = context
 
+  // console.log("assignment",assignment)
+
   const ring_no = toNumberFallback(
     data.values?.s100100008,
     data.values?.s050100008
@@ -101,6 +103,8 @@ export async function processRealdata(
 
   // 6. 各模块独立执行，避免一个失败影响其他模块
   const results = await Promise.allSettled(tasks.map((task) => task.run()))
+
+  // console.log("results",results)
 
   // 7. 统一记录错误
   results.forEach((result, index) => {

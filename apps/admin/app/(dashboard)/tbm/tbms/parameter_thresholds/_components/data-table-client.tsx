@@ -10,12 +10,11 @@ import {
   CardTitle,
   CardDescription,
 } from "@workspace/ui/components/card"
-import { Button } from "@workspace/ui/components/button"
-import { Plus } from "lucide-react"
+
 import { DataTableToolbar } from "./data-table-toolbar"
 
-import { ParameterThresholdListRow } from "@workspace/tbm/tbm-parameter"
-import { CodeNameOption } from "@workspace/shared"
+import { ParameterThresholdListRow } from "@workspace/tbm/parameter"
+
 import type { ParameterThresholdOptions } from "@/lib/tbm/parameter-threshold/types"
 
 interface Props {

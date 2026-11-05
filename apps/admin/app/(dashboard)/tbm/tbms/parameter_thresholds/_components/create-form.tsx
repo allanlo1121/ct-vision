@@ -33,9 +33,8 @@ import {
 } from "@workspace/ui/components/select"
 
 import {
-  createParameterThresholdSchema,
-  type TbmParameter,
-} from "@workspace/tbm/tbm-parameter"
+  createParameterThresholdSchema
+} from "@workspace/tbm/parameter"
 import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 
@@ -68,11 +67,11 @@ export default function CreateForm({
       start_ring: 0,
       end_ring: 0,
       threshold_type: "upper",
-      alert_severity_code: "",
+      severity_code: "52010001",
       threshold_value: 0,
       reference_value: null,
-      deadband: 0,
-      recovery_delay_ms: 0,
+      min_record_delta: 0,
+      min_record_interval_ms: 1000,
       remark: "",
     },
   })
@@ -235,11 +234,11 @@ export default function CreateForm({
         />
 
         <Controller
-          name="alert_severity_code"
+          name="severity_code"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="create-tbm-parameter-threshold-alert_severity_code">
+              <FieldLabel htmlFor="create-tbm-parameter-threshold-severity_code">
                 告警等级
               </FieldLabel>
 
@@ -249,7 +248,7 @@ export default function CreateForm({
                 onValueChange={field.onChange}
               >
                 <SelectTrigger
-                  id="create-tbm-parameter-threshold-alert_severity_code"
+                  id="create-tbm-parameter-threshold-severity_code"
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
@@ -369,17 +368,17 @@ export default function CreateForm({
           )}
         />
           <Controller
-          name="deadband"
+          name="min_record_delta"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="create-tbm-parameter-threshold-deadband">
-                报警滞回值
+              <FieldLabel htmlFor="create-tbm-parameter-threshold-min_record_delta">
+                报警最小波动值
               </FieldLabel>
 
               <Input
                 {...field}
-                id="create-tbm-parameter-threshold-deadband"
+                id="create-tbm-parameter-threshold-min_record_delta"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
@@ -401,17 +400,17 @@ export default function CreateForm({
           )}
         />
         <Controller
-          name="recovery_delay_ms"
+          name="min_record_interval_ms"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="create-tbm-parameter-threshold-recovery_delay_ms">
-                恢复延时
+              <FieldLabel htmlFor="create-tbm-parameter-threshold-min_record_interval_ms">
+                报警最少间隔时间(毫秒)
               </FieldLabel>
 
               <Input
                 {...field}
-                id="create-tbm-parameter-threshold-recovery_delay_ms"
+                id="create-tbm-parameter-threshold-min_record_interval_ms"
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}

@@ -18,7 +18,7 @@ import { toast } from "@workspace/ui/components/toast"
 
 import { TITLE } from "../constants"
 
-import type { ImportTbmParameterInput } from "@workspace/tbm/tbm-parameter"
+import type { ImportTbmParameterInput } from "@workspace/tbm/parameter"
 import { mapTbmParameterImportRows } from "@/lib/tbm/tbm-parameter/mapper"
 import { importTbmParameters } from "@/lib/tbm/tbm-parameter/action"
 import { CsvUploader } from "@/components/import/csv-uploader"

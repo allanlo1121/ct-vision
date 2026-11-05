@@ -10,7 +10,7 @@ import {
 import { TITLE } from "../constants"
 
 import UpdateForm from "./update-form"
-import { ParameterThresholdListRow } from "@workspace/tbm/tbm-parameter"
+import { ParameterThresholdListRow } from "@workspace/tbm/parameter"
 import { ParameterThresholdOptions } from "@/lib/tbm/parameter-threshold/types"
 
 interface UpdateDrawerProps {
