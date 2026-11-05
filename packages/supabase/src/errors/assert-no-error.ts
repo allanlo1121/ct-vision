@@ -34,6 +34,14 @@ export function assertNoError(
         cause: error,
       })
 
+    case "42501":
+      throw new AppError({
+        message: "权限不足，无法执行当前操作",
+        code: ERROR_CODES.PERMISSION_DENIED,
+        type: ERROR_TYPES.PERMISSION,
+        cause: error,
+      })
+
     default:
       throw new AppError({
         message: error.message,

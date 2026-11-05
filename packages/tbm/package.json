@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/tbm",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tbm": "./src/tbm/index.ts",
+    "./parameter": "./src/parameter/index.ts",
+    "./tbm-parameter": "./src/tbm-parameter/index.ts",
+    "./runtime": "./src/runtime/index.ts",
+    "./event":"./src/event/index.ts"
+   
+  },
+  "dependencies": {
+    "@workspace/supabase": "workspace:*",
+    "@workspace/errors": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "zod": "^4.0.0"
+  }
+}

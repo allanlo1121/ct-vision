@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-import { paginationQuerySchema } from "@workspace/shared"
+import { auditSchema, paginationQuerySchema } from "@workspace/shared"
 
-export const roleSchema = z.object({
+export const roleBaseSchema = z.object({
   id: z.uuid(),
 
   code: z.string().min(1).max(100),
@@ -11,13 +11,9 @@ export const roleSchema = z.object({
 
   sort_order: z.number().int(),
   is_disabled: z.boolean(),
-
-  created_at: z.iso.datetime({ offset: true }),
-  updated_at: z.iso.datetime({ offset: true }).nullable(),
-
-  created_by: z.uuid().nullable(),
-  updated_by: z.uuid().nullable(),
 })
+
+export const roleSchema = roleBaseSchema.safeExtend(auditSchema.shape)
 
 export const createRoleSchema = roleSchema
   .omit({
@@ -32,8 +28,9 @@ export const createRoleSchema = roleSchema
     is_disabled: z.boolean(),
   })
 
-export const updateRoleSchema = createRoleSchema.omit({ code: true }).partial()
+export const updateRoleSchema = createRoleSchema.partial()
 
+export type RoleBase = z.infer<typeof roleBaseSchema>
 export type Role = z.infer<typeof roleSchema>
 export type CreateRoleInput = z.input<typeof createRoleSchema>
 export type UpdateRoleInput = z.input<typeof updateRoleSchema>
@@ -45,3 +42,11 @@ export const roleQuerySchema = paginationQuerySchema.extend({
 })
 
 export type RoleQuery = z.output<typeof roleQuerySchema>
+
+export const roleSummarySchema = roleSchema.pick({
+  id: true,
+  code: true,
+  name: true,
+})
+
+export type RoleSummary = z.infer<typeof roleSummarySchema>

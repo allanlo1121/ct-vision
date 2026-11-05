@@ -80,4 +80,11 @@ export const appErrors = {
       type: ERROR_TYPES.PERMISSION,
     })
   },
+  operationNotApplied(message = "操作未生效") {
+  return new AppError({
+    message,
+    code: ERROR_CODES.OPERATION_NOT_APPLIED,
+    type: ERROR_TYPES.BUSINESS,
+  })
+},
 }

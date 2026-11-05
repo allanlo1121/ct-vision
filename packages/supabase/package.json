@@ -1,6 +1,6 @@
 {
   "name": "@workspace/supabase",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "exports": {
@@ -9,11 +9,21 @@
     "./server": "./src/server.ts",
     "./privileged": "./src/privileged.ts",
     "./database": "./src/database.types.ts",
-    "./errors": "./src/errors/assert-no-error.ts"
+    "./errors": "./src/errors/assert-no-error.ts",
+    "./utils": "./src/utils/index.ts",
+    "./proxy": "./src/proxy.ts"
+  },
+  "peerDependencies": {
+    "next": "^16.3.6"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
-    "@workspace/errors": "workspace:*"
+    "@workspace/errors": "workspace:*",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.41",
+    "next": "catalog:"
   }
 }

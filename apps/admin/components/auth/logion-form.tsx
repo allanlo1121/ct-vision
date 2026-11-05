@@ -2,7 +2,7 @@
 
 import { cn } from "@workspace/ui/lib/utils"
 import { Logo } from "@workspace/ui/brand/logo"
-import { createClient } from "@/lib/supabase/client"
+
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import {
@@ -16,6 +16,7 @@ import { Input } from "@workspace/ui/components/input"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { signIn } from "@workspace/auth/actions"
 
 export function LoginForm({
   className,
@@ -29,16 +30,12 @@ export function LoginForm({
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (error) throw error
+      await signIn(email, password)
+
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/")
     } catch (error: unknown) {
@@ -150,10 +147,7 @@ export function LoginForm({
               </Field>
               <FieldDescription className="mt-4 text-center text-sm">
                 没有账号？{" "}
-                <Link
-                  href="#"
-                  className="underline underline-offset-4"
-                >
+                <Link href="#" className="underline underline-offset-4">
                   注册
                 </Link>
               </FieldDescription>

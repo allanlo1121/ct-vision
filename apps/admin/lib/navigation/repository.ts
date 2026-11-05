@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@workspace/supabase/server"
 
 import { assertNoError } from "@workspace/supabase/errors"
 import { AppError } from "@workspace/errors"

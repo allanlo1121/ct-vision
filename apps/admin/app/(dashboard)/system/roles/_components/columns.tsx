@@ -4,15 +4,23 @@ import { createColumnHelper } from "@tanstack/react-table"
 
 import { Checkbox } from "@workspace/ui/components/checkbox"
 
-import { type Role } from "@workspace/system/role"
+import { type RoleWithPermissions } from "@workspace/system/role-permission"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 import { DataTableRowActions } from "./data-table-row-actions"
 
-// Use `accessor` for data columns and `display` for columns without one.
-const columnHelper = createColumnHelper<DataTableFeatures, Role>()
+import { Badge } from "@workspace/ui/components/badge"
+import { formatDateTime } from "@workspace/shared/utils"
+import { type Permission } from "@workspace/system/permission";
 
-export const columns = columnHelper.columns([
+// Use `accessor` for data columns and `display` for columns without one.
+const columnHelper = createColumnHelper<
+  DataTableFeatures,
+  RoleWithPermissions
+>()
+
+export function getRoleColumns(permissions: Permission[]) {
+  return columnHelper.columns([
   columnHelper.display({
     id: "select",
     header: ({ table }) => (
@@ -43,7 +51,7 @@ export const columns = columnHelper.columns([
     meta: {
       label: "编码",
     },
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("code")}</div>,
+    cell: ({ row }) => <div className="w-[120px]">{row.getValue("code")}</div>,
     enableSorting: true,
     enableHiding: true,
   }),
@@ -55,12 +63,36 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="名称" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[500px] truncate font-medium">
+      <div className="max-w-[120px] truncate font-medium">
         {row.getValue("name")}
       </div>
     ),
     enableSorting: true,
     enableHiding: false,
+  }),
+  columnHelper.accessor("permissions", {
+    meta: {
+      label: "权限",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="权限" />
+    ),
+    cell: ({ row }) => {
+      const permissions = row.original.permissions
+      return (
+        <div className="max-w-[400px] truncate">
+          {permissions.length > 0
+            ? permissions.map((permission) => (
+                <Badge key={permission.id} className="mr-1">
+                  {permission.name}
+                </Badge>
+              ))
+            : ""}
+        </div>
+      )
+    },
+    enableSorting: false,
+    enableHiding: true,
   }),
   columnHelper.accessor("description", {
     meta: {
@@ -70,10 +102,29 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="描述" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[500px] truncate">
+      <div className="max-w-[200px] truncate">
         {row.getValue("description")}
       </div>
     ),
+    enableSorting: false,
+    enableHiding: true,
+  }),
+  columnHelper.accessor("is_disabled", {
+    meta: {
+      label: "状态",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="状态" />
+    ),
+    cell: ({ row }) => {
+      const disabled = row.original.is_disabled
+
+      return (
+        <Badge variant={disabled ? "destructive" : "secondary"}>
+          {disabled ? "已禁用" : "正常"}
+        </Badge>
+      )
+    },
     enableSorting: false,
     enableHiding: true,
   }),
@@ -98,7 +149,9 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="创建时间" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("created_at")}</div>
+      <div className="w-[80px]">
+        {formatDateTime(row.getValue("created_at"))}
+      </div>
     ),
     enableSorting: true,
     enableHiding: true,
@@ -111,7 +164,9 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="更新时间" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("updated_at")}</div>
+      <div className="w-[80px]">
+        {formatDateTime(row.getValue("updated_at"))}
+      </div>
     ),
     enableSorting: false,
     enableHiding: true,
@@ -124,7 +179,7 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="创建人" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("created_by")}</div>
+      <div className="w-[80px] truncate">{row.getValue("created_by")}</div>
     ),
     enableSorting: false,
     enableHiding: true,
@@ -137,7 +192,7 @@ export const columns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="更新人" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("updated_by")}</div>
+      <div className="w-[80px] truncate">{row.getValue("updated_by")}</div>
     ),
     enableSorting: false,
     enableHiding: true,
@@ -145,6 +200,8 @@ export const columns = columnHelper.columns([
 
   columnHelper.display({
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} permissions={permissions} />,
   }),
-])
+  ])
+}
+

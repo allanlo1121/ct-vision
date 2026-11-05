@@ -1,20 +1,16 @@
 import type { Menu, CreateMenuInput, UpdateMenuInput } from "./schemas"
 
-import type { MenuQuery } from "./schemas"
 
-import type { PaginatedResult } from "@workspace/shared"
-import { MenuOption } from "./types";
+import { MenuOption } from "./types"
 
 export interface MenuRepository {
   findById(id: string): Promise<Menu | null>
 
-  findByScope(scope: string): Promise<Menu[]>
+  findByAppCode(appCode: string): Promise<Menu[]>
 
-  findOptions(scope: string): Promise<MenuOption[]>
+  findOptions(appCode: string): Promise<MenuOption[]>
 
   findAll(): Promise<Menu[]>
-
-  paginate(query: MenuQuery): Promise<PaginatedResult<Menu>>
 
   create(input: CreateMenuInput): Promise<Menu>
 

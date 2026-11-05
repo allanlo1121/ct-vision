@@ -34,7 +34,7 @@ import {
 
 import { useRouter } from "next/navigation"
 
-import type { AuthUser } from "@workspace/auth/context"
+import type { AuthUser } from "@workspace/auth/core"
 
 export function NavUser({ user }: { user: AuthUser }) {
   const { isMobile } = useSidebar()

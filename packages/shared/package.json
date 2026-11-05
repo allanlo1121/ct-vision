@@ -6,15 +6,21 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
-    "./pagination": "./src/pagination.ts"
+    "./schemas": "./src/schemas/index.ts",
+    "./pagination": "./src/pagination.ts",
+    "./utils": "./src/utils/index.ts",
+    "./tree": "./src/tree/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-   "zod": "^4.0.0"
+    "@date-fns/tz": "catalog:",
+    "date-fns": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "^20.19.41",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5"
   }

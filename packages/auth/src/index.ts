@@ -3,12 +3,12 @@ export type {
   AuthUser,
   AuthorizationResult,
   CreateAuthContextInput,
-  PermissionCode,
+  PermissionGrant,
   RoleCode,
   UserId,
-} from "./context"
+} from "./core"
 
-export { createAuthContext } from "./context"
+export { createAuthContext } from "./core"
 
 export {
   isAuthenticated,
@@ -23,6 +23,6 @@ export {
   requireAnyPermission,
   requirePermission,
   requireRole,
-} from "./context"
+} from "./core"
 
 export { SUPER_ADMIN_ROLE } from "./constants"

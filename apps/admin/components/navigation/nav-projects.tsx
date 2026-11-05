@@ -19,8 +19,8 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar";
 import { FavoriteProject } from "@/lib/app-context/types";
-import { resolveIcon } from "@/lib/navigation/adapter";
 import Link from "next/link";
+import { IconRenderer } from "@workspace/ui/icon"
 
 export function NavProjects({ projects }: { projects: FavoriteProject[] }) {
   const { isMobile } = useSidebar();
@@ -31,14 +31,17 @@ export function NavProjects({ projects }: { projects: FavoriteProject[] }) {
 
   <SidebarMenu>
     {projects.map((item) => {
-      const Icon = resolveIcon(item.icon);
+      // const Icon = resolveIcon(item.icon);
 
       return (
         <SidebarMenuItem key={item.id}>
           <SidebarMenuButton
             render={<Link href={item.url} />}
           >
-            {Icon && <Icon />}
+            <IconRenderer
+              name={item.icon}
+              className="size-4 text-muted-foreground"
+            />
             <span>{item.name}</span>
           </SidebarMenuButton>
 

@@ -1,18 +1,13 @@
+import { type RoleWithPermissions } from "./schemas"
+
 export interface RolePermissionRepository {
-  findPermissionIds(roleId: string): Promise<string[]>;
+  findPermissionIds(roleId: string): Promise<string[]>
 
-  add(
-    roleId: string,
-    permissionId: string
-  ): Promise<void>;
+  sync(roleId: string, permissionIds: string[]): Promise<void>
 
-  remove(
-    roleId: string,
-    permissionId: string
-  ): Promise<void>;
+  findWithPermissions(roleId: string): Promise<RoleWithPermissions>
 
-  replace(
-    roleId: string,
-    permissionIds: string[]
-  ): Promise<void>;
+  findAllWithPermissions(): Promise<RoleWithPermissions[]>
+
+    sync(roleId: string, permissionIds: string[]): Promise<void>
 }

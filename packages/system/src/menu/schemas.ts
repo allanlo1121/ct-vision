@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { paginationQuerySchema } from "@workspace/shared"
+import { auditSchema } from "@workspace/shared"
 
 /**
  * 菜单基础 Schema
@@ -8,7 +8,7 @@ import { paginationQuerySchema } from "@workspace/shared"
  * 对应数据库中的完整菜单实体
  * 不在这里设置创建默认值
  */
-export const menuSchema = z.object({
+export const menuBaseSchema = z.object({
   id: z.uuid(),
 
   code: z
@@ -53,9 +53,9 @@ export const menuSchema = z.object({
     description: "菜单的图标",
   }),
 
-  menu_scope: z.string().max(10, "菜单范围最多10个字符").meta({
-    title: "菜单范围",
-    description: "菜单的作用范围",
+  app_code: z.string().max(10, "菜单范围最多10个字符").meta({
+    title: "应用编码",
+    description: "菜单所属的应用编码",
   }),
 
   is_visible: z.boolean().meta({
@@ -71,15 +71,9 @@ export const menuSchema = z.object({
   is_disabled: z.boolean().meta({
     title: "是否禁用",
   }),
-
-  created_at: z.iso.datetime({ offset: true }),
-
-  updated_at: z.iso.datetime({ offset: true }).nullable(),
-
-  created_by: z.uuid().nullable(),
-
-  updated_by: z.uuid().nullable(),
 })
+
+export const menuSchema = menuBaseSchema.safeExtend(auditSchema.shape)
 
 /**
  * 创建菜单 Schema
@@ -87,26 +81,10 @@ export const menuSchema = z.object({
  * 排除数据库自动生成和维护的字段
  * 设置创建时的默认值
  */
-export const createMenuSchema = menuSchema.omit({
+export const createMenuSchema = menuBaseSchema.omit({
   id: true,
-  created_at: true,
-  updated_at: true,
-  created_by: true,
-  updated_by: true,
-}).extend({
-  parent_id: menuSchema.shape.parent_id.default(null),
-
-  path_url: menuSchema.shape.path_url.default(null),
-
-  icon: menuSchema.shape.icon.default('SquareDashed'),
-
-  menu_scope: menuSchema.shape.menu_scope.default("global"),
-
-  is_visible: menuSchema.shape.is_visible.default(true),
-
-  sort_order: menuSchema.shape.sort_order.default(999),
-
-  is_disabled: menuSchema.shape.is_disabled.default(false),
+  is_disabled: true,
+  is_visible: true,
 })
 
 /**
@@ -114,7 +92,9 @@ export const createMenuSchema = menuSchema.omit({
  *
  * 支持部分字段更新
  */
-export const updateMenuSchema = createMenuSchema.partial()
+export const updateMenuSchema = menuBaseSchema.omit({
+  id: true,
+}).partial()
 
 /**
  * 导入菜单 Schema
@@ -146,10 +126,4 @@ export type ImportMenuInput = z.input<typeof importMenuSchema>
 // 菜单字段名
 export type MenuFields = keyof z.infer<typeof menuSchema>
 
-export const menuQuerySchema = paginationQuerySchema.extend({
-  keyword: z.string().trim().optional(),
 
-  is_disabled: z.boolean().optional(),
-})
-
-export type MenuQuery = z.output<typeof menuQuerySchema>

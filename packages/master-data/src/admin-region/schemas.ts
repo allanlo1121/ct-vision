@@ -1,216 +1,81 @@
-import {
-  adminRegionCodeSchema,
-  countryCodeSchema,
-  EntityReferenceSchema,
-  idSchema,
-  latitudeSchema,
-  longitudeSchema,
-} from "@/lib/shared/schema"
-import { FormFieldMeta } from "@/lib/shared/form-engine/types"
-
 import { z } from "zod"
-
+import { auditSchema } from "@workspace/shared"
 /**
  * 基础字段规则
  */
-export const OrganizationFormSchema = {
-  id: z.uuid(),
-  name: z
-    .string()
-    .min(6, "组织名称至少6个字符")
-    .max(50, "组织名称最多50个字符")
-    .meta({
-      title: "组织名称",
-      description: "组织机构的名称",
-    }),
-
+export const adminRegionBaseSchema = z.object({
   code: z
     .string()
-    .regex(/^[A-Z0-9_-]+$/, {
-      message: "编码只能包含大写字母、数字、下划线和中划线",
+    .regex(/^[0-9]{6}$/, {
+      message: "编码必须是6位数字",
     })
     .meta({
-      title: "编码",
-      description: "唯一标识，建议使用大写字母、数字和下划线",
+      title: "地区编码",
+      description: "唯一标识，必须是6位数字",
     }),
 
-  shortName: z
-    .string()
-    .max(20, { message: "组织简称最多20个字符" })
-    .optional()
-    .meta({
-      title: "组织简称",
-      description: "组织机构的简称",
-    }),
-
-  description: z
-    .string()
-    .max(200, { message: "描述最多200个字符" })
-    .optional()
-    .nullable()
-    .meta({
-      title: "组织描述",
-    }),
-
-  parentId: z.uuid().meta({
-    title: "上级组织"
+  name: z.string().min(2, "名称至少2个字符").max(50, "名称最多50个字符").meta({
+    title: "名称",
+    description: "地区的名称",
   }),
 
-  orgTypeId: z.uuid().meta({
-    title: "组织类型",
-    description: "主数据-组织类型-ORG_TYPE",
-  } ),
-  orgCategoryId: z.uuid()
-    .nullable()
-    .optional()
+  short_name: z
+    .string()
+    .max(20, { message: "地区简称最多20个字符" })   
     .meta({
-      title: "机构类型",
-      description: "主数据-机构类型-ORG_CATEGORY",
+      title: "地区简称",
+      description: "地区的简称",
     }),
 
-  businessId: z.uuid()
-    .nullable()
-    .optional()
-    .meta({
-      title: "业务类型",
-      description: "主数据-业务类型-ORG_BUSINESS",
-    }),
-
-  countryCode: z.string().default("CN").meta({
-    title: "国家代码",
-    description: "国家代码，默认为CN",
+  full_name: z.string().max(50, "地名全称最多50个字符").meta({
+    title: "地名全称",
+    description: "地名的正式全称",
   }),
 
-  provinceCode: adminRegionCodeSchema.meta({
-    label: "省",
-    component: "select",
-    section: "地理信息",
-    colSpan: 1,
-    optionSource: {
-      source: "admin_regions",
-      level: 1,
-    },
-  } satisfies FormFieldMeta),
+  parent_code: z.string().nullable().meta({
+    title: "上级地区",
+    description: "上级行政区的编码，如果没有则为null",
+  }),
 
-  cityCode: adminRegionCodeSchema.meta({
-    label: "市",
-    component: "select",
-    section: "地理信息",
-    colSpan: 1,
-    dependsOn: ["provinceCode"],
-    optionSource: (v: any) => ({
-      source: "admin_regions",
-      level: 2,
-      parentCode: v.provinceCode,
-    }),
-  } satisfies FormFieldMeta),
+  pinyin_code: z.string().max(50, "拼音码最多50个字符").meta({
+    title: "拼音码",
+    description: "地区名称的拼音码",
+  }),
 
-  districtCode: adminRegionCodeSchema.meta({
-    label: "区县",
-    component: "select",
-    section: "地理信息",
-    dependsOn: ["cityCode"],
-    optionSource: (v: any) => ({
-      source: "admin_regions",
-      level: 3,
-      parentCode: v.cityCode,
-    }),
-  } satisfies FormFieldMeta),
+  level: z.number().int().min(1, "层级最小为1").max(3, "层级最大为3").meta({
+    title: "层级",
+    description: "行政区的层级，例如省、市、区县等",
+  }),
 
-  address: z
-    .string()
-    .max(200, { message: "地址最多200个字符" })
-    .optional()
-    .nullable()
-    .meta({
-      label: "地址",
-      component: "input",
-      section: "地理信息",
-      colSpan: 2,
-    } satisfies FormFieldMeta),
-
-  latitude: latitudeSchema
-    .optional()
-    .nullable()
-    .meta({
-      label: "纬度",
-      component: "input",
-      section: "地理信息",
-      type: "number",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-
-  longitude: longitudeSchema
-    .optional()
-    .nullable()
-    .meta({
-      label: "经度",
-      component: "input",
-      section: "地理信息",
-      type: "number",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-
-  sortOrder: z.coerce
-    .number()
-    .default(0)
-    .meta({
-      label: "排序",
-      component: "input",
-      section: "其他信息",
-      type: "number",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-
-  isDisabled: z.coerce
-    .boolean()
-    .default(false)
-    .meta({
-      label: "是否禁用",
-      component: "switch",
-      section: "其他信息",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-
-  externalId: z
-    .string()
-    .nullable()
-    .optional()
-    .meta({
-      label: "外部ID",
-      component: "input",
-      readonly: true,
-      section: "系统字段",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-
-  externalVersion: z.coerce
-    .number()
-    .nullable()
-    .optional()
-    .meta({
-      label: "外部版本",
-      component: "input",
-      readonly: true,
-      section: "系统字段",
-      colSpan: 1,
-    } satisfies FormFieldMeta),
-}
-
-export const OrganizationSchema = z.object(OrganizationFormSchema)
-
-export const CreateOrganizationSchema = OrganizationSchema
-
-export const ImportOrganizationSchema = OrganizationSchema
-
-export type CreateOrganizationInput = z.infer<typeof CreateOrganizationSchema>
-
-export type ImportOrganizationInput = z.infer<typeof ImportOrganizationSchema>
-
-export const UpdateOrganizationSchema = OrganizationSchema.extend({
-  id: idSchema,
+  is_disabled: z.boolean().meta({
+    title: "是否禁用",
+    description: "行政区是否被禁用",
+  }),
 })
 
-export type UpdateOrganizationInput = z.infer<typeof UpdateOrganizationSchema>
+export const adminRegionSchema = adminRegionBaseSchema.safeExtend(
+  auditSchema.shape
+)
 
-export type OrganizationFields = keyof z.infer<typeof OrganizationSchema>
+export const createAdminRegionSchema = adminRegionBaseSchema
+  .omit({
+    is_disabled: true,
+  })
+
+export const updateAdminRegionSchema = adminRegionBaseSchema
+  .omit({ code: true })
+  .partial()
+
+export const importAdminRegionSchema = adminRegionSchema
+
+export type AdminRegion = z.infer<typeof adminRegionSchema>
+
+export type CreateAdminRegionInput = z.input<typeof createAdminRegionSchema>
+export type CreateAdminRegionOutput = z.output<typeof createAdminRegionSchema>
+
+export type UpdateAdminRegionInput = z.input<typeof updateAdminRegionSchema>
+export type UpdateAdminRegionOutput = z.output<typeof updateAdminRegionSchema>
+
+export type ImportAdminRegionInput = z.infer<typeof importAdminRegionSchema>
+
+export type AdminRegionFields = keyof z.infer<typeof adminRegionSchema>

@@ -1,13 +1,13 @@
 import type { Role, CreateRoleInput, UpdateRoleInput } from "./schemas"
 
-import type { RoleQuery } from "./schemas"
-
-import type { PaginatedResult } from "@workspace/shared"
+import type { IdNameOption } from "@workspace/shared"
 
 export interface RoleRepository {
   findById(id: string): Promise<Role | null>
 
   findByCode?(code: string): Promise<Role | null>
+
+  findOptions(): Promise<IdNameOption[]>
 
   findAll(): Promise<Role[]>
 
@@ -15,7 +15,7 @@ export interface RoleRepository {
 
   create(input: CreateRoleInput): Promise<Role>
 
-  update(id: string, input: UpdateRoleInput): Promise<Role>
+  update(id: string, input: UpdateRoleInput): Promise<void>
 
   delete(id: string): Promise<void>
 }

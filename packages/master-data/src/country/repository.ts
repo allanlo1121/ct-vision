@@ -1,22 +1,16 @@
-import type {
-  Country,
-  CountryQuery,
-  CreateCountryInput,
-  UpdateCountryInput,
-} from "./schemas"
-import type { PaginatedResult } from "@workspace/shared"
+import type { Country, CreateCountryInput, UpdateCountryInput } from "./schemas"
+import type { CodeNameOption } from "@workspace/shared"
 
 export interface CountryRepository {
-  create(input: CreateCountryInput): Promise<Country>
+  create(input: CreateCountryInput): Promise<void>
 
-  update(code: string, input: UpdateCountryInput): Promise<Country>
+  update(code: string, input: UpdateCountryInput): Promise<void>
 
   delete(code: string): Promise<void>
 
-  paginate(query: CountryQuery): Promise<PaginatedResult<Country>>
   findByCode(code: string): Promise<Country | null>
 
-  findChildren(parentCode: string | null): Promise<Country[]>
+  findOptions(): Promise<CodeNameOption[]>
 
   findAll(): Promise<Country[]>
 }

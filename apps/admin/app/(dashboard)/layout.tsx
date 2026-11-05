@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 
-import { getAuthContext } from "@/lib/auth/services"
+import { getCurrentAuthContext } from "@workspace/auth/server"
 
 import { AppSidebar } from "./_components/app-sidebar"
 import {
@@ -11,22 +11,25 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { DashboardBreadcrumbs } from "./_components/dashboard-breadcrumbs"
 
-import { appTeams, favoriteProjects } from "@/lib/app-context"
-import { menuRepository } from "@/lib/navigation/repository"
+import { favoriteProjects } from "@/lib/app-context"
+import { menuRepository } from "@/lib/system/navigation/repository"
 import { buildMenuTree } from "@workspace/system/menu"
-import { AuthProvider } from "@/providers/auth/AuthProvider"
+import { AuthProvider } from "@workspace/auth/components"
+import { applicationRepository } from "@/lib/system/application/repository"
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const authContext = await getAuthContext()
+  const authContext = await getCurrentAuthContext()
 
   if (!authContext) {
     redirect("/auth/login")
   }
-  const menus = await menuRepository.findByScope("global")
+  const menus = await menuRepository.findByAppCode("admin")
+  const applications = await applicationRepository.findAll()
+  const currentAppCode = "admin"
 
   // console.log("admin-menus", menus)
 
@@ -38,7 +41,8 @@ export default async function DashboardLayout({
         <AppSidebar
           menus={menuTree}
           authUser={authContext.user}
-          appTeams={appTeams}
+          applications={applications}
+          currentAppCode={currentAppCode}
           favoriteProjects={favoriteProjects}
         />
         <SidebarInset>

@@ -6,15 +6,30 @@
   "exports": {
     ".": "./src/index.ts",
     "./constants": "./src/constants/index.ts",
-    "./context": "./src/context/index.ts"
+    "./core": "./src/core/index.ts",
+    "./components": "./src/components/index.ts",
+    "./server": "./src/server/index.ts",
+    "./actions": "./src/actions.ts"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "^16.3.6"  
   },
   "dependencies": {
-    "@workspace/shared": "workspace:*",
     "@workspace/errors": "workspace:*",
-    "zod": "^4.0.0"
+    "@workspace/shared": "workspace:*",
+    "@workspace/supabase": "workspace:*",
+    "server-only": "^0.0.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@workspace/typescript-config": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "next": "catalog:",
     "typescript": "^5"
   }
 }

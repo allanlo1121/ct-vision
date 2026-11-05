@@ -5,13 +5,20 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./constants": "./src/constants/index.ts",
+    "./application": "./src/application/index.ts",
+    "./user": "./src/iam/user/index.ts",
+    "./user-profile": "./src/iam/user-profile/index.ts",
     "./role": "./src/iam/role/index.ts",
-    "./menu": "./src/menu/index.ts"
+    "./menu": "./src/menu/index.ts",
+    "./permission": "./src/iam/permission/index.ts",
+    "./role-permission": "./src/iam/role-permission/index.ts",
+    "./user-role": "./src/iam/user-role/index.ts"  
   },
   "dependencies": {
     "@workspace/supabase": "workspace:*",
     "@workspace/errors": "workspace:*",
     "@workspace/shared": "workspace:*",
-    "zod": "^4.0.0"
+    "zod": "catalog:"
   }
 }

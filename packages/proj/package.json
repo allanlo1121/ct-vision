@@ -1,0 +1,18 @@
+{
+  "name": "@workspace/proj",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./project": "./src/project/index.ts",
+    "./unit": "./src/engineering-unit/index.ts",
+    "./tunnel": "./src/tunnel/index.ts"
+  },
+  "dependencies": {
+    "@workspace/supabase": "workspace:*",
+    "@workspace/errors": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "zod": "^4.0.0"
+  }
+}

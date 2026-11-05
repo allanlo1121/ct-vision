@@ -23,7 +23,8 @@ import {
 } from "@workspace/ui/components/sidebar"
 
 import type { MenuNode } from "@workspace/system/menu"
-import { resolveIcon } from "@/lib/navigation/adapter"
+
+import { IconRenderer } from "@workspace/ui/icon"
 
 export function resolveMenuPath(pathUrl?: string | null) {
   if (!pathUrl) return "#"
@@ -61,8 +62,7 @@ export function NavMain({ items }: { items: MenuNode[] }) {
           })
 
           const isOpen = isRouteOpen || openMenus.includes(item.id)
-          const Icon = resolveIcon(item.icon)
-
+     
           return (
             <Collapsible
               key={item.id}
@@ -78,11 +78,12 @@ export function NavMain({ items }: { items: MenuNode[] }) {
               className="group/collapsible"
             >
               <CollapsibleTrigger
-                render={
-                  <SidebarMenuButton tooltip={item.name} />
-                }
+                render={<SidebarMenuButton tooltip={item.name} />}
               >
-                {Icon && <Icon />}
+                <IconRenderer
+                  name={item.icon}
+                  className="size-4 text-muted-foreground"
+                />
 
                 <span>{item.name}</span>
 
@@ -95,7 +96,7 @@ export function NavMain({ items }: { items: MenuNode[] }) {
                     const pathUrl = resolveMenuPath(subItem.pathUrl)
 
                     const isActive = isPathActive(pathname, pathUrl)
-                    const SubIcon = resolveIcon(subItem.icon)
+                    // const SubIcon = resolveIcon(subItem.icon)
 
                     return (
                       <SidebarMenuSubItem
@@ -106,7 +107,10 @@ export function NavMain({ items }: { items: MenuNode[] }) {
                           isActive={isActive}
                           render={<Link href={pathUrl} />}
                         >
-                          {SubIcon && <SubIcon />}
+                          <IconRenderer
+                            name={subItem.icon}
+                            className="size-4 text-muted-foreground"
+                          />
                           <span>{subItem.name}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

@@ -5,9 +5,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./master-data": "./src/master-data/index.ts",
+    "./dictionary-type": "./src/dictionary-type/index.ts",
+    "./dictionary-item": "./src/dictionary-item/index.ts",
     "./country": "./src/country/index.ts",
-    "./admin-region": "./src/admin-region/index.ts"
+    "./admin-region": "./src/admin-region/index.ts",
+    "./geological-type": "./src/geological-type/index.ts"
   },
   "dependencies": {
     "@workspace/supabase": "workspace:*",

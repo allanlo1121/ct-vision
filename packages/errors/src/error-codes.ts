@@ -14,6 +14,7 @@ export const ERROR_CODES = {
 
   UNAUTHORIZED: "UNAUTHORIZED",
   FORBIDDEN: "FORBIDDEN",
+  OPERATION_NOT_APPLIED: "OPERATION_NOT_APPLIED",
 } as const
 
 export type ErrorCode =

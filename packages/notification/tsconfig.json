@@ -1,0 +1,5 @@
+{
+  "extends": "@workspace/typescript-config/library.json",
+  "include": ["src/**/*.ts", "../shared/src/schemas/organization.schemas.ts"],
+  "exclude": ["node_modules", "dist"]
+}

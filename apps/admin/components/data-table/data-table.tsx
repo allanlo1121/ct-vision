@@ -8,6 +8,8 @@ import {
   type ColumnVisibilityState,
   type RowData,
   type SortingState,
+  type ReactTable,
+  ExpandedState,
 } from "@tanstack/react-table"
 
 import {
@@ -19,18 +21,29 @@ import {
   TableRow,
 } from "@workspace/ui/components/table"
 
-import { features, type DataTableFeatures } from "./data-table-features"
-import { DataTablePagination } from "./data-table-pagination"
-import { DataTableToolbar } from "../../app/(dashboard)/system/roles/_components/data-table-toolbar"
+import {
+  features,
+  type DataTableFeatures,
+} from "@/components/data-table/data-table-features"
+import { DataTablePagination } from "@/components/data-table/data-table-pagination"
+
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
+  toolbar?: (table: ReactTable<DataTableFeatures, TData>) => React.ReactNode
+  server?: boolean
+  getRowId?: (row: TData) => string
+  getSubRows?: (row: TData) => TData[] | undefined
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  toolbar,
+  server,
+  getRowId,
+  getSubRows,
 }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -39,21 +52,27 @@ export function DataTable<TData extends RowData>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
+    const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
   const table = useTable({
     features,
     data,
     columns,
+    getRowId,
+    getSubRows,
+    manualPagination: server,
+    manualFiltering: server,
     state: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
+      expanded,
     },
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 25,
+        pageSize: 10,
       },
     },
     enableRowSelection: true,
@@ -61,11 +80,12 @@ export function DataTable<TData extends RowData>({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: setExpanded,
   })
 
   return (
-    <div className="flex flex-col gap-4">
-      <DataTableToolbar table={table} />
+    <div className="flex flex-col gap-4 py-4">
+      {toolbar && toolbar(table)}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -110,7 +130,7 @@ export function DataTable<TData extends RowData>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+       {!server && <DataTablePagination table={table} />}
     </div>
   )
 }

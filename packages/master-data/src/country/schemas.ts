@@ -1,10 +1,9 @@
-import { z } from "zod";
-import type { PaginationQuery } from "@workspace/shared/pagination";
-
+import { z } from "zod"
+import { auditSchema } from "@workspace/shared"
 /**
  * 国家字段定义
  */
-export const CountryShape = {
+export const countryBaseSchema = z.object({
   code: z
     .string()
     .regex(/^[A-Z]{2}$/, "国家编码必须为两个大写字母")
@@ -22,67 +21,46 @@ export const CountryShape = {
       description: "国家的常用名称",
     }),
 
-  full_name: z
-    .string()
-    .max(100, "国家全称最多100个字符")
-    .nullable()
-    .meta({
-      title: "国家全称",
-      description: "国家的正式全称",
-    }),
+  full_name: z.string().max(100, "国家全称最多100个字符").nullable().meta({
+    title: "国家全称",
+    description: "国家的正式全称",
+  }),
 
-  sort_order: z
-    .coerce.number()
-    .int()
-    .min(0)
-    .default(0)
-    .meta({
-      title: "排序",
-    }),
+  sort_order: z.number().int().min(0).meta({
+    title: "排序",
+    description: "菜单排序值",
+  }),
 
-  is_disabled: z
-    .boolean()
-    .default(false)
-    .meta({
-      title: "是否禁用",
-    }),
-};
+  is_disabled: z.boolean().meta({
+    title: "是否禁用",
+  }),
+})
 
 /**
  * 国家实体
  */
-export const CountrySchema = z.object(CountryShape);
+export const countrySchema = countryBaseSchema.safeExtend(auditSchema.shape)
 
-export const CreateCountrySchema = CountrySchema
+export const createCountrySchema = countryBaseSchema
   .omit({
-    sort_order: true,
     is_disabled: true,
   })
   .extend({
-    full_name: CountrySchema.shape.full_name.optional(),
-  });
+    full_name: countrySchema.shape.full_name.optional(),
+  })
 
-export const UpdateCountrySchema = CountrySchema
+export const updateCountrySchema = countryBaseSchema
   .omit({ code: true })
-  .partial();
+  .partial()
 
-export type Country = z.infer<typeof CountrySchema>;
+export type Country = z.infer<typeof countrySchema>
 
-export type CreateCountryInput =
-  z.input<typeof CreateCountrySchema>;
+export type CreateCountryInput = z.input<typeof createCountrySchema>
 
-export type UpdateCountryInput =
-  z.input<typeof UpdateCountrySchema>;
+export type CreateCountryOutput = z.output<typeof createCountrySchema>
 
+export type UpdateCountryInput = z.input<typeof updateCountrySchema>
 
-import { PaginationQuerySchema } from "@workspace/shared";
+export type UpdateCountryOutput = z.output<typeof updateCountrySchema>
 
-
-export const CountryQuerySchema = PaginationQuerySchema.extend({
-  keyword: z.string().trim().optional(),
-
-  is_disabled: z.boolean().optional(),
-});
-
-export type CountryQuery =
-  z.output<typeof CountryQuerySchema>;
+export type CountryFields = keyof z.infer<typeof countrySchema>

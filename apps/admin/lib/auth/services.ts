@@ -1,45 +1,45 @@
-import { cache } from "react"
+// import { cache } from "react"
 
-import { createClient } from "@/lib/supabase/server"
+// import { createClient } from "@/lib/supabase/server"
 
-import type { AuthContext } from "@workspace/auth/context"
-import { createAuthContext } from "@workspace/auth/context"
+// import type { AuthContext } from "@workspace/auth/context"
+// import { createAuthContext } from "@workspace/auth/context"
 
-import { z } from "zod"
+// import { z } from "zod"
 
-export const authContextSchema = z.object({
-  user: z.object({
-    userId: z.uuid(),
-    email: z.email(),
-    displayName: z.string(),
-    avatarUrl: z.string().nullable(),
-  }),
+// export const authContextSchema = z.object({
+//   user: z.object({
+//     userId: z.uuid(),
+//     email: z.email(),
+//     displayName: z.string(),
+//     avatarUrl: z.string().nullable(),
+//   }),
 
-  roles: z.array(z.string()),
+//   roles: z.array(z.string()),
 
-  permissions: z.array(z.string()),
-})
+//   permissions: z.array(z.string()),
+// })
 
-export type AuthContextSchema = z.infer<typeof authContextSchema>
+// export type AuthContextSchema = z.infer<typeof authContextSchema>
 
-export const getAuthContext = cache(async (): Promise<AuthContext | null> => {
-  const supabase = await createClient()
+// export const getAuthContext = cache(async (): Promise<AuthContext | null> => {
+//   const supabase = await createClient()
 
 
-  const { data, error } = await supabase
-    .schema("api")
-    .rpc("get_current_auth_context")
+//   const { data, error } = await supabase
+//     .schema("api")
+//     .rpc("get_current_auth_context")
 
-  if (error) {
-    throw new Error(`获取用户资料失败: ${error.message}`)
-  }
+//   if (error) {
+//     throw new Error(`获取用户资料失败: ${error.message}`)
+//   }
 
-  if (data === null) {
-    return null
-  }
-  const parsed = authContextSchema.parse(data)
-  return createAuthContext(parsed)
-})
+//   if (data === null) {
+//     return null
+//   }
+//   const parsed = authContextSchema.parse(data)
+//   return createAuthContext(parsed)
+// })
 
 // export const getDataScope = cache(async (): Promise<DataScope> => {
 //   const supabase = await createClient()
@@ -105,7 +105,7 @@ export const getAuthContext = cache(async (): Promise<AuthContext | null> => {
 //   }
 // }
 
-export async function logoutAction() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-}
+// export async function logoutAction() {
+//   const supabase = await createClient()
+//   await supabase.auth.signOut()
+// }
