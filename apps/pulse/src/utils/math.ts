@@ -52,3 +52,36 @@ export function toNumberFallback(
 
   return null
 }
+
+// export function formatParameterValue(
+//   value: number,
+//   digits: number = 2
+// ): string {
+//   if (!Number.isFinite(value)) return ""
+
+//   return String(Number(value.toFixed(digits)))
+// }
+
+
+export function formatParameterValue(
+  value: number,
+  digits: number | null | undefined
+): number | null {
+  if (!Number.isFinite(value)) return null
+
+  const precision = Math.max(
+    0,
+    Math.min(10, digits ?? 2)
+  )
+
+  return Number(value.toFixed(precision))
+}
+
+export function roundParameterValue(
+  value: number,
+  digits: number | null | undefined
+): number {
+  const precision = Math.max(0, Math.min(10, digits ?? 2))
+
+  return Number(value.toFixed(precision))
+}

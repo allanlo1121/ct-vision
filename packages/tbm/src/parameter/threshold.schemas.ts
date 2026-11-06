@@ -8,7 +8,8 @@ import {
   masterDataCodeSchema,
   thresholdTypeSchema,
   tbmCodeSchema,
-  codeSchema
+  codeSchema,
+  nonNegativeIntSchema
 } from "@workspace/shared/schemas"
 
 import type { ParameterCode, SeverityCode, TbmCode } from "@workspace/shared/schemas"
@@ -132,7 +133,8 @@ export const thresholdRuleSchema = parameterThresholdBaseSchema
     parameter_code: codeSchema,
     parameter_name: z.string(),
     parameter_unit: z.string(),
-    severity_name: z.string()
+    severity_name: z.string(),
+    digits:nonNegativeIntSchema.nullable()
   })
 
 export type ThresholdRule = z.infer<typeof thresholdRuleSchema>
@@ -142,9 +144,6 @@ export const tbmThresholdRuleSchema = thresholdRuleSchema.safeExtend({
 })
 
 export type TbmThresholdRule = z.infer<typeof tbmThresholdRuleSchema>
-
-
-
 
 
 // 按报警等级分组

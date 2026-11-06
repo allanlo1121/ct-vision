@@ -1,12 +1,12 @@
 {
-    "name": "@app/message-worker",
+    "name": "@workspace/message-worker",
     "version": "0.0.1",
     "private": true,
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/index.ts",
         "build": "tsup",
-        "start": "node dist/index.js",
+        "start": "node --env-file=.env.production dist/index.js",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {

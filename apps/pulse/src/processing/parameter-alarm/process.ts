@@ -10,7 +10,7 @@ import { ApplyParameterAlarmInput } from "@workspace/tbm/runtime";
 import type { TbmAssignmentContext } from "@workspace/tbm/tbm"
 import type { ThresholdRulesByParameter } from "@workspace/tbm/parameter"
 import type { ParameterAlarmPayload } from "@workspace/tbm/event"
-
+import { roundParameterValue } from "../../utils/math"
 
 export interface ProcessAlarmInput {
   assignment: TbmAssignmentContext
@@ -93,11 +93,11 @@ export async function processAlarm({
       severity_name: alarmResult.rule.severity_name,
 
 
-      alarm_value: input.alarm_value,
+      alarm_value: roundParameterValue(value, alarmResult.rule.digits),
       ring_no: input.ring_no,
       chainage: input.chainage,
     } satisfies ParameterAlarmPayload
-    
+
     await notificationEventRepository.create({
       source_type_code: "tbm",
       source_id: String(alarmId),

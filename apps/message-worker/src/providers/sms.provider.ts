@@ -105,7 +105,7 @@ export const smsNotificationProvider: NotificationProvider = {
       content,
     ]
       .filter(Boolean)
-      .join("\n")
+      .join(" ")
 
     const response = await fetch(config.endpoint, {
       method: "POST",
