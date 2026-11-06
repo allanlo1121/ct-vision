@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util"
 import { tbmAssignmentRepository } from "./repository"
 // import { createContext } from "./context"
 import { tbmRealtimeContextStore } from "../store"
@@ -40,6 +41,7 @@ export class TbmAssignmentEngine {
    * 保留已有 TBM 的阈值规则
    */
   async refreshAll(): Promise<void> {
+
     const assignments = await tbmAssignmentRepository.list()
 
     // 数据库当前有效的 TBM
@@ -72,6 +74,8 @@ export class TbmAssignmentEngine {
   }
 }
 
+
+
 function createContext(assignment: TbmAssignmentContext): TbmRealtimeContext {
   return {
     assignment,
@@ -81,3 +85,4 @@ function createContext(assignment: TbmAssignmentContext): TbmRealtimeContext {
 }
 
 export const tbmAssignmentEngine = new TbmAssignmentEngine()
+

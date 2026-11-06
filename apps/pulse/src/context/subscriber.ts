@@ -5,21 +5,31 @@ import { supabase } from "../db/supabase"
 import { tbmAssignmentEngine } from "./assignment/engine"
 import { thresholdEngine } from "./threshold/engine"
 
+
+
 export class TbmRealtimeSubscriber {
-  private channel: RealtimeChannel | null = null
+  private channels: RealtimeChannel[] = []
 
   private starting: Promise<void> | null = null
-
   private stopping = false
 
   // 同一个 Key 的刷新任务串行执行
   private refreshTasks = new Map<string, Promise<void>>()
 
-  async start(): Promise<void> {
-    if (this.starting) return this.starting
-    if (this.channel) return
+  // ========================================
+  // 启动
+  // ========================================
 
-    this.stopping = false
+  async start(): Promise<void> {
+    if (this.stopping) return
+
+    if (this.starting) {
+      return this.starting
+    }
+
+    if (this.channels.length > 0) {
+      return
+    }
 
     this.starting = this.subscribe()
 
@@ -30,10 +40,13 @@ export class TbmRealtimeSubscriber {
     }
   }
 
-  private async subscribe(): Promise<void> {
-    const channel = supabase
-      .channel("tbm-context")
+  // ========================================
+  // 创建 Assignment Channel
+  // ========================================
 
+  private createAssignmentChannel(): RealtimeChannel {
+    return supabase
+      .channel("tbm-assignments")
       .on(
         "postgres_changes",
         {
@@ -42,6 +55,14 @@ export class TbmRealtimeSubscriber {
           table: "assignments",
         },
         (payload) => {
+          if (this.stopping) return
+
+          console.log("[Pulse Realtime] Assignment changed", {
+            eventType: payload.eventType,
+            new: payload.new,
+            old: payload.old,
+          })
+
           const row =
             payload.eventType === "DELETE"
               ? payload.old
@@ -50,7 +71,7 @@ export class TbmRealtimeSubscriber {
           const tbmCode = row.tbm_code
 
           if (typeof tbmCode !== "string") {
-            // 无法定位时，交由 Engine 做全量协调刷新
+            // DELETE 可能无法获取 tbm_code
             void this.refresh("assignment:all", () =>
               tbmAssignmentEngine.refreshAll()
             )
@@ -62,7 +83,15 @@ export class TbmRealtimeSubscriber {
           )
         }
       )
+  }
 
+  // ========================================
+  // 创建 Threshold Channel
+  // ========================================
+
+  private createThresholdChannel(): RealtimeChannel {
+    return supabase
+      .channel("tbm-threshold-rules")
       .on(
         "postgres_changes",
         {
@@ -71,6 +100,14 @@ export class TbmRealtimeSubscriber {
           table: "tbm_parameter_threshold_rules",
         },
         (payload) => {
+          if (this.stopping) return
+
+          console.log("[Pulse Realtime] Threshold changed", {
+            eventType: payload.eventType,
+            new: payload.new,
+            old: payload.old,
+          })
+
           const row =
             payload.eventType === "DELETE"
               ? payload.old
@@ -79,7 +116,7 @@ export class TbmRealtimeSubscriber {
           const tunnelId = row.tunnel_id
 
           if (typeof tunnelId !== "string") {
-            // DELETE 可能无法携带 tunnel_id
+            // 无法定位隧道，全量刷新阈值
             void this.refresh("threshold:all", () =>
               thresholdEngine.start()
             )
@@ -91,56 +128,109 @@ export class TbmRealtimeSubscriber {
           )
         }
       )
+  }
 
-    this.channel = channel
+  // ========================================
+  // 订阅单个 Channel
+  // ========================================
+
+  private subscribeChannel(
+    channel: RealtimeChannel,
+    name: string
+  ): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let subscribedOnce = false
+
+      channel.subscribe((status, error) => {
+        if (this.stopping) return
+
+        if (status === "SUBSCRIBED") {
+          console.log(
+            `[TbmRealtimeSubscriber] ${name} subscribed`
+          )
+
+          if (subscribedOnce) {
+            // 连接恢复后补偿同步
+            void this.refresh("context:resync", async () => {
+              await tbmAssignmentEngine.refreshAll()
+              await thresholdEngine.start()
+            })
+          }
+
+          subscribedOnce = true
+          resolve()
+          return
+        }
+
+        if (
+          status === "CHANNEL_ERROR" ||
+          status === "TIMED_OUT" ||
+          status === "CLOSED"
+        ) {
+          console.error(
+            `[TbmRealtimeSubscriber] ${name} subscription error`,
+            status,
+            error
+          )
+
+          if (!subscribedOnce) {
+            reject(error ?? new Error(`${name}: ${status}`))
+          }
+        }
+      })
+    })
+  }
+
+  // ========================================
+  // 启动全部订阅
+  // ========================================
+
+  private async subscribe(): Promise<void> {
+    const assignmentChannel =
+      this.createAssignmentChannel()
+
+    const thresholdChannel =
+      this.createThresholdChannel()
+
+    this.channels = [
+      assignmentChannel,
+      thresholdChannel,
+    ]
 
     try {
-      await new Promise<void>((resolve, reject) => {
-        let subscribedOnce = false
+      await Promise.all([
+        this.subscribeChannel(
+          assignmentChannel,
+          "Assignment"
+        ),
 
-        channel.subscribe((status, error) => {
-          if (status === "SUBSCRIBED") {
-            if (subscribedOnce) {
-              // 重连后补偿同步
-              void this.refresh("context:resync", async () => {
-                await tbmAssignmentEngine.refreshAll()
-                await thresholdEngine.start()
-              })
-            }
+        this.subscribeChannel(
+          thresholdChannel,
+          "Threshold"
+        ),
+      ])
 
-            subscribedOnce = true
-            resolve()
-          }
-
-          if (
-            status === "CHANNEL_ERROR" ||
-            status === "TIMED_OUT" ||
-            status === "CLOSED"
-          ) {
-            console.error(
-              "[TbmRealtimeSubscriber] subscription error",
-              status,
-              error
-            )
-
-            if (!subscribedOnce) {
-              reject(error ?? new Error(status))
-            }
-          }
-        })
-      })
-
-      console.log("[TbmRealtimeSubscriber] subscribed")
+      console.log(
+        "[TbmRealtimeSubscriber] all channels subscribed"
+      )
     } catch (error) {
-      this.channel = null
-      await supabase.removeChannel(channel)
+      const channels = this.channels
+      this.channels = []
+
+      await Promise.allSettled(
+        channels.map((channel) =>
+          supabase.removeChannel(channel)
+        )
+      )
+
       throw error
     }
   }
 
-  /**
-   * 同 Key 串行刷新
-   */
+  // ========================================
+  // 同 Key 串行刷新
+  // ========================================
+
   private refresh(
     key: string,
     callback: () => Promise<void>
@@ -149,7 +239,7 @@ export class TbmRealtimeSubscriber {
       this.refreshTasks.get(key) ?? Promise.resolve()
 
     const task = previous
-      .catch(() => {})
+      .catch(() => { })
       .then(async () => {
         if (this.stopping) return
 
@@ -174,6 +264,10 @@ export class TbmRealtimeSubscriber {
     return task
   }
 
+  // ========================================
+  // 停止订阅
+  // ========================================
+
   async stop(): Promise<void> {
     this.stopping = true
 
@@ -181,23 +275,31 @@ export class TbmRealtimeSubscriber {
       try {
         await this.starting
       } catch {
-        // 启动失败时已处理
+        // 启动失败时已清理
       }
     }
 
-    const channel = this.channel
-    this.channel = null
+    const channels = this.channels
+    this.channels = []
 
-    if (channel) {
-      await supabase.removeChannel(channel)
-    }
+    await Promise.allSettled(
+      channels.map((channel) =>
+        supabase.removeChannel(channel)
+      )
+    )
 
-    await Promise.allSettled(this.refreshTasks.values())
+    await Promise.allSettled(
+      this.refreshTasks.values()
+    )
+
     this.refreshTasks.clear()
 
     console.log("[TbmRealtimeSubscriber] stopped")
+
+    this.stopping = false
   }
 }
 
 export const tbmRealtimeSubscriber =
   new TbmRealtimeSubscriber()
+

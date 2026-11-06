@@ -11,15 +11,14 @@ export const notificationEventRepository: Pick<
 > = {
 
   async create(input: CreateNotificationEventInput) {
-    // console.log("CreateNotificationEventInput", input)
-    const { data, error } = await supabase
+
+    const { error } = await supabase
       .schema("system")
       .from("notification_events")
       .insert(input)
       .select("*")
       .maybeSingle()
 
-    console.log(data, error)
 
     assertNoError(error)
   }

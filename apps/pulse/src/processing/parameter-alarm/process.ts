@@ -75,23 +75,27 @@ export async function processAlarm({
 
     if (!applyResult) continue
     const alarmId = applyResult
+    console.log("[Pulse][Alarm] Created", {
+      alarmId,
+      tbmCode: tbm_code,
+      parameterCode,
+      severity: alarmResult.severityCode,
+      value,
+      ringNo,
+    })
 
     const payload = {
       tbm_code: input.tbm_code,
       tbm_name: assignment.tbm_name!,
-
       project_name: assignment.project_name!,
-
       tunnel_id: assignment.tunnel_id,
       tunnel_name: assignment.tunnel_name!,
 
       parameter_code: input.parameter_code,
       parameter_name: alarmResult.rule.parameter_name,
       parameter_unit: alarmResult.rule.parameter_unit,
-
       severity_code: alarmResult.rule.severity_code,
       severity_name: alarmResult.rule.severity_name,
-
 
       alarm_value: roundParameterValue(value, alarmResult.rule.digits),
       ring_no: input.ring_no,
@@ -110,6 +114,13 @@ export async function processAlarm({
       processed_at: null,
       retry_count: 0,
       processing_error: null
+    })
+    
+    console.log("[Pulse][Notification] Created", {
+      alarmId,
+      tbmCode: tbm_code,
+      parameterCode,
+      ringNo,
     })
   }
 
