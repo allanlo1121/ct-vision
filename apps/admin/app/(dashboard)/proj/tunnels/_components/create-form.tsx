@@ -54,11 +54,11 @@ export default function CreateForm({
       chainage_prefix: "DK",
       start_chainage: 0,
       end_chainage: 0,
-      start_ring: 0,
-      end_ring: 0,
+      start_ring: 1,
+      end_ring: 100,
       chainage_adjustment: 0,
       excavation_diameter: 0,
-      sort_order: 0,
+      sort_order: 1,
     },
   })
 
@@ -238,7 +238,6 @@ export default function CreateForm({
                 ref={field.ref}
                 onBlur={field.onBlur}
                 type="number"
-                min={0}
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {
@@ -270,8 +269,7 @@ export default function CreateForm({
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
-                type="number"
-                min={0}
+                type="number"                
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {
@@ -302,8 +300,7 @@ export default function CreateForm({
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
-                type="number"
-                min={0}
+                type="number"                
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {

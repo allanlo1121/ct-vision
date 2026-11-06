@@ -249,8 +249,7 @@ export default function UpdateForm({
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
-                type="number"
-                min={0}
+                type="number"                
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {
@@ -281,8 +280,7 @@ export default function UpdateForm({
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
-                type="number"
-                min={0}
+                type="number"               
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {
@@ -313,8 +311,7 @@ export default function UpdateForm({
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
-                type="number"
-                min={0}
+                type="number"     
                 step={0.001}
                 value={field.value ?? ""}
                 onChange={(e) => {
