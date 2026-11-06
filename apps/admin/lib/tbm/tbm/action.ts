@@ -53,7 +53,7 @@ export async function importTbms(
     // 2. 批量映射
     const data = await mapTbmImportRowsToEntities(inputs)
 
-    console.log("Mapped project data:", data)
+    // console.log("Mapped project data:", data)
 
     if (data.length === 0) {
       return {

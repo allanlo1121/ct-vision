@@ -74,7 +74,6 @@ export const parameterRepository: ParameterRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("TBM Parameter creation error:", error)
     assertNoError(error)
 
     if (!data) {

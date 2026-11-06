@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await countryRepository.findAll()
-  console.log("countries:", data)
+ 
   return (
     <div className="h-full w-full flex-col">
       <PageHeader title={`${TITLE}管理`} />

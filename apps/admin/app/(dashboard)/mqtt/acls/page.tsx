@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await mqttAclRepository.findAll()
-  console.log("data:", data)
+  // console.log("data:", data)
 
   return (
     <div className="h-full w-full flex-col">

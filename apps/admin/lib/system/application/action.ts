@@ -10,9 +10,9 @@ export async function createApplication(
   input: CreateApplicationInput
 ): Promise<ActionResult> {
   try {
-    console.log("Creating application with input:", input)
+    // console.log("Creating application with input:", input)
     const result = await applicationRepository.create(input)
-    console.log("application creation result:", result)
+    // console.log("application creation result:", result)
     return {
       success: true,
       data: undefined,
@@ -31,9 +31,9 @@ export async function updateApplication(
   input: UpdateApplicationInput
 ): Promise<ActionResult> {
   try {
-    console.log("Updating application with input:", input)
+    // console.log("Updating application with input:", input)
     const result = await applicationRepository.update(code, input)
-    console.log("application update result:", result)
+    // console.log("application update result:", result)
     return {
       success: true,
       data: undefined,
@@ -52,7 +52,7 @@ export async function setApplicationDisabled(
   input: { is_disabled: boolean }
 ): Promise<ActionResult> {
   try {
-    console.log("Updating application with input:", input)
+    // console.log("Updating application with input:", input)
     await applicationRepository.update(code, input)
 
     return {

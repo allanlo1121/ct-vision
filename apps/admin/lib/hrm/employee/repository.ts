@@ -76,7 +76,7 @@ export const employeeRepository: EmployeeRepository = {
 
   async create(input: CreateEmployeeInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating Employee with input:", input)
+
 
     const { data, error } = await supabase
       .schema("hrm")
@@ -85,7 +85,7 @@ export const employeeRepository: EmployeeRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Employee creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

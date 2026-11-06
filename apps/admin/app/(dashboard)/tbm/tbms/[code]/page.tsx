@@ -34,17 +34,17 @@ export default async function DetailPage({
   const { code } = await params
 
   const tbm = await tbmRepository.findByCode(code)
-  console.log(tbm)
+
 
   if (!tbm) {
     notFound()
   }
   const tbmParameters = await getTbmParametersByTbmCode(code)
   const subsystemOptions = await subsystemRepository.findOptions()
-  console.log(subsystemOptions)
+
   const severityTypeOptions =
     await dictionaryItemRepository.findOptionsByType("5201")
-  console.log("severityOptions", severityTypeOptions)
+
 
   const thresholds = await parameterThresholdRepository.findByTbmCodes([code])
 

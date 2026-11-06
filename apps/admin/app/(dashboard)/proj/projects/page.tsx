@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await projectRepository.findAll()
-  console.log("data:", data)
+
   const projectTypeOptions =
     await dictionaryItemRepository.findOptionsByType("1011")
   const managementModeOptions =

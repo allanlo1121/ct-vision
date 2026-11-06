@@ -65,7 +65,7 @@ export const countryRepository: CountryRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Country creation error:", error)
+
     assertNoError(error)
 
     if (!data) {
@@ -88,7 +88,6 @@ export const countryRepository: CountryRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Country update result:", { data, error, count })
 
     assertNoError(error)
 

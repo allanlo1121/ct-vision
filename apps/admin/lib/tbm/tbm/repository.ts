@@ -68,7 +68,7 @@ export const tbmRepository: TbmRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("TBM creation error:", error)
+    // console.log("TBM creation error:", error)
     assertNoError(error)
 
     if (!data) {

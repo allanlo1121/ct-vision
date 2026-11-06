@@ -10,8 +10,7 @@ import type {
   Application,
 } from "@workspace/system/application"
 import {
-  applicationSchema,
-  createApplicationSchema,
+  applicationSchema
 } from "@workspace/system/application"
 import { z } from "zod"
 
@@ -41,9 +40,6 @@ export const applicationRepository: ApplicationRepository = {
       .select("*")
       .order("sort_order")
 
-    console.log("applications data:", data)
-    console.log("applications error:", error)
-
     assertNoError(error)
 
     return data ?? []
@@ -65,7 +61,7 @@ export const applicationRepository: ApplicationRepository = {
 
   async create(input: CreateApplicationInput): Promise<Application> {
     const supabase = await createClient()
-    console.log("Creating application with input:", input)
+
 
     const { data, error } = await supabase
       .schema("system")
@@ -74,7 +70,7 @@ export const applicationRepository: ApplicationRepository = {
       .select("*")
       .single()
 
-    console.log("Application creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

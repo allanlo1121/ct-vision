@@ -41,8 +41,6 @@ export const dictionaryItemRepository: DictionaryItemRepository = {
       .select("*")
       .order("code")
 
-    console.log("dictionary_items data:", data)
-    console.log("dictionary_items error:", error)
 
     assertNoError(error)
 
@@ -108,7 +106,6 @@ export const dictionaryItemRepository: DictionaryItemRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("DictionaryItem creation error:", error)
     assertNoError(error)
 
     if (!data) {

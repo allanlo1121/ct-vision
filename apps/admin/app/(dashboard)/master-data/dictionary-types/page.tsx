@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const dictionaryTypes = await dictionaryTypeRepository.findAll()
-  console.log("dictionaryTypes:", dictionaryTypes)
+
   return (
     <div className="h-full w-full flex-col">
       <PageHeader title={`${TITLE}管理`} />

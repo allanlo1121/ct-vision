@@ -14,7 +14,7 @@ export async function importOrganizations(
     // 2. 批量映射
     const data = await mapOrganizationImportRowsToEntities(inputs)
 
-    console.log("Mapped organization data:", data)  
+
 
     if (data.length === 0) {
       return {

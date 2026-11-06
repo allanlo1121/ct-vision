@@ -6,7 +6,7 @@ import { permissionRepository } from "@/lib/system/permission/permission.reposit
 
 export default async function Page() {
   const permissions = await permissionRepository.findAll()
-  console.log("permissions:", permissions)
+
   return (
     <div className="h-full w-full flex-col">
       <PageHeader title="权限管理" />

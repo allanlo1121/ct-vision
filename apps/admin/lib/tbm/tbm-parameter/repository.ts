@@ -96,7 +96,6 @@ export const tbmParameterRepository: TbmParameterRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("TBM Parameter creation error:", error)
     assertNoError(error)
 
     if (!data) {
@@ -149,8 +148,7 @@ export const tbmParameterRepository: TbmParameterRepository = {
       .from("tbm_parameters")
       .delete()
       .eq("tbm_code", tbmCode)
-    console.log("Deleting TBM Parameters for tbmCode:", tbmCode)
-    console.log("Delete error:", deleteError)
+
 
     assertNoError(deleteError)
 

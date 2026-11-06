@@ -7,9 +7,9 @@ export async function createRole(
   input: CreateRoleInput
 ): Promise<ActionResult> {
   try {
-    console.log("Creating role with input:", input)
+
     const result = await roleRepository.create(input)
-    console.log("Role creation result:", result)
+
     return {
       success: true,
       data: undefined,
@@ -28,9 +28,9 @@ export async function updateRole(
   input: UpdateRoleInput
 ): Promise<ActionResult> {
   try {
-    console.log("Updating role with input:", input)
+  
     const result = await roleRepository.update(id, input)
-    console.log("Role update result:", result)
+
     return {
       success: true,
       data: undefined,
@@ -49,7 +49,7 @@ export async function setRoleDisabled(
   input: { is_disabled: boolean }
 ): Promise<ActionResult> {
   try {
-    console.log("Updating role with input:", input)
+
     await roleRepository.update(id, input)
 
     return {

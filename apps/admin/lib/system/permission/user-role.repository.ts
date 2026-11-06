@@ -26,7 +26,7 @@ export const userRoleRepository: UserRoleRepository = {
 
   async assign(userId: string, roleId: string): Promise<void> {
     const supabase = await createClient()
-    console.log("Assigning role with userId:", userId, "roleId:", roleId)
+
 
     const { data, error } = await supabase
       .schema("iam")
@@ -38,7 +38,7 @@ export const userRoleRepository: UserRoleRepository = {
       .select("*")
       .single()
 
-    console.log("Assign role error:", error)
+
     assertNoError(error)
 
     if (!data) {

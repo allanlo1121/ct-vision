@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await tbmRepository.findAll()
-  console.log("data:", data)
+
   const tbmTypeOptions =
     await dictionaryItemRepository.findOptionsByType("4500")
 

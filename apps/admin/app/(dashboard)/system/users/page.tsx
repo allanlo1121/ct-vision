@@ -24,7 +24,7 @@ export default async function Page({
 
   const users = await userRepository.findPage(query)
 
-  console.log("users:", users)
+
 
   return (
     <div className="flex h-full w-full flex-col">

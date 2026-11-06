@@ -92,7 +92,7 @@ export const parameterThresholdRepository: ParameterThresholdRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Creating tbm parameter threshold error:", error)
+
     assertNoError(error)
 
     if (!data) {

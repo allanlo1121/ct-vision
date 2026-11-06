@@ -89,7 +89,6 @@ export const geologicalTypeRepository: GeologicalTypeRepository = {
 
   async create(input: CreateGeologicalTypeInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating Geological Type with input:", input)
 
     const { data, error } = await supabase
       .schema("master_data")
@@ -98,7 +97,6 @@ export const geologicalTypeRepository: GeologicalTypeRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Geological Type creation error:", error)
     assertNoError(error)
 
     if (!data) {
@@ -111,7 +109,6 @@ export const geologicalTypeRepository: GeologicalTypeRepository = {
   async update(code: string, input: UpdateGeologicalTypeInput): Promise<void> {
     const supabase = await createClient()
 
-    console.log("Updating Geological Type with input:", code, input)
 
     const { data, error, count } = await supabase
       .schema("master_data")
@@ -121,7 +118,6 @@ export const geologicalTypeRepository: GeologicalTypeRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Geological Type update result:", { data, error, count })
 
     assertNoError(error)
 

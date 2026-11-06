@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await tunnelRepository.findAll()
-  console.log("data:", data)
+
 
 
   return (

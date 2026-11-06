@@ -74,7 +74,7 @@ export const tunnelRepository: TunnelRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Project creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

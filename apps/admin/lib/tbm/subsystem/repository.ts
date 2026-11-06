@@ -76,7 +76,7 @@ export const subsystemRepository: SubsystemRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Subsystem creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

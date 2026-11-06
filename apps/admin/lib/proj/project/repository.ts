@@ -106,7 +106,7 @@ export const projectRepository: ProjectRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Project creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

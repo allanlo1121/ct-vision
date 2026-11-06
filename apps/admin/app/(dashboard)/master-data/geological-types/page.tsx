@@ -19,7 +19,7 @@ export default async function Page() {
     getParentId: (item) => item.parent_code,
     getSortOrder: (item) => Number(item.code),
   })
-  console.log("geological-types:", data)
+
   return (
     <div className="h-full w-full flex-col">
       <PageHeader title={`${TITLE}管理`} />

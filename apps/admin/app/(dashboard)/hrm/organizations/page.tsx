@@ -22,13 +22,12 @@ export default async function Page({ searchParams }: PageProps) {
   const { organizationId } = await searchParams
   const parentId = organizationId || null
   const data = await organizationRepository.findByParentId(parentId)
-  console.log("data:", data)
+
   const orgTypeOptions =
     await dictionaryItemRepository.findOptionsByType("1023")
   const orgCatagoryOptions =
     await dictionaryItemRepository.findOptionsByType("1025")
-  console.log("orgTypeOptions:", orgTypeOptions)
-  console.log("orgCatagoryOptions:", orgCatagoryOptions)
+
   return (
     <div className="h-full w-full flex-col">
       <PageHeader title={`${TITLE}管理`} />

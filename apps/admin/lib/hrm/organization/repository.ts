@@ -107,7 +107,7 @@ export const organizationRepository: OrganizationRepository = {
           .range(from, to)
 
         assertNoError(error)
-        console.log("Fetched organization tree page:", data)
+
 
         return (data ?? []).map((org) => ({
           id: org.id,
@@ -122,7 +122,7 @@ export const organizationRepository: OrganizationRepository = {
 
   async create(input: CreateOrganizationInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating Organization with input:", input)
+
 
     const { data, error } = await supabase
       .schema("hrm")
@@ -131,7 +131,6 @@ export const organizationRepository: OrganizationRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Organization creation error:", error)
     assertNoError(error)
 
     if (!data) {

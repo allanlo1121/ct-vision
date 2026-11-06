@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await engineeringUnitRepository.findAll()
-  console.log("data:", data)
+
   const unitTypeOptions =
     await dictionaryItemRepository.findOptionsByType("2072")
 

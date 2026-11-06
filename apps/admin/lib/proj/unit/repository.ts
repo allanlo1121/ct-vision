@@ -65,8 +65,7 @@ export const engineeringUnitRepository: EngineeringUnitRepository = {
 
   async create(input: CreateEngineeringUnitInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating Engineering Unit with input:", input)
-
+   
     const { data, error } = await supabase
       .schema("proj")
       .from("engineering_units")

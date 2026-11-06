@@ -109,7 +109,7 @@ export const adminRegionRepository: AdminRegionRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Admin Region creation error:", error)
+
     assertNoError(error)
 
     if (!data) {
@@ -122,7 +122,7 @@ export const adminRegionRepository: AdminRegionRepository = {
   async update(code: string, input: UpdateAdminRegionInput): Promise<void> {
     const supabase = await createClient()
 
-    console.log("Updating Admin Region with input:", code, input)
+
 
     const { data, error, count } = await supabase
       .schema("master_data")
@@ -132,7 +132,6 @@ export const adminRegionRepository: AdminRegionRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Admin Region update result:", { data, error, count })
 
     assertNoError(error)
 

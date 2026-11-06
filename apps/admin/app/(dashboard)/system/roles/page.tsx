@@ -9,7 +9,7 @@ import { permissionRepository } from "@/lib/system/permission/permission.reposit
 
 export default async function Page() {
   const roles = await rolePermissionRepository.findAllWithPermissions()
-  console.log("roles:", roles)
+
   const permissions = await permissionRepository.findAll()
   return (
     <div className="h-full w-full flex-col">

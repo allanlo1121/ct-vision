@@ -74,7 +74,7 @@ export const riskRepository: RiskRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Project creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

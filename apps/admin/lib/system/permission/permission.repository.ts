@@ -48,7 +48,7 @@ export const permissionRepository: PermissionRepository = {
 
   async create(input: CreatePermissionInput): Promise<Permission> {
     const supabase = await createClient()
-    console.log("Creating permission with input:", input)
+
 
     const { data, error } = await supabase
       .schema("iam")
@@ -57,7 +57,7 @@ export const permissionRepository: PermissionRepository = {
       .select("*")
       .single()
 
-    console.log("Permission creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

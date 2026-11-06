@@ -68,7 +68,6 @@ export const roleRepository: RoleRepository = {
       .select("*")
       .single()
 
-    console.log("Role creation error:", error)
     assertNoError(error)
 
     if (!data) {

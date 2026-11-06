@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const dictionaryItems = await dictionaryItemRepository.findAll()
-  console.log("dictionaryItems:", dictionaryItems)
+
   const dictionaryTypeOptions = await dictionaryTypeRepository.findOptions()
   return (
     <div className="h-full w-full flex-col">

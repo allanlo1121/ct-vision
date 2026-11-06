@@ -58,7 +58,7 @@ export const deviceRepository: DeviceRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Device creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

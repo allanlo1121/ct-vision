@@ -74,7 +74,7 @@ export const segmentRepository: SegmentRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("Project creation error:", error)
+
     assertNoError(error)
 
     if (!data) {

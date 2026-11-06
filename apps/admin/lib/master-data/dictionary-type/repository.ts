@@ -40,8 +40,6 @@ export const dictionaryTypeRepository: DictionaryTypeRepository = {
       .select("*")
       .order("code")
 
-    console.log("dictionary_types data:", data)
-    console.log("dictionary_types error:", error)
 
     assertNoError(error)
 
@@ -65,7 +63,7 @@ export const dictionaryTypeRepository: DictionaryTypeRepository = {
 
   async create(input: CreateDictionaryTypeInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating DictionaryType with input:", input)
+
 
     const { data, error } = await supabase
       .schema("master_data")
@@ -74,7 +72,6 @@ export const dictionaryTypeRepository: DictionaryTypeRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("DictionaryType creation error:", error)
     assertNoError(error)
 
     if (!data) {
@@ -87,7 +84,7 @@ export const dictionaryTypeRepository: DictionaryTypeRepository = {
   async update(code: string, input: UpdateDictionaryTypeInput): Promise<void> {
     const supabase = await createClient()
 
-    console.log("Updating DictionaryType with input:", code, input)
+
 
     const {data, error, count } = await supabase
       .schema("master_data")
@@ -97,7 +94,7 @@ export const dictionaryTypeRepository: DictionaryTypeRepository = {
       .select("*")
       .maybeSingle()
 
-    console.log("DictionaryType update result:", { data, error, count })
+
 
     assertNoError(error)
 
