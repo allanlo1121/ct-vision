@@ -5,7 +5,7 @@ export type TbmAssignmentListRow =
 
 
 
-  export type TbmAssignmentContextRow =
+export type TbmAssignmentContextRow =
   Database["tbm"]["Views"]["v_current_assignments"]["Row"]
 
 export type TbmAssignmentContext = SetRequired<

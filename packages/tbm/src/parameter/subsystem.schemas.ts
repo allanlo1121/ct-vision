@@ -4,6 +4,7 @@ import {
   codeSchema,
   isDisabledSchema,
   auditSchema,
+  sortOrderSchema,
 } from "@workspace/shared/schemas"
 
 /**
@@ -27,12 +28,13 @@ export const subsystemBaseSchema = z.object({
     }),
 
   is_disabled: isDisabledSchema,
+  sort_order: sortOrderSchema
 })
 
 export const subsystemSchema = subsystemBaseSchema.safeExtend(auditSchema.shape)
 
 export const createSubsystemSchema = subsystemBaseSchema
-  .omit({  
+  .omit({
     is_disabled: true,
   })
   .partial({

@@ -2,8 +2,8 @@
 import { supabase } from "../../db/supabase"
 import { assertNoError } from "@workspace/supabase/errors"
 
-import type { TbmThresholdRule } from "@workspace/tbm/parameter"
-import { tbmThresholdRuleSchema } from "@workspace/tbm/parameter"
+import type { TbmThresholdRule, TbmThresholdRuleList } from "@workspace/tbm/parameter"
+import { tbmThresholdRuleSchema, tbmThresholdRuleListSchema, } from "@workspace/tbm/parameter"
 
 export const thresholdRuleRepository = {
   async findById(id: number) {
@@ -21,7 +21,7 @@ export const thresholdRuleRepository = {
   async findByTbmCode(tbmCode: string) {
     const { data, error } = await supabase
       .schema("tbm")
-      .from("v_parameter_threshold_list")
+      .from("v_parameter_threshold_rules")
       .select("*")
       .eq("tbm_code", tbmCode)
 
@@ -29,15 +29,15 @@ export const thresholdRuleRepository = {
 
     return data
   },
-  async findByTbmCodes(tbmCodes: string[]): Promise<TbmThresholdRule[]> {
+  async findByTbmCodes(tbmCodes: string[]): Promise<TbmThresholdRuleList[]> {
     const { data, error } = await supabase
       .schema("tbm")
-      .from("v_parameter_threshold_list")
+      .from("v_parameter_threshold_rules")
       .select("*")
       .in("tbm_code", tbmCodes)
 
     assertNoError(error)
 
-    return tbmThresholdRuleSchema.array().parse(data ?? [])
+    return tbmThresholdRuleListSchema.array().parse(data ?? [])
   },
 }

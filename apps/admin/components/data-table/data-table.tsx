@@ -27,7 +27,6 @@ import {
 } from "@/components/data-table/data-table-features"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 
-
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
@@ -35,6 +34,7 @@ interface DataTableProps<TData extends RowData> {
   server?: boolean
   getRowId?: (row: TData) => string
   getSubRows?: (row: TData) => TData[] | undefined
+  initialColumnVisibility?: ColumnVisibilityState
 }
 
 export function DataTable<TData extends RowData>({
@@ -44,15 +44,16 @@ export function DataTable<TData extends RowData>({
   server,
   getRowId,
   getSubRows,
+  initialColumnVisibility = {},
 }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<ColumnVisibilityState>({})
+    React.useState<ColumnVisibilityState>(initialColumnVisibility)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
-    const [expanded, setExpanded] = React.useState<ExpandedState>({})
+  const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
   const table = useTable({
     features,
@@ -130,7 +131,7 @@ export function DataTable<TData extends RowData>({
           </TableBody>
         </Table>
       </div>
-       {!server && <DataTablePagination table={table} />}
+      {!server && <DataTablePagination table={table} />}
     </div>
   )
 }

@@ -2,16 +2,17 @@
 
 import type { ActionResult } from "@workspace/shared"
 import type {
-  CreateParameterThresholdInput,
-  UpdateParameterThresholdInput,
+  CreateTbmParameterThresholdInput,
+  UpdateTbmParameterThresholdInput,
 } from "@workspace/tbm/parameter"
-import { parameterThresholdRepository } from "./repository"
+import { tbmParameterThresholdRepository } from "./repository"
+import { ENTITY } from "./constants"
 
-export async function createParameterThreshold(
-  input: CreateParameterThresholdInput
+export async function create(
+  input: CreateTbmParameterThresholdInput
 ): Promise<ActionResult> {
   try {
-    await parameterThresholdRepository.create(input)
+    await tbmParameterThresholdRepository.create(input)
 
     return {
       success: true,
@@ -21,17 +22,17 @@ export async function createParameterThreshold(
     return {
       success: false,
       message: (error as Error).message,
-      code: "CREATE_PARAMETER_THRESHOLD_FAILED",
+      code: `CREATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function updateParameterThreshold(
+export async function update(
   id: number,
-  input: UpdateParameterThresholdInput
+  input: UpdateTbmParameterThresholdInput
 ): Promise<ActionResult> {
   try {
-    await parameterThresholdRepository.update(id, input)
+    await tbmParameterThresholdRepository.update(id, input)
 
     return {
       success: true,
@@ -41,16 +42,35 @@ export async function updateParameterThreshold(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_PARAMETER_THRESHOLD_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function deleteParameterThreshold(
+export async function upsertMany(
+  inputs: CreateTbmParameterThresholdInput[]
+): Promise<ActionResult> {
+  try {
+    await tbmParameterThresholdRepository.upsertMany(inputs)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `UPASERT_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function remove(
   id: number
 ): Promise<ActionResult> {
   try {
-    await parameterThresholdRepository.delete(id)
+    await tbmParameterThresholdRepository.delete(id)
 
     return {
       success: true,
@@ -60,7 +80,7 @@ export async function deleteParameterThreshold(
     return {
       success: false,
       message: (error as Error).message,
-      code: "DELETE_PARAMETER_THRESHOLD_FAILED",
+      code: `DELETE_${ENTITY.code}_FAILED`,
     }
   }
 }

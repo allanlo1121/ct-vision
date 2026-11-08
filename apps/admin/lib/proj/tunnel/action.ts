@@ -45,3 +45,20 @@ export async function updateTunnel(
     }
   }
 }
+
+import {
+  getTunnelPickerById,
+  listTunnelPicker,
+} from "./repository"
+
+import type { TunnelPickerQuery } from "./types"
+
+export async function fetchTunnelPicker(
+  query: TunnelPickerQuery
+) {
+  return listTunnelPicker(query)
+}
+
+export async function fetchTunnelPickerById(id: string) {
+  return getTunnelPickerById(id)
+}

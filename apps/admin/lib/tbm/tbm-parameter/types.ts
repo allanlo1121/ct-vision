@@ -1,5 +1,5 @@
 import type { TbmParameter } from "@workspace/tbm/parameter"
-
+import type { CodeNameOption } from "@workspace/shared"
 export type TbmParameterListItem = TbmParameter & {
   name: string
   unit: string | null
@@ -16,4 +16,10 @@ export interface TbmParameterImportRow {
   value_max: string
   value_min: string
   remark: string
+}
+
+
+export interface ParameterThresholdDefaultOptions {
+  tbmTypeOptons: CodeNameOption[]
+  severityOptions: CodeNameOption[]
 }

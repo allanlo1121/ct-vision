@@ -25,7 +25,7 @@ export type {
   CreateTbmAssignmentInput,
   CreateTbmAssignmentOutput,
   UpdateTbmAssignmentInput,
-  UpdateTbmAssignmentOutput,
+  UpdateTbmAssignmentOutput
 } from "./assignment.schemas"
 
 export type {

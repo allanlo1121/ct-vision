@@ -2,6 +2,7 @@
 import { ThresholdRule, ThresholdRulesBySeverity, } from "@workspace/tbm/parameter"
 import { SeverityCode } from "@workspace/shared"
 
+
 export type ThresholdResult = {
   severityCode: SeverityCode
   rule: ThresholdRule
@@ -14,30 +15,43 @@ export function evaluateThresholds(
 ): ThresholdResult {
   if (!Number.isFinite(value)) return null
 
+  // 告警等级从高到低
   const severityEntries = Object.entries(rules).sort(
     ([a], [b]) => Number(b) - Number(a)
   )
 
   for (const [severityCode, severityRules] of severityEntries) {
-    if (!severityRules) continue
-    for (const rule of severityRules) {
-      // 检查环号范围
-      if (rule.start_ring !== null || rule.end_ring !== null) {
-        if (ringNo === null) continue
+    if (!severityRules?.length) continue
 
-        if (rule.start_ring !== null && ringNo < rule.start_ring) {
-          continue
-        }
-
-        if (rule.end_ring !== null && ringNo > rule.end_ring) {
-          continue
-        }
+    // 1. 查找当前环号适用的专用规则
+    const specificRules = severityRules.filter((rule) => {
+      if (rule.start_ring === null && rule.end_ring === null) {
+        return false
       }
 
-      // 命中当前等级
+      if (ringNo === null) return false
+
+      return (
+        (rule.start_ring === null || ringNo >= rule.start_ring) &&
+        (rule.end_ring === null || ringNo <= rule.end_ring)
+      )
+    })
+
+    // 2. 专用优先；没有专用规则时才使用通用规则
+    const applicableRules =
+      specificRules.length > 0
+        ? specificRules
+        : severityRules.filter(
+            (rule) =>
+              rule.start_ring === null &&
+              rule.end_ring === null
+          )
+
+    // 3. 判断当前等级是否命中
+    for (const rule of applicableRules) {
       if (evaluateThreshold(value, rule)) {
         return {
-          severityCode,
+          severityCode: severityCode as SeverityCode,
           rule,
         }
       }
@@ -46,7 +60,6 @@ export function evaluateThresholds(
 
   return null
 }
-
 export function evaluateThreshold(
   value: number,
   rule: ThresholdRule

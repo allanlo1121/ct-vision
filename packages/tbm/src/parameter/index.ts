@@ -62,35 +62,62 @@ export type {
   TbmParameterFields,
 } from "./tbm-parameter.schemas"
 
-export type { TbmParameterRepository } from "../parameter/tbm-parameter.repository"
+export type { TbmParameterRepository } from "./tbm-parameter.repository"
 
 export {
-  parameterThresholdSchema,
-  createParameterThresholdSchema,
-  updateParameterThresholdSchema,
-  importParameterThresholdSchema,
-  thresholdRuleSchema,
-  parameterRuleSnapshotSchema,
-  tbmThresholdRuleSchema
-} from "../parameter/threshold.schemas"
+  parameterThresholdDefaultSchema,
+  parameterThresholdDefaultWithBaseSchema,
+  createParameterThresholdDefaultSchema,
+  updateParameterThresholdDefaultSchema,
+  importParameterThresholdDefaultSchema,
+} from "./threshold.schemas"
 
 export type {
-  ParameterThreshold,
-  ParameterThresholdBase,
-  CreateParameterThresholdInput,
-  CreateParameterThresholdOutput,
-  UpdateParameterThresholdInput,
-  UpdateParameterThresholdOutput,
-  ImportParameterThresholdInput,
-  ImportParameterThresholdOutput,
+  ParameterThresholdDefault,
+  CreateParameterThresholdDefaultInput,
+  CreateParameterThresholdDefaultOutput,
+  UpdateParameterThresholdDefaultInput,
+  UpdateParameterThresholdDefaultOutput,
+  ImportParameterThresholdDefaultInput,
+  ImportParameterThresholdDefaultOutput,
+  ParameterThresholdDefaultFields,
+  ParameterThresholdDefaultWithBase
+} from "./threshold.schemas"
+
+export type { ParameterThresholdDefaultRepository } from "./threshold.repository"
+
+export {
+  tbmParameterThresholdSchema,
+  tbmParameterThresholdWithBaseSchema,
+  createTbmParameterThresholdSchema,
+  updateTbmParameterThresholdSchema,
+  importTbmParameterThresholdSchema,
+  thresholdRuleSchema,
+  parameterRuleSnapshotSchema,
+  tbmThresholdRuleSchema,
+  tbmThresholdRuleListSchema
+} from "./threshold.schemas"
+
+
+export type {
+  TbmParameterThreshold,
+  TbmParameterThresholdBase,
+  TbmParameterThresholdWithBase,
+  CreateTbmParameterThresholdInput,
+  CreateTbmParameterThresholdOutput,
+  UpdateTbmParameterThresholdInput,
+  UpdateTbmParameterThresholdOutput,
+  ImportTbmParameterThresholdInput,
+  ImportTbmParameterThresholdOutput,
   ParameterThresholdFields,
   ThresholdRule,
   TbmThresholdRule,
   ThresholdRulesBySeverity,
   ThresholdRulesByParameter,
-  ThresholdRulesByTbm
-} from "../parameter/threshold.schemas"
+  ThresholdRulesByTbm,
+  TbmThresholdRuleList
+} from "./threshold.schemas"
 
-export type { ParameterThresholdRepository } from "../parameter/threshold.repository"
+export type { TbmParameterThresholdRepository } from "./threshold.repository"
 
-export type { TbmParameterWithBase, ParameterThresholdListRow } from "./types"
+export type { TbmParameterWithBase, TbmParameterThresholdRuleList } from "./types"

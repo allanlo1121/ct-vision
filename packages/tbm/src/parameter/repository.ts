@@ -8,7 +8,7 @@ import type {
 export interface ParameterRepository {
   findByCode(code: string): Promise<Parameter | null>
 
-  findAll(): Promise<Parameter[]>
+  findAll(subsystemCode: string | null ): Promise<Parameter[]>
 
   findBySubsystemCode(subsystemCode: string | null): Promise<Parameter[]>
 

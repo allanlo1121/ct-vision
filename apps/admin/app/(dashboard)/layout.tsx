@@ -45,7 +45,7 @@ export default async function DashboardLayout({
           currentAppCode={currentAppCode}
           favoriteProjects={favoriteProjects}
         />
-        <SidebarInset>
+        <SidebarInset className="flex h-dvh min-h-0 flex-col overflow-hidden" >
           <header className="flex h-16 shrink-0 items-center gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <SidebarTrigger className="-ml-1" />
 
@@ -57,7 +57,7 @@ export default async function DashboardLayout({
             <DashboardBreadcrumbs menus={menuTree} />
           </header>
 
-          <main className="flex-1 overflow-auto px-4 pt-4">{children}</main>
+          <main className="min-h-0 min-w-0 flex-1 overflow-auto px-4 pt-4">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

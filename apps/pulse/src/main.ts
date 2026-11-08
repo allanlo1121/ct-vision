@@ -45,10 +45,10 @@ async function bootstrap(): Promise<void> {
     await tbmContextManager.start()
 
     console.log("[Pulse] TBM context initialized")
-    // console.dir(tbmRealtimeContextStore.values(), {
-    //   depth: null,
-    //   colors: true,
-    // })
+    console.dir(tbmRealtimeContextStore.values(), {
+      depth: null,
+      colors: true,
+    })
 
     // 6. 启动 MQTT 数据接收
     await startMqtt()

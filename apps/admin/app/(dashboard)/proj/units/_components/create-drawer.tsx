@@ -1,11 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import type { CodeNameOption } from "@workspace/shared"
-import type { Project } from "@workspace/proj/project"
 
-import { Button } from "@workspace/ui/components/button"
+import type { Project } from "@workspace/proj/project"
 import {
   Drawer,
   DrawerContent,

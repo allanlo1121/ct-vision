@@ -4,90 +4,139 @@ import { assertNoError } from "@workspace/supabase/errors"
 import { AppError } from "@workspace/errors"
 import { fetchAllPages } from "@workspace/supabase/utils"
 
-import type {
-  ParameterThresholdRepository,
-  CreateParameterThresholdInput,
-  UpdateParameterThresholdInput,
-  ParameterThreshold,
-  ParameterThresholdListRow,
+import {
+  type TbmParameterThresholdRepository,
+  type CreateTbmParameterThresholdInput,
+  type UpdateTbmParameterThresholdInput,
+  type TbmParameterThreshold,
+  type TbmParameterThresholdRules,
+  type TbmParameterThresholdWithBase,
+  tbmParameterThresholdSchema,
+  tbmParameterThresholdWithBaseSchema
 } from "@workspace/tbm/parameter"
 
-import { parameterThresholdSchema } from "@workspace/tbm/parameter"
+import { } from "@workspace/tbm/parameter"
 
-export const parameterThresholdRepository: ParameterThresholdRepository = {
-  async findById(id: number): Promise<ParameterThreshold | null> {
+import { ENTITY } from "./constants"
+
+
+export const tbmParameterThresholdRepository: TbmParameterThresholdRepository = {
+  async findById(id: number): Promise<TbmParameterThreshold | null> {
     const supabase = await createClient()
 
     const { data, error } = await supabase
       .schema("tbm")
-      .from("tbm_parameter_threshold_rules")
+      .from("parameter_thresholds")
       .select("*")
       .eq("id", id)
       .maybeSingle()
 
     assertNoError(error)
 
-    return data ? parameterThresholdSchema.parse(data) : null
+    return data ? tbmParameterThresholdSchema.parse(data) : null
   },
 
   async findByTbmParameterId(
     tbmParameterId: number
-  ): Promise<ParameterThreshold | null> {
+  ): Promise<TbmParameterThreshold | null> {
     const supabase = await createClient()
 
     const { data, error } = await supabase
       .schema("tbm")
-      .from("tbm_parameter_threshold_rules")
+      .from("parameter_thresholds")
       .select("*")
       .eq("tbm_parameter_id", tbmParameterId)
       .maybeSingle()
 
     assertNoError(error)
 
-    return data ? parameterThresholdSchema.parse(data) : null
+    return data ? tbmParameterThresholdSchema.parse(data) : null
   },
-
-  async findByTbmCodes(tbmCodes: string[]): Promise<ParameterThresholdListRow[]> {
+  async listByTbmCode(
+    tbmCode: string,
+    subsystemCode: string | null = null
+  ): Promise<TbmParameterThresholdWithBase[]> {
     const supabase = await createClient()
 
-    // 1. 查询 TBM 对应的参数 ID
-    const { data, error } = await supabase
+    let query = supabase
       .schema("tbm")
-      .from("v_parameter_threshold_list")
-      .select("*")
-      .in("tbm_code", tbmCodes)
+      .from("parameter_thresholds")
+      .select(`
+      *,
+      tbm_parameter:tbm_parameters!inner(
+        *,
+        parameter:parameters!inner(*)
+      )
+    `)
+      .eq("tbm_parameter.tbm_code", tbmCode)
+
+    if (subsystemCode) {
+      query = query.eq(
+        "tbm_parameter.parameter.subsystem_code",
+        subsystemCode
+      )
+    }
+
+    const { data, error } = await query.order("id")
 
     assertNoError(error)
 
-    return data ?? []
+    return tbmParameterThresholdWithBaseSchema.array().parse(data ?? [])
   },
 
-  async findAll(): Promise<ParameterThreshold[]> {
+  async findByTbmCodes(
+    tbmCodes: string[],
+    subsystemCode: string | null = null
+  ): Promise<TbmParameterThresholdRules[]> {
+    if (tbmCodes.length === 0) return []
+
     const supabase = await createClient()
 
-    return fetchAllPages<ParameterThreshold>({
+    let query = supabase
+      .schema("tbm")
+      .from("v_parameter_threshold_rules")
+      .select("*")
+      .in("tbm_code", tbmCodes)
+
+    if (subsystemCode) {
+      query = query.eq("subsystem_code", subsystemCode)
+    }
+
+    const { data, error } = await query
+      .order("parameter_code")
+      .order("severity_code")
+
+    assertNoError(error)
+
+    return (data ?? []) as TbmParameterThresholdRules[]
+  },
+
+  async findAll(): Promise<TbmParameterThreshold[]> {
+    const supabase = await createClient()
+
+    return fetchAllPages<TbmParameterThreshold>({
       fetchPage: async (from, to) => {
         const { data, error } = await supabase
           .schema("tbm")
-          .from("tbm_parameter_threshold_rules")
+          .from("parameter_thresholds")
           .select("*")
           .order("sort_order")
           .range(from, to)
 
         assertNoError(error)
 
-        return parameterThresholdSchema.array().parse(data ?? [])
+        return tbmParameterThresholdSchema.array().parse(data ?? [])
       },
     })
   },
 
-  async create(input: CreateParameterThresholdInput): Promise<void> {
+  async create(input: CreateTbmParameterThresholdInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating tbm parameter threshold with input:", input)
+
 
     const { data, error } = await supabase
       .schema("tbm")
-      .from("tbm_parameter_threshold_rules")
+      .from("parameter_thresholds")
       .insert(input)
       .select("*")
       .maybeSingle()
@@ -97,20 +146,20 @@ export const parameterThresholdRepository: ParameterThresholdRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "创建隧道风险点数据失败：数据库未返回记录",
+        message: `创建${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }
   },
   async update(
     id: number,
-    input: UpdateParameterThresholdInput
+    input: UpdateTbmParameterThresholdInput
   ): Promise<void> {
     const supabase = await createClient()
 
     const { data, error } = await supabase
       .schema("tbm")
-      .from("tbm_parameter_threshold_rules")
+      .from("parameter_thresholds")
       .update(input)
       .eq("id", id)
       .select("*")
@@ -120,17 +169,30 @@ export const parameterThresholdRepository: ParameterThresholdRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "更新隧道风险点数据失败：记录不存在或未返回数据",
+        message: `更新${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }
   },
+  async upsertMany(inputs): Promise<void> {
+    if (inputs.length === 0) return
+    const supabase = await createClient()
+    const { error } = await supabase
+      .schema("tbm")
+      .from("parameter_thresholds")
+      .upsert(inputs, {
+        onConflict: "tbm_parameter_id,severity_code",
+      })
+
+    assertNoError(error)
+  },
+
   async delete(id: number): Promise<void> {
     const supabase = await createClient()
 
     const { error } = await supabase
       .schema("tbm")
-      .from("tbm_parameter_threshold_rules")
+      .from("parameter_thresholds")
       .delete()
       .eq("id", id)
 

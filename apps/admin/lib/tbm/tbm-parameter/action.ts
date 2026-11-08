@@ -67,7 +67,7 @@ export async function setDisabled(
   }
 }
 
-export async function deleteTbmParameter(id: number): Promise<ActionResult> {
+export async function remove(id: number): Promise<ActionResult> {
   try {
     await tbmParameterRepository.delete(id)
     return {

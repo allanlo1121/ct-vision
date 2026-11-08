@@ -4,14 +4,15 @@ import { assertNoError } from "@workspace/supabase/errors"
 import { AppError } from "@workspace/errors"
 import { fetchAllPages } from "@workspace/supabase/utils"
 
-import type {
-  ParameterRepository,
-  CreateParameterInput,
-  UpdateParameterInput,
-  Parameter,
+import {
+  type ParameterRepository,
+  type CreateParameterInput,
+  type UpdateParameterInput,
+  type Parameter,
+  parameterSchema
 } from "@workspace/tbm/parameter"
 
-import { parameterSchema } from "@workspace/tbm/parameter"
+import { ENTITY } from "./constants"
 
 export const parameterRepository: ParameterRepository = {
   async findByCode(code: string): Promise<Parameter | null> {
@@ -29,21 +30,30 @@ export const parameterRepository: ParameterRepository = {
     return data ? parameterSchema.parse(data) : null
   },
 
-  async findAll(): Promise<Parameter[]> {
+  async findAll(
+    subsystemCode: string | null = null
+  ): Promise<Parameter[]> {
     const supabase = await createClient()
 
     return fetchAllPages<Parameter>({
       fetchPage: async (from, to) => {
-        const { data, error } = await supabase
+        let query = supabase
           .schema("tbm")
           .from("parameters")
           .select("*")
+
+        if (subsystemCode) {
+          query = query.eq("subsystem_code", subsystemCode)
+        }
+
+        const { data, error } = await query
+          .order("sort_order")
           .order("code")
           .range(from, to)
 
         assertNoError(error)
 
-        return data ?? []
+        return parameterSchema.array().parse(data ?? [])
       },
     })
   },
@@ -55,6 +65,7 @@ export const parameterRepository: ParameterRepository = {
       .from("parameters")
       .select("*")
       .eq("subsystem_code", subsystemCode)
+      .order("sort_order")
 
     const { data, error } = await query.order("code", { ascending: true })
 
@@ -65,7 +76,7 @@ export const parameterRepository: ParameterRepository = {
 
   async create(input: CreateParameterInput): Promise<void> {
     const supabase = await createClient()
-    console.log("Creating TBM Parameter with input:", input)
+
 
     const { data, error } = await supabase
       .schema("tbm")
@@ -78,7 +89,7 @@ export const parameterRepository: ParameterRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "创建TBM参数失败：数据库未返回记录",
+        message: `创建${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }
@@ -98,7 +109,7 @@ export const parameterRepository: ParameterRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "更新TBM参数失败：记录不存在或未返回数据",
+        message: `更新${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }

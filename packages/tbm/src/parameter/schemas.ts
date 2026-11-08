@@ -4,6 +4,8 @@ import {
   codeSchema,
   isDisabledSchema,
   auditSchema,
+  sortOrderSchema,
+  parameterDataTypeSchema
 } from "@workspace/shared/schemas"
 
 
@@ -22,10 +24,7 @@ export const parameterBaseSchema = z.object({
     description: "工点的名称",
   }),
 
-  data_type: z.string().max(50, { message: "数据类型最多50个字符" }).meta({
-    title: "数据类型",
-    description: "主数据-数据类型-DATA_TYPE-XXXX",
-  }),
+  data_type: parameterDataTypeSchema,
 
   digits: z
     .number()
@@ -48,6 +47,8 @@ export const parameterBaseSchema = z.object({
   }),
 
   is_disabled: isDisabledSchema,
+
+  sort_order: sortOrderSchema
 })
 
 export const parameterSchema = parameterBaseSchema.safeExtend(auditSchema.shape)

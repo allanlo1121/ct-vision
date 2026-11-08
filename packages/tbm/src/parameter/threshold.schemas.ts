@@ -9,24 +9,20 @@ import {
   thresholdTypeSchema,
   tbmCodeSchema,
   codeSchema,
-  nonNegativeIntSchema
+  nonNegativeIntSchema,
+  parameterDataTypeSchema
 } from "@workspace/shared/schemas"
 
 import type { ParameterCode, SeverityCode, TbmCode } from "@workspace/shared/schemas"
+import { parameterBaseSchema } from "./schemas";
+import { tbmParameterSchema } from "./tbm-parameter.schemas"
 
 /**
- * 基础字段规则
+ * 参数阀值基础字段规则
  */
 export const parameterThresholdBaseSchema = z.object({
-  id: serialIdSchema,
 
-  tbm_parameter_id: serialIdSchema,
-
-  tunnel_id: uuidSchema.nullable(),
-
-  start_ring: ringSchema,
-
-  end_ring: ringSchema,
+  parameter_code: codeSchema,
 
   threshold_type: thresholdTypeSchema,
 
@@ -40,9 +36,9 @@ export const parameterThresholdBaseSchema = z.object({
     description: "与上一条报警记录的数值差达到此值时新增记录，0表示不启用",
   }),
 
-  min_record_interval_ms: z.int32().nonnegative().meta({
+  min_record_interval_seconds: z.int32().nonnegative().meta({
     title: "最小记录间隔",
-    description: "距离上一条报警记录达到指定毫秒数时新增记录，0表示不启用",
+    description: "距离上一条报警记录达到指定秒数时新增记录，0表示不启用",
   }),
 
 
@@ -54,24 +50,36 @@ export const parameterThresholdBaseSchema = z.object({
   is_disabled: isDisabledSchema,
 })
 
-export const parameterThresholdSchema = parameterThresholdBaseSchema.safeExtend(
+/**
+ * 通用参数阈值
+ */
+export const parameterThresholdDefaultBaseSchema =
+  parameterThresholdBaseSchema.safeExtend({
+    id: serialIdSchema,
+    parameter_code: z.string(),
+  })
+
+export const parameterThresholdDefaultSchema = parameterThresholdDefaultBaseSchema.safeExtend(
   auditSchema.shape
 )
 
-export const createParameterThresholdSchema =
-  parameterThresholdBaseSchema
+export const parameterThresholdDefaultWithBaseSchema = parameterThresholdDefaultSchema.safeExtend({
+  parameter: parameterBaseSchema
+})
+
+export const createParameterThresholdDefaultSchema =
+  parameterThresholdDefaultBaseSchema
     .omit({
       id: true,
       is_disabled: true,
     })
-export const updateParameterThresholdSchema = parameterThresholdSchema
+export const updateParameterThresholdDefaultSchema = parameterThresholdDefaultSchema
   .omit({
-    id: true,
-    tbm_parameter_id: true,
+    id: true
   })
   .partial()
 
-export const importParameterThresholdSchema = parameterThresholdSchema.omit({
+export const importParameterThresholdDefaultSchema = parameterThresholdDefaultSchema.omit({
   id: true,
   is_disabled: true,
   updated_at: true,
@@ -79,39 +87,124 @@ export const importParameterThresholdSchema = parameterThresholdSchema.omit({
   updated_by: true,
 })
 
-export type ParameterThreshold = z.infer<typeof parameterThresholdSchema>
+export type ParameterThresholdDefault = z.infer<typeof parameterThresholdDefaultSchema>
 
-export type ParameterThresholdBase = z.infer<
-  typeof parameterThresholdBaseSchema
->
+export type ParameterThresholdDefaultWithBase = z.infer<typeof parameterThresholdDefaultWithBaseSchema>
 
-export type CreateParameterThresholdInput = z.input<
-  typeof createParameterThresholdSchema
+export type ParameterThresholdDefaultBase = z.infer<
+  typeof parameterThresholdDefaultBaseSchema
 >
 
-export type CreateParameterThresholdOutput = z.output<
-  typeof createParameterThresholdSchema
+export type CreateParameterThresholdDefaultInput = z.input<
+  typeof createParameterThresholdDefaultSchema
 >
 
-export type ImportParameterThresholdInput = z.input<
-  typeof importParameterThresholdSchema
->
-export type ImportParameterThresholdOutput = z.output<
-  typeof importParameterThresholdSchema
+export type CreateParameterThresholdDefaultOutput = z.output<
+  typeof createParameterThresholdDefaultSchema
 >
 
-export type UpdateParameterThresholdInput = z.input<
-  typeof updateParameterThresholdSchema
+export type ImportParameterThresholdDefaultInput = z.input<
+  typeof importParameterThresholdDefaultSchema
 >
-export type UpdateParameterThresholdOutput = z.output<
-  typeof updateParameterThresholdSchema
+export type ImportParameterThresholdDefaultOutput = z.output<
+  typeof importParameterThresholdDefaultSchema
+>
+
+export type UpdateParameterThresholdDefaultInput = z.input<
+  typeof updateParameterThresholdDefaultSchema
+>
+export type UpdateParameterThresholdDefaultOutput = z.output<
+  typeof updateParameterThresholdDefaultSchema
+>
+
+export type ParameterThresholdDefaultFields = keyof z.infer<
+  typeof parameterThresholdDefaultSchema
+>
+
+
+/**
+ * tbm 专属阀值字段规则
+ */
+export const tbmParameterThresholdBaseSchema = parameterThresholdBaseSchema.omit({
+  parameter_code: true
+}).safeExtend({
+  id: serialIdSchema,
+  tbm_parameter_id: serialIdSchema,
+  tunnel_id: uuidSchema.nullable(),
+  start_ring: ringSchema,
+  end_ring: ringSchema,
+
+})
+
+
+export const tbmParameterThresholdSchema = tbmParameterThresholdBaseSchema.safeExtend(
+  auditSchema.shape
+)
+
+export const tbmParameterThresholdWithBaseSchema =
+  tbmParameterThresholdSchema.safeExtend({
+    tbm_parameter: tbmParameterSchema.safeExtend({
+      parameter: parameterBaseSchema,
+    }),
+  })
+
+export const createTbmParameterThresholdSchema =
+  tbmParameterThresholdBaseSchema
+    .omit({
+      id: true,
+      is_disabled: true,
+    })
+export const updateTbmParameterThresholdSchema = tbmParameterThresholdSchema
+  .omit({
+    id: true,
+    tbm_parameter_id: true,
+  })
+  .partial()
+
+export const importTbmParameterThresholdSchema = tbmParameterThresholdSchema.omit({
+  id: true,
+  is_disabled: true,
+  created_at: true,
+  updated_at: true,
+  created_by: true,
+  updated_by: true,
+})
+
+export type TbmParameterThreshold = z.infer<typeof tbmParameterThresholdSchema>
+
+export type TbmParameterThresholdWithBase = z.infer<typeof tbmParameterThresholdWithBaseSchema>
+
+export type TbmParameterThresholdBase = z.infer<
+  typeof tbmParameterThresholdBaseSchema
+>
+
+export type CreateTbmParameterThresholdInput = z.input<
+  typeof createTbmParameterThresholdSchema
+>
+
+export type CreateTbmParameterThresholdOutput = z.output<
+  typeof createTbmParameterThresholdSchema
+>
+
+export type ImportTbmParameterThresholdInput = z.input<
+  typeof importTbmParameterThresholdSchema
+>
+export type ImportTbmParameterThresholdOutput = z.output<
+  typeof importTbmParameterThresholdSchema
+>
+
+export type UpdateTbmParameterThresholdInput = z.input<
+  typeof updateTbmParameterThresholdSchema
+>
+export type UpdateTbmParameterThresholdOutput = z.output<
+  typeof updateTbmParameterThresholdSchema
 >
 
 export type ParameterThresholdFields = keyof z.infer<
-  typeof parameterThresholdSchema
+  typeof tbmParameterThresholdSchema
 >
 
-export const parameterRuleSnapshotSchema = parameterThresholdBaseSchema.pick({
+export const parameterRuleSnapshotSchema = tbmParameterThresholdBaseSchema.pick({
   start_ring: true,
   end_ring: true,
   threshold_type: true,
@@ -119,7 +212,7 @@ export const parameterRuleSnapshotSchema = parameterThresholdBaseSchema.pick({
   threshold_value: true,
 })
 
-export const thresholdRuleSchema = parameterThresholdBaseSchema
+export const thresholdRuleSchema = tbmParameterThresholdBaseSchema
   .pick({
     start_ring: true,
     end_ring: true,
@@ -127,14 +220,16 @@ export const thresholdRuleSchema = parameterThresholdBaseSchema
     reference_value: true,
     threshold_value: true,
     min_record_delta: true,
-    min_record_interval_ms: true,
+    min_record_interval_seconds: true,
     severity_code: true
-  }).safeExtend({
+  }).extend({
+    start_ring: ringSchema.nullable(),
+    end_ring: ringSchema.nullable(),
     parameter_code: codeSchema,
     parameter_name: z.string(),
     parameter_unit: z.string(),
     severity_name: z.string(),
-    digits:nonNegativeIntSchema.nullable()
+    digits: nonNegativeIntSchema.nullable()
   })
 
 export type ThresholdRule = z.infer<typeof thresholdRuleSchema>
@@ -160,3 +255,31 @@ export type ThresholdRulesByParameter = Record<
 
 // 一台 TBM 的所有参数规则
 export type ThresholdRulesByTbm = Record<TbmCode, ThresholdRulesByParameter>
+
+
+export const tbmThresholdRuleListSchema = tbmThresholdRuleSchema.safeExtend({
+  subsystem_code: codeSchema,
+  value_max: z.number().nullable(),
+  value_min: z.number().nullable(),
+  data_type: parameterDataTypeSchema,
+
+})
+
+export type TbmThresholdRuleList = z.infer<typeof tbmThresholdRuleListSchema>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

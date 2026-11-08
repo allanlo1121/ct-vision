@@ -8,6 +8,8 @@ import type {
 export interface TbmRepository {
   findByCode(code: string): Promise<Tbm | null>
 
+  findFirst(): Promise<Tbm | null>
+
   //   findOptions(appCode: string): Promise<ProjectOption[]>
 
   findAll(): Promise<Tbm[]>

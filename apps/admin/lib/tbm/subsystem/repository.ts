@@ -4,15 +4,16 @@ import { assertNoError } from "@workspace/supabase/errors"
 import { AppError } from "@workspace/errors"
 import { fetchAllPages } from "@workspace/supabase/utils"
 
-import type {
-  SubsystemRepository,
-  CreateSubsystemInput,
-  UpdateSubsystemInput,
-  Subsystem,
+import {
+  type SubsystemRepository,
+  type CreateSubsystemInput,
+  type UpdateSubsystemInput,
+  type Subsystem,
+  subsystemSchema
 } from "@workspace/tbm/parameter"
 import type { CodeNameOption } from "@workspace/shared"
 
-import { subsystemSchema } from "@workspace/tbm/parameter"
+import { ENTITY } from "./constants"
 
 export const subsystemRepository: SubsystemRepository = {
   async findByCode(code: string): Promise<Subsystem | null> {
@@ -39,8 +40,9 @@ export const subsystemRepository: SubsystemRepository = {
           .schema("tbm")
           .from("subsystems")
           .select("*")
-          .order("code", { ascending: true })
+          .order("sort_order")
           .range(from, to)
+          
 
         assertNoError(error)
 
@@ -56,6 +58,7 @@ export const subsystemRepository: SubsystemRepository = {
       .schema("tbm")
       .from("subsystems")
       .select("code, name")
+      .order("sort_order")
 
     assertNoError(error)
 
@@ -81,7 +84,7 @@ export const subsystemRepository: SubsystemRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "创建子系统失败：数据库未返回记录",
+        message: `创建${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }
@@ -101,7 +104,7 @@ export const subsystemRepository: SubsystemRepository = {
 
     if (!data) {
       throw new AppError({
-        message: "更新子系统失败：记录不存在或未返回数据",
+        message: `更新${ENTITY.label}失败：数据库未返回记录`,
         code: "INTERNAL_ERROR",
       })
     }

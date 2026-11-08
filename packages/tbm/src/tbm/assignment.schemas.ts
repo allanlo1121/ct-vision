@@ -7,6 +7,7 @@ import {
   advanceDirectionSchema,
   dateSchema,
 } from "@workspace/shared/schemas"
+
 /**
  * 基础字段规则
  */
@@ -37,6 +38,7 @@ export const tbmAssignmentSchema = tbmAssignmentBaseSchema.safeExtend(
   auditSchema.shape
 )
 
+
 export const createTbmAssignmentSchema = tbmAssignmentBaseSchema.omit({
   id: true,
 })
@@ -50,6 +52,8 @@ export const updateTbmAssignmentSchema = tbmAssignmentSchema
 export type TbmAssignment = z.infer<typeof tbmAssignmentSchema>
 
 export type TbmAssignmentBase = z.infer<typeof tbmAssignmentBaseSchema>
+
+
 
 export type CreateTbmAssignmentInput = z.input<typeof createTbmAssignmentSchema>
 

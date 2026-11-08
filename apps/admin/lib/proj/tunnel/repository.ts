@@ -116,3 +116,95 @@ export const tunnelRepository: TunnelRepository = {
     assertNoError(error)
   },
 }
+
+
+
+import type {
+  TunnelPickerItem,
+  TunnelPickerQuery,
+  TunnelPickerResult,
+} from "./types"
+
+export async function listTunnelPicker(
+  query: TunnelPickerQuery = {}
+): Promise<TunnelPickerResult> {
+  const {
+    search = "",
+    page = 1,
+    pageSize = 20,
+  } = query
+
+  const supabase = await createClient()
+
+  const safePage = Math.max(1, page)
+  const safePageSize = Math.min(100, Math.max(1, pageSize))
+  const from = (safePage - 1) * safePageSize
+
+  let request = supabase
+    .schema("tbm")
+    .from("v_assignable_tunnels")
+    .select(
+      "id, name, project_name, engineering_unit_name",
+      { count: "exact" }
+    )
+
+  if (search.trim()) {
+    const keyword = `%${search.trim()}%`
+
+    request = request.or(
+      `name.ilike.${keyword},engineering_unit_name.ilike.${keyword},project_name.ilike.${keyword}`
+    )
+  }
+
+  const { data, count, error } = await request
+    .order("name")
+    .order("id")
+    .range(from, from + safePageSize - 1)
+
+  if (error) throw error
+
+  return {
+    items: (data ?? []).map((item) => ({
+      id: item.id,
+      name: item.name,
+      engineering_unit_name: item.engineering_unit_name,
+      project_name: item.project_name
+    })),
+    total: count ?? 0,
+    page: safePage,
+    pageSize: safePageSize,
+  }
+}
+
+
+export async function getTunnelPickerById(
+  id: string
+): Promise<TunnelPickerItem | null> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .schema("proj")
+    .from("tunnels")
+    .select(`
+      id,
+      name,
+      engineering_unit:engineering_units!inner (
+        name,
+        project:projects!inner (
+          name
+        )
+      )
+    `)
+    .eq("id", id)
+    .maybeSingle()
+
+  if (error) throw error
+  if (!data) return null
+
+  return {
+    id: data.id,
+    name: data.name,
+    engineering_unit_name: data.engineering_unit.name,
+    project_name: data.engineering_unit.project.name,
+  }
+}

@@ -6,8 +6,9 @@ import type {
   UpdateParameterInput,
 } from "@workspace/tbm/parameter"
 import { parameterRepository } from "./repository"
+import { ENTITY } from "./constants"
 
-export async function createParameter(
+export async function create(
   input: CreateParameterInput
 ): Promise<ActionResult> {
   try {
@@ -21,12 +22,12 @@ export async function createParameter(
     return {
       success: false,
       message: (error as Error).message,
-      code: "CREATE_PARAMETER_FAILED",
+      code: `CREATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function updateParameter(
+export async function update(
   id: string,
   input: UpdateParameterInput
 ): Promise<ActionResult> {
@@ -41,11 +42,10 @@ export async function updateParameter(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_PARAMETER_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
     }
   }
 }
-
 
 export async function setDisabled(
   code: string,
@@ -62,12 +62,12 @@ export async function setDisabled(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_PARAMETER_FAILED",
+      code: `SETDISABLED_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function deleteParameter(code: string): Promise<ActionResult> {
+export async function remove(code: string): Promise<ActionResult> {
   try {
     await parameterRepository.delete(code)
     return {
@@ -78,7 +78,7 @@ export async function deleteParameter(code: string): Promise<ActionResult> {
     return {
       success: false,
       message: (error as Error).message,
-      code: "DELETE_PARAMETER_FAILED",
+      code: `DELETE_${ENTITY.code}_FAILED`,
     }
   }
 }

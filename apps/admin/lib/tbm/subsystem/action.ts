@@ -7,8 +7,8 @@ import type {
   CreateSubsystemInput,
   UpdateSubsystemInput,
 } from "@workspace/tbm/parameter"
-
-export async function createSubsystem(
+import { ENTITY } from "./constants"
+export async function create(
   input: CreateSubsystemInput
 ): Promise<ActionResult> {
   try {
@@ -22,12 +22,12 @@ export async function createSubsystem(
     return {
       success: false,
       message: (error as Error).message,
-      code: "CREATE_SUBSYSTEM_FAILED",
+      code: `CREATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function updateSubsystem(
+export async function update(
   id: string,
   input: UpdateSubsystemInput
 ): Promise<ActionResult> {
@@ -41,7 +41,7 @@ export async function updateSubsystem(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_SUBSYSTEM_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
     }
   }
 }
@@ -61,12 +61,12 @@ export async function setDisabled(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_SUBSYSTEM_FAILED",
+      code: `SETDISABLED_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function deleteSubsystem(code: string): Promise<ActionResult> {
+export async function remove(code: string): Promise<ActionResult> {
   try {
     await subsystemRepository.delete(code)
     return {
@@ -77,7 +77,7 @@ export async function deleteSubsystem(code: string): Promise<ActionResult> {
     return {
       success: false,
       message: (error as Error).message,
-      code: "DELETE_SUBSYSTEM_FAILED",
+      code: `DELETE_${ENTITY.code}_FAILED`,
     }
   }
 }

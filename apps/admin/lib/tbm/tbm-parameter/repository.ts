@@ -50,14 +50,16 @@ export const tbmParameterRepository: TbmParameterRepository = {
       },
     })
   },
-  async findByTbmCode(tbmCode: string): Promise<TbmParameterWithBase[]> {
+  async findByTbmCode(
+    tbmCode: string,
+    subsystemCode: string | null = null
+  ): Promise<TbmParameterWithBase[]> {
     const supabase = await createClient()
 
-    const { data, error } = await supabase
+    let query = supabase
       .schema("tbm")
       .from("tbm_parameters")
-      .select(
-        `
+      .select(`
       *,
       parameter:parameters!inner(
         code,
@@ -67,22 +69,31 @@ export const tbmParameterRepository: TbmParameterRepository = {
         digits,
         unit,
         description,
-        is_disabled)
-    `
+        sort_order,
+        is_disabled
       )
+    `)
       .eq("tbm_code", tbmCode)
-      .order("id")
+
+    // 指定子系统时才筛选
+    if (subsystemCode) {
+      query = query.eq("parameter.subsystem_code", subsystemCode)
+    }
+
+    const { data, error } = await query.order("id")
 
     assertNoError(error)
 
-    return data
-      ? data.map((item) => {
-          return {
-            ...tbmParameterSchema.parse(item),
-            parameter: parameterBaseSchema.parse(item.parameter),
-          }
-        })
-      : []
+    return (data ?? [])
+      .map((item) => ({
+        ...tbmParameterSchema.parse(item),
+        parameter: parameterBaseSchema.parse(item.parameter),
+      }))
+      .sort(
+        (a, b) =>
+          a.parameter.sort_order - b.parameter.sort_order ||
+          a.parameter.code.localeCompare(b.parameter.code)
+      )
   },
 
   async create(input: CreateTbmParameterInput): Promise<void> {

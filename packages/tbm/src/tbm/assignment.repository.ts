@@ -1,7 +1,7 @@
 import type {
   TbmAssignment,
   CreateTbmAssignmentInput,
-  UpdateTbmAssignmentInput,
+  UpdateTbmAssignmentInput
 } from "./assignment.schemas"
 import type { TbmAssignmentListRow, TbmAssignmentContext } from "./types"
 

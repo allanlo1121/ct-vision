@@ -1,13 +1,8 @@
 import { z } from "zod"
 import {
   serialIdSchema,
-  uuidSchema,
-  latitudeSchema,
-  longitudeSchema,
   nameSchema,
   codeSchema,
-  masterDataCodeSchema,
-  sortOrderSchema,
   isDisabledSchema,
   auditSchema,
   tbmCodeSchema,

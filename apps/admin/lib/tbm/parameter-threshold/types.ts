@@ -20,7 +20,7 @@ export interface TbmParameterImportRow {
   remark: string
 }
 
-// export type TbmParameterThresholdListItem = ParameterThresholdBase & TbmParameter & Parameter
+
 
 export interface ParameterThresholdOptions {
   subsystemOptions: CodeNameOption[]

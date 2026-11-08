@@ -1,9 +1,9 @@
 
-import type { TbmThresholdRule, ThresholdRulesByParameter, ThresholdRulesByTbm } from "@workspace/tbm/parameter"
+import type { TbmThresholdRule, TbmThresholdRuleList, ThresholdRulesByParameter, ThresholdRulesByTbm } from "@workspace/tbm/parameter"
 
 import type { ParameterCode, SeverityCode, TbmCode } from "@workspace/shared/schemas"
 export function buildTbmThresholdRules(
-  rows: TbmThresholdRule[]
+  rows: TbmThresholdRuleList[]
 ): ThresholdRulesByParameter {
   const result: ThresholdRulesByParameter = {}
 
@@ -20,14 +20,14 @@ export function buildTbmThresholdRules(
       parameter_code: row.parameter_code,
       parameter_name: row.parameter_name,
       parameter_unit: row.parameter_unit,
-      digits:row.digits,
+      digits: row.digits,
       severity_code: row.severity_code,
-      severity_name:row.severity_name,
+      severity_name: row.severity_name,
       threshold_type: row.threshold_type,
       reference_value: row.reference_value,
       threshold_value: row.threshold_value,
       min_record_delta: row.min_record_delta,
-      min_record_interval_ms: row.min_record_interval_ms
+      min_record_interval_seconds: row.min_record_interval_seconds
     })
   }
 
@@ -40,7 +40,7 @@ export type MultiTbmThresholdRules = ThresholdRulesByTbm
  * 将多台 TBM 的数据库规则转换为缓存结构
  */
 export function buildMultiTbmThresholdRules(
-  rows: TbmThresholdRule[]
+  rows: TbmThresholdRuleList[]
 ): MultiTbmThresholdRules {
   const result: MultiTbmThresholdRules = {}
 
@@ -59,14 +59,14 @@ export function buildMultiTbmThresholdRules(
       parameter_code: row.parameter_code,
       parameter_name: row.parameter_name,
       parameter_unit: row.parameter_unit,
-      digits:row.digits,
+      digits: row.digits,
       severity_code: row.severity_code,
-      severity_name:row.severity_name,
+      severity_name: row.severity_name,
       threshold_type: row.threshold_type,
       reference_value: row.reference_value,
       threshold_value: row.threshold_value,
       min_record_delta: row.min_record_delta,
-      min_record_interval_ms: row.min_record_interval_ms
+      min_record_interval_seconds: row.min_record_interval_seconds
     })
   }
 

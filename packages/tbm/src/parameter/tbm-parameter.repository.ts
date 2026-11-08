@@ -10,7 +10,7 @@ import { TbmParameterWithBase } from "./types"
 export interface TbmParameterRepository {
   findById(id: number): Promise<TbmParameter | null>
 
-  findByTbmCode(tbmCode: string): Promise<TbmParameterWithBase[]>
+  findByTbmCode(tbmCode: string, subsystemCode: string | null): Promise<TbmParameterWithBase[]>
 
   findAll(): Promise<TbmParameter[]>
 
