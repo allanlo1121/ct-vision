@@ -7,8 +7,6 @@ import { ENTITY } from "@/lib/tbm/tbm-parameter"
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
 import { dictionaryItemRepository } from "@/lib/master-data/dictionary-item/repository"
 
-import { TbmInfoCard } from "./_components/tbm-info-card"
-
 interface PageProps {
   searchParams: Promise<{
     code?: string
@@ -44,9 +42,5 @@ export default async function Page({ searchParams }: PageProps) {
     severityTypeOptions,
   }
 
-  return (
-    <div className="flex h-full w-full flex-col gap-6">
-      <TbmInfoCard tbmCode={code} />
-    </div>
-  )
+  return <div className="flex h-full w-full flex-col gap-6"></div>
 }

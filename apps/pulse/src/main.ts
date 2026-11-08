@@ -7,6 +7,7 @@ import cors from "@fastify/cors"
 import { tbmContextManager } from "./context"
 import { startMqtt, stopMqtt } from "./mqtt/client"
 import { tbmRealtimeContextStore } from "./context/store"
+// import { testRealtime } from "./realtime/test-realtime"
 
 const PORT = Number(process.env.PORT ?? 4000)
 
@@ -40,6 +41,8 @@ async function bootstrap(): Promise<void> {
     })
 
     console.log(`[Pulse] HTTP server started on :${PORT}`)
+
+    // const testChannel = testRealtime()
 
     // 5. 初始化 TBM 配置上下文
     await tbmContextManager.start()

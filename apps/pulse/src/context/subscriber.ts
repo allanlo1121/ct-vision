@@ -8,7 +8,7 @@ import { thresholdEngine } from "./threshold/engine"
 
 
 export class TbmRealtimeSubscriber {
-  private channels: RealtimeChannel[] = []
+  private channel: RealtimeChannel | null = null
 
   private starting: Promise<void> | null = null
   private stopping = false
@@ -27,7 +27,7 @@ export class TbmRealtimeSubscriber {
       return this.starting
     }
 
-    if (this.channels.length > 0) {
+    if (this.channel) {
       return
     }
 
@@ -41,12 +41,13 @@ export class TbmRealtimeSubscriber {
   }
 
   // ========================================
-  // 创建 Assignment Channel
+  // 创建  Channel
   // ========================================
-
-  private createAssignmentChannel(): RealtimeChannel {
+  private createChannel(): RealtimeChannel {
     return supabase
-      .channel("tbm-assignments")
+      .channel("tbm-context")
+
+      // 1. TBM 任务分配
       .on(
         "postgres_changes",
         {
@@ -71,7 +72,6 @@ export class TbmRealtimeSubscriber {
           const tbmCode = row.tbm_code
 
           if (typeof tbmCode !== "string") {
-            // DELETE 可能无法获取 tbm_code
             void this.refresh("assignment:all", () =>
               tbmAssignmentEngine.refreshAll()
             )
@@ -83,21 +83,14 @@ export class TbmRealtimeSubscriber {
           )
         }
       )
-  }
 
-  // ========================================
-  // 创建 Threshold Channel
-  // ========================================
-
-  private createThresholdChannel(): RealtimeChannel {
-    return supabase
-      .channel("tbm-threshold-rules")
+      // 2. 专用阈值
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "tbm",
-          table: "tbm_parameter_threshold_rules",
+          table: "parameter_thresholds",
         },
         (payload) => {
           if (this.stopping) return
@@ -116,15 +109,37 @@ export class TbmRealtimeSubscriber {
           const tunnelId = row.tunnel_id
 
           if (typeof tunnelId !== "string") {
-            // 无法定位隧道，全量刷新阈值
-            void this.refresh("threshold:all", () =>
+            void this.refresh("threshold", () =>
               thresholdEngine.start()
             )
             return
           }
 
-          void this.refresh(`threshold:${tunnelId}`, () =>
+          void this.refresh("threshold", () =>
             thresholdEngine.refreshByTunnelId(tunnelId)
+          )
+        }
+      )
+
+      // 3. 通用阈值
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "tbm",
+          table: "parameter_threshold_defaults",
+        },
+        (payload) => {
+          if (this.stopping) return
+
+          console.log("[Pulse Realtime] Default Threshold changed", {
+            eventType: payload.eventType,
+            new: payload.new,
+            old: payload.old,
+          })
+
+          void this.refresh("threshold", () =>
+            thresholdEngine.start()
           )
         }
       )
@@ -142,23 +157,28 @@ export class TbmRealtimeSubscriber {
       let subscribedOnce = false
 
       channel.subscribe((status, error) => {
-        if (this.stopping) return
-
         if (status === "SUBSCRIBED") {
-          console.log(
-            `[TbmRealtimeSubscriber] ${name} subscribed`
-          )
+          if (!subscribedOnce) {
+            subscribedOnce = true
 
-          if (subscribedOnce) {
-            // 连接恢复后补偿同步
-            void this.refresh("context:resync", async () => {
-              await tbmAssignmentEngine.refreshAll()
-              await thresholdEngine.start()
-            })
+            console.log(
+              `[TbmRealtimeSubscriber] ${name} subscribed`
+            )
+
+            resolve()
+            return
           }
 
-          subscribedOnce = true
-          resolve()
+          if (this.stopping) return
+
+          // 重连后补偿同步
+          void this.refresh("assignment", () =>
+            tbmAssignmentEngine.refreshAll()
+          )
+
+          void this.refresh("threshold", () =>
+            thresholdEngine.start()
+          )
           return
         }
 
@@ -182,51 +202,28 @@ export class TbmRealtimeSubscriber {
   }
 
   // ========================================
-  // 启动全部订阅
+  // 启动订阅
   // ========================================
 
   private async subscribe(): Promise<void> {
-    const assignmentChannel =
-      this.createAssignmentChannel()
+    const channel = this.createChannel()
 
-    const thresholdChannel =
-      this.createThresholdChannel()
-
-    this.channels = [
-      assignmentChannel,
-      thresholdChannel,
-    ]
+    this.channel = channel
 
     try {
-      await Promise.all([
-        this.subscribeChannel(
-          assignmentChannel,
-          "Assignment"
-        ),
-
-        this.subscribeChannel(
-          thresholdChannel,
-          "Threshold"
-        ),
-      ])
+      await this.subscribeChannel(channel, "TBM Context")
 
       console.log(
-        "[TbmRealtimeSubscriber] all channels subscribed"
+        "[TbmRealtimeSubscriber] all subscriptions ready"
       )
     } catch (error) {
-      const channels = this.channels
-      this.channels = []
+      this.channel = null
 
-      await Promise.allSettled(
-        channels.map((channel) =>
-          supabase.removeChannel(channel)
-        )
-      )
+      await supabase.removeChannel(channel)
 
       throw error
     }
   }
-
   // ========================================
   // 同 Key 串行刷新
   // ========================================
@@ -279,14 +276,11 @@ export class TbmRealtimeSubscriber {
       }
     }
 
-    const channels = this.channels
-    this.channels = []
+    if (this.channel) {
+      await supabase.removeChannel(this.channel)
+      this.channel = null
+    }
 
-    await Promise.allSettled(
-      channels.map((channel) =>
-        supabase.removeChannel(channel)
-      )
-    )
 
     await Promise.allSettled(
       this.refreshTasks.values()

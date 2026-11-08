@@ -5,8 +5,8 @@
 export interface TunnelPickerItem {
   id: string
   name: string
-  project_name: string,
-  engineering_unit_name: string
+  project_name: string | null,
+  engineering_unit_name: string | null
 }
 
 export interface TunnelPickerQuery {

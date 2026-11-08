@@ -1,5 +1,5 @@
 import { TbmAssignmentContext } from "@workspace/tbm/tbm"
-import type { ParameterCode, SeverityCode, TbmCode } from "@workspace/shared/schemas"
+import type {TbmCode } from "@workspace/shared/schemas"
 import type {
   ThresholdRulesByParameter
 } from "@workspace/tbm/parameter"

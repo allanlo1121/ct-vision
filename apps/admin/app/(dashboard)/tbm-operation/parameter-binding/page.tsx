@@ -2,7 +2,7 @@ import React from "react"
 
 import { ParameterTabs } from "./_components/parameter-tabs"
 import { ParameterTable } from "./parameter-table"
-import { ThresholdTable } from "./parameter-threshold/page"
+import  ThresholdTable  from "./parameter-threshold/page"
 import { dictionaryItemRepository } from "@/lib/master-data/dictionary-item/repository"
 import type { ParameterThresholdDefaultOptions } from "@/lib/tbm/parameter-threshold-default"
 

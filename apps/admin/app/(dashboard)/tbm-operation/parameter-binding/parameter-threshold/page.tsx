@@ -8,7 +8,7 @@ interface Props {
   options: ParameterThresholdDefaultOptions
 }
 
-export async function ThresholdTable({
+export default async function ThresholdTable({
   tbmCode,
   subsystemCode = null,
   options,
@@ -19,8 +19,7 @@ export async function ThresholdTable({
   )
 
   return (
-    <div className="flex flex-col gap-4">
-      {tbmCode},{subsystemCode}
+    <div className="flex flex-col gap-4">   
       <DataTableClient data={data} options={options} />
     </div>
   )

@@ -9,10 +9,11 @@ import {
   type CreateTbmParameterThresholdInput,
   type UpdateTbmParameterThresholdInput,
   type TbmParameterThreshold,
-  type TbmParameterThresholdRules,
+  type TbmThresholdRuleList,
   type TbmParameterThresholdWithBase,
   tbmParameterThresholdSchema,
-  tbmParameterThresholdWithBaseSchema
+  tbmParameterThresholdWithBaseSchema,
+  tbmThresholdRuleListSchema
 } from "@workspace/tbm/parameter"
 
 import { } from "@workspace/tbm/parameter"
@@ -87,7 +88,7 @@ export const tbmParameterThresholdRepository: TbmParameterThresholdRepository = 
   async findByTbmCodes(
     tbmCodes: string[],
     subsystemCode: string | null = null
-  ): Promise<TbmParameterThresholdRules[]> {
+  ): Promise<TbmThresholdRuleList[]> {
     if (tbmCodes.length === 0) return []
 
     const supabase = await createClient()
@@ -108,7 +109,7 @@ export const tbmParameterThresholdRepository: TbmParameterThresholdRepository = 
 
     assertNoError(error)
 
-    return (data ?? []) as TbmParameterThresholdRules[]
+    return tbmThresholdRuleListSchema.array().parse(data ?? [])
   },
 
   async findAll(): Promise<TbmParameterThreshold[]> {
