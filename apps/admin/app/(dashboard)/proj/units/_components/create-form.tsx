@@ -30,6 +30,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@workspace/ui/components/input-group"
+import { toNumberOrUndefined } from "@/components/utils"
 
 import { createEngineeringUnitSchema } from "@workspace/proj/unit"
 import type { CreateEngineeringUnitInput } from "@workspace/proj/unit"
@@ -62,6 +63,7 @@ export default function CreateForm({
       name: "",
       full_name: "",
       engineering_unit_type_code: "20720001",
+      overview: null,
       sort_order: 0,
     },
   })
@@ -144,9 +146,9 @@ export default function CreateForm({
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
                 <FieldLabel htmlFor="create-engineering-unit-engineering_unit_type_code">
-                  工程单元类型
+                  工点类型
                 </FieldLabel>
-                <FieldDescription>请选择工程单元类型。</FieldDescription>
+                <FieldDescription>请选择工点类型。</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -161,7 +163,7 @@ export default function CreateForm({
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
-                  <SelectValue placeholder="请选择工程单元类型" />
+                  <SelectValue placeholder="请选择工点类型" />
                 </SelectTrigger>
                 <SelectContent align="start">
                   {options.unitTypeOptions.map((option) => (
@@ -180,13 +182,13 @@ export default function CreateForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="create-engineering-unit-name">
-                工程单元名称
+                工点简称
               </FieldLabel>
               <Input
                 {...field}
                 id="create-engineering-unit-name"
                 aria-invalid={fieldState.invalid}
-                placeholder="输入工程单元名称"
+                placeholder="输入工点简称"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -199,14 +201,14 @@ export default function CreateForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="create-engineering-unit-full_name">
-                工程单元全称
+                工点全称
               </FieldLabel>
               <Input
                 {...field}
                 value={field.value ?? ""}
                 id="create-engineering-unit-full_name"
                 aria-invalid={fieldState.invalid}
-                placeholder="输入工程单元全称"
+                placeholder="输入工点全称"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -219,8 +221,10 @@ export default function CreateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={`create-engineering-unit-overview-${project.code}`}>
-                工程单元概述
+              <FieldLabel
+                htmlFor={`create-engineering-unit-overview-${project.code}`}
+              >
+                工点概述
               </FieldLabel>
 
               <InputGroup>
@@ -229,15 +233,15 @@ export default function CreateForm({
                   value={field.value ?? ""}
                   id={`create-engineering-unit-overview-${project.code}`}
                   rows={4}
-                  maxLength={100}
+                  maxLength={500}
                   className="min-h-24 resize-none"
-                  placeholder="输入描述（选填）"
+                  placeholder="输入工点概述（选填）"
                   aria-invalid={fieldState.invalid}
                 />
 
                 <InputGroupAddon align="block-end">
                   <InputGroupText className="tabular-nums">
-                    {(field.value ?? "").length}/100
+                    {(field.value ?? "").length}/500
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>
@@ -259,18 +263,12 @@ export default function CreateForm({
               <Input
                 {...field}
                 id="create-engineering-unit-sort_order"
-                name={field.name}
-                ref={field.ref}
-                onBlur={field.onBlur}
                 type="number"
                 min={0}
                 step={1}
-                value={field.value ?? ""}
-                onChange={(e) => {
-                  const value = e.target.value
-
-                  field.onChange(value === "" ? undefined : Number(value))
-                }}
+                onChange={(e) =>
+                  field.onChange(toNumberOrUndefined(e.currentTarget))
+                }
                 aria-invalid={fieldState.invalid}
                 placeholder="0"
               />

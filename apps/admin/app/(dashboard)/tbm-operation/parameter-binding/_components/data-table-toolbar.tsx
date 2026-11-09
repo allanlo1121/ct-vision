@@ -37,7 +37,7 @@ export function DataTableToolbar<TData extends RowData>({
       <div className="flex flex-1 items-center gap-2">
         <Input
           placeholder={`查找${ENTITY.label}...`}
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("parameter.name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }

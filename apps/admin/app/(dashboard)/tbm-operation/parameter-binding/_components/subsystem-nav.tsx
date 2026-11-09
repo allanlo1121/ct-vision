@@ -87,7 +87,8 @@ export function SubsystemNav({ subsystems }: Props) {
             {moreItems.map((item) => (
               <DropdownMenuItem
                 key={item.code}
-                onSelect={() => navigate({ subsystemCode: item.code })}
+                closeOnClick
+                onClick={() => navigate({ subsystemCode: item.code })}
                 className={cn(
                   "flex cursor-pointer items-center justify-between",
                   selectedCode === item.code && "bg-accent font-medium"

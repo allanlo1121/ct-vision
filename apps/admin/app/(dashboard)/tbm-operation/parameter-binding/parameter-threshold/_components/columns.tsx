@@ -141,7 +141,11 @@ export function createColumns(
         <DataTableColumnHeader column={column} title="阈值类型" />
       ),
       cell: ({ row }) => {
-        thresholdTypeLabels[row.getValue<ThresholdType>("threshold_type")]
+        const type = row.getValue<ThresholdType>("threshold_type")
+
+        return (
+          <div className="truncate">{thresholdTypeLabels[type] ?? type}</div>
+        )
       },
       enableSorting: true,
       enableHiding: false,

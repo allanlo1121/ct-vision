@@ -64,7 +64,7 @@ export function createColumns(
       ),
       cell: ({ row }) => (
         <div className="max-w-[250px] truncate font-medium">
-          {row.getValue("code")}
+          {row.getValue("parameter_code")}
         </div>
       ),
       enableSorting: true,
@@ -107,7 +107,11 @@ export function createColumns(
         <DataTableColumnHeader column={column} title="阈值类型" />
       ),
       cell: ({ row }) => {
-        thresholdTypeLabels[row.getValue<ThresholdType>("threshold_type")]
+        const type = row.getValue<ThresholdType>("threshold_type")
+
+        return (
+          <div className="truncate">{thresholdTypeLabels[type] ?? type}</div>
+        )
       },
       enableSorting: true,
       enableHiding: false,

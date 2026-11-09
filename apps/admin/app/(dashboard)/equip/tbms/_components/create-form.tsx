@@ -49,7 +49,7 @@ export default function CreateForm({
       code: "",
       name: "",
       tbm_type_code: "",
-      diameter: null,
+      diameter: 0,
     },
   })
 
@@ -96,9 +96,9 @@ export default function CreateForm({
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
                 <FieldLabel htmlFor="form-tbm-tbm_type_code">
-                  TBM 类型
+                  盾构机类型
                 </FieldLabel>
-                <FieldDescription>请选择字典类型。</FieldDescription>
+                <FieldDescription>请选择盾构机类型。</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -113,7 +113,7 @@ export default function CreateForm({
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
-                  <SelectValue placeholder="请选择字典类型" />
+                  <SelectValue placeholder="请选择盾构机类型" />
                 </SelectTrigger>
                 <SelectContent align="start">
                   {tbmTypeOptions.map((option) => (
@@ -136,7 +136,7 @@ export default function CreateForm({
                 {...field}
                 id="form-tbm-code"
                 aria-invalid={fieldState.invalid}
-                placeholder="输入 TBM 编码"
+                placeholder="输入盾构机编码"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -173,6 +173,7 @@ export default function CreateForm({
                 {...field}
                 id="form-tbm-diameter"
                 value={field.value ?? ""}
+                type="number"
                 onChange={(e) =>
                   field.onChange(toNumberOrUndefined(e.currentTarget))
                 }
@@ -194,7 +195,7 @@ export default function CreateForm({
 
         <Button
           type="submit"
-          form="form-dictionary-item"
+          form="form-tbm"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? "创建中..." : `创建${ENTITY.label}`}

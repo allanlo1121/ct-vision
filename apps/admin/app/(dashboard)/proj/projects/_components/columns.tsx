@@ -59,17 +59,7 @@ export function createColumns(
       enableSorting: false,
       enableHiding: false,
     }),
-    columnHelper.accessor("code", {
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="编码" />
-      ),
-      meta: {
-        label: "编码",
-      },
-      cell: ({ row }) => <div className="w-[80px]">{row.getValue("code")}</div>,
-      enableSorting: true,
-      enableHiding: true,
-    }),
+
     columnHelper.accessor("name", {
       meta: {
         label: "名称",
@@ -153,6 +143,19 @@ export function createColumns(
       enableSorting: false,
       enableHiding: true,
     }),
+    columnHelper.accessor("code", {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="编码" />
+      ),
+      meta: {
+        label: "编码",
+      },
+      cell: ({ row }) => (
+        <div className="w-[80px] truncate">{row.getValue("code")}</div>
+      ),
+      enableSorting: true,
+      enableHiding: true,
+    }),
     columnHelper.accessor("created_at", {
       meta: {
         label: "创建时间",
@@ -212,12 +215,7 @@ export function createColumns(
 
     columnHelper.display({
       id: "actions",
-      cell: ({ row }) => (
-        <DataTableRowActions
-          row={row}
-          options={options}
-        />
-      ),
+      cell: ({ row }) => <DataTableRowActions row={row} options={options} />,
     }),
   ])
 }

@@ -2,8 +2,8 @@
 import { supabase } from "../../db/supabase"
 import { assertNoError } from "@workspace/supabase/errors"
 
-import type { TbmThresholdRule, TbmThresholdRuleList } from "@workspace/tbm/parameter"
-import { tbmThresholdRuleSchema, tbmThresholdRuleListSchema, } from "@workspace/tbm/parameter"
+import type {  TbmThresholdRuleList } from "@workspace/tbm/parameter"
+import { tbmThresholdRuleListSchema, } from "@workspace/tbm/parameter"
 
 export const thresholdRuleRepository = {
   async findById(id: number) {

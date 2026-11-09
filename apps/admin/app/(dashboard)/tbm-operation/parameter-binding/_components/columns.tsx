@@ -11,7 +11,6 @@ import { DataTableRowActions } from "./data-table-row-actions"
 import { Badge } from "@workspace/ui/components/badge"
 import type { ParameterThresholdDefaultOptions } from "@/lib/tbm/parameter-threshold-default"
 
-
 export type DataTableColumn<TData extends RowData> = ColumnDef<
   DataTableFeatures,
   TData,
@@ -223,7 +222,7 @@ export function createColumns(
 
     columnHelper.display({
       id: "actions",
-      cell: ({ row }) => <DataTableRowActions row={row}  options={options} />,
+      cell: ({ row }) => <DataTableRowActions row={row} options={options} />,
     }),
   ])
 }
