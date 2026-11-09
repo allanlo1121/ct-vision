@@ -1,41 +1,59 @@
-
 import Fastify from "fastify"
+import { ZodError } from "zod"
+
 import { healthRoutes } from "./routes/health"
 import { tbmRoutes } from "./routes/tbm"
 
 export function buildApp() {
-  const app = Fastify({
-    logger: true,
-    bodyLimit: 1024 * 1024,
-    requestTimeout: 30_000,
-  })
-
-  // 健康检查
-  app.register(healthRoutes)
-
-  // TBM AI 工具接口
-  app.register(tbmRoutes, {
-    prefix: "/api/agent/tbm",
-  })
-
-  // 统一异常处理
-  app.setErrorHandler((error, request, reply) => {
-    request.log.error(error)
-
-    const statusCode =
-      error.statusCode && error.statusCode >= 400 &&
-      error.statusCode < 500
-        ? error.statusCode
-        : 500
-
-    reply.status(statusCode).send({
-      success: false,
-      message:
-        statusCode === 500
-          ? "Internal Server Error"
-          : error.message,
+    const app = Fastify({
+        logger: true,
+        bodyLimit: 1024 * 1024,
+        requestTimeout: 30_000,
     })
-  })
 
-  return app
+    app.register(healthRoutes)
+
+    app.register(tbmRoutes, {
+        prefix: "/api/agent/tbm",
+    })
+
+    app.setErrorHandler((error, request, reply) => {
+        // 记录完整错误到服务器日志
+        request.log.error({ err: error }, "Request failed")
+
+        // Zod 参数校验失败
+        if (error instanceof ZodError) {
+            return reply.status(400).send({
+                success: false,
+                message: "请求参数验证失败",
+                errors: error.issues.map((issue) => ({
+                    path: issue.path.join("."),
+                    message: issue.message,
+                })),
+            })
+        }
+
+        // 其他异常
+        const status =
+            error instanceof Error &&
+                "statusCode" in error &&
+                typeof error.statusCode === "number"
+                ? error.statusCode
+                : 500
+
+        const statusCode =
+            status >= 400 && status < 500 ? status : 500
+
+        return reply.status(statusCode).send({
+            success: false,
+            message:
+                statusCode === 500
+                    ? "Internal Server Error"
+                    : error instanceof Error
+                        ? error.message
+                        : "Request failed",
+        })
+    })
+
+    return app
 }

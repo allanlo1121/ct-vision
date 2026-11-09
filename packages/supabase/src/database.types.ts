@@ -1315,9 +1315,19 @@ isOneToOne: false
               "engineering_unit_id": string,"organization_id": string,"project_id": string,"tbm_code": string,"tunnel_id": string
             }[]
                            },
+"get_parameter_alarms":
+{ Args: { "p_end_time": string,"p_start_time": string,"p_tbm_codes": (string)[] }; Returns: {
+              "alarm_value": number,"chainage": number,"digits": number,"id": number,"min_record_delta": number,"min_record_interval_ms": number,"occurred_at": string,"parameter_code": string,"parameter_name": string,"parameter_unit": string,"project_name": string,"reference_value": number,"ring_no": number,"severity_code": string,"severity_name": string,"tbm_code": string,"tbm_name": string,"threshold_type": string,"threshold_value": number,"tunnel_name": string
+            }[]
+                           },
+"get_ring_phase_details":
+{ Args: { "p_end_time": string,"p_start_time": string,"p_tbm_codes": (string)[] }; Returns: {
+              "cutter_change_seconds": number,"excavation_seconds": number,"fault_seconds": number,"maintenance_seconds": number,"project_name": string,"ring_no": number,"segment_erection_seconds": number,"stopped_seconds": number,"tbm_code": string,"tbm_name": string,"total_seconds": number,"tunnel_name": string,"unknown_seconds": number,"waiting_seconds": number
+            }[]
+                           },
 "get_ring_progress":
-{ Args: { "p_end_time": string,"p_start_time": string,"p_tbm_codes": (string)[],"p_tunnel_ids"?: (string)[] }; Returns: {
-              "completed_rings": number,"first_completed_at": string,"first_ring": number,"last_completed_at": string,"last_ring": number,"tbm_code": string,"tunnel_id": string
+{ Args: { "p_end_time": string,"p_start_time": string,"p_tbm_codes": (string)[] }; Returns: {
+              "completed_rings": number,"first_completed_at": string,"first_ring": number,"last_completed_at": string,"last_ring": number,"project_name": string,"tbm_code": string,"tbm_name": string,"tunnel_name": string
             }[]
                            },
 "sync_realdata_table":
