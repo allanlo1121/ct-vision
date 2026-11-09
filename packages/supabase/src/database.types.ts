@@ -1315,6 +1315,11 @@ isOneToOne: false
               "engineering_unit_id": string,"organization_id": string,"project_id": string,"tbm_code": string,"tunnel_id": string
             }[]
                            },
+"get_ring_progress":
+{ Args: { "p_end_time": string,"p_start_time": string,"p_tbm_codes": (string)[],"p_tunnel_ids"?: (string)[] }; Returns: {
+              "completed_rings": number,"first_completed_at": string,"first_ring": number,"last_completed_at": string,"last_ring": number,"tbm_code": string,"tunnel_id": string
+            }[]
+                           },
 "sync_realdata_table":
 { Args: { "p_tbm_code": string }; Returns: string
                            }

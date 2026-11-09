@@ -2,6 +2,8 @@
 import { timingSafeEqual } from "node:crypto"
 import type { FastifyPluginAsync } from "fastify"
 import { getTbmOverview } from "../tools/get-tbm-overview"
+import { GetRingProgressSchema, getRingProgress }
+  from "../tools/get-ring-progress"
 
 function verifyApiKey(token: string | undefined): boolean {
   const expectedKey = process.env.AGENT_API_KEY
@@ -45,4 +47,17 @@ export const tbmRoutes: FastifyPluginAsync = async (app) => {
       data: result,
     }
   })
+
+  // 统计完成环数
+app.post("/ring-progress", async (request) => {
+  const input = GetRingProgressSchema.parse(request.body)
+
+  const data = await getRingProgress(input)
+
+  return {
+    success: true,
+    data,
+  }
+})
+  
 }
