@@ -19,20 +19,20 @@ export const severityCodeSchema = masterDataCodeSchema
 
 export type SeverityCode = z.infer<typeof severityCodeSchema>
 
-export const connectionTypeSchema = z.enum(["heartbeat", "realdata"])
+export const connectivityTypeSchema = z.enum(["heartbeat", "realdata"])
 
-export type ConnectionType = z.infer<typeof connectionTypeSchema>
+export type ConnectivityType = z.infer<typeof connectivityTypeSchema>
 
-export const connectionTypeLabels: Record<ConnectionType, string> = {
+export const connectivityTypeLabels: Record<ConnectivityType, string> = {
   heartbeat: "心跳",
   realdata: "实时数据",
 }
 
-export const connectionStatusSchema = z.enum(["online", "offline"])
+export const connectivityStatusSchema = z.enum(["online", "offline"])
 
-export type ConnectionStatus = z.infer<typeof connectionStatusSchema>
+export type ConnectivityStatus = z.infer<typeof connectivityStatusSchema>
 
-export const connectionStatusLabels: Record<ConnectionStatus, string> = {
+export const connectivityStatusLabels: Record<ConnectivityStatus, string> = {
   online: "在线",
   offline: "离线",
 }

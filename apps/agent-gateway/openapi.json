@@ -1,0 +1,1321 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Chengtong Vision Agent API",
+    "description": "盾构生产智能体查询接口",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/agent/tbm/tbm-assignment": {
+      "post": {
+        "operationId": "get_tbm_assignment",
+        "summary": "查询盾构机施工隧道相关信息",
+        "tags": [
+          "TBM"
+        ],
+        "description": "查询指定时间范围内正在施工的盾构机,及相关隧道工点工程项目经理部等信息。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tbmCodes": {
+                    "description": "盾构机编号列表，不传或空数组表示查询全部盾构机",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 50,
+                      "pattern": "^[a-z0-9_-]+$"
+                    }
+                  },
+                  "startDate": {
+                    "description": "查询开始日期，不传表示今天",
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "endDate": {
+                    "description": "查询结束日期，不传表示与开始日期相同",
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "startTime": {
+                              "type": "string",
+                              "description": "返回开始日期"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "description": "返回结束日期"
+                            }
+                          },
+                          "required": [
+                            "startTime",
+                            "endTime"
+                          ],
+                          "additionalProperties": false,
+                          "description": "返回查询日期范围"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": ""
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "ID"
+                              },
+                              "tbm_code": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50,
+                                "pattern": "^[a-z0-9_-]+$",
+                                "description": "盾构机编号"
+                              },
+                              "tunnel_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "隧道ID"
+                              },
+                              "advance_direction": {
+                                "type": "string",
+                                "enum": [
+                                  "increasing",
+                                  "decreasing"
+                                ],
+                                "description": "推进方向"
+                              },
+                              "start_date": {
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                                "description": "开始日期"
+                              },
+                              "end_date": {
+                                "nullable": true,
+                                "description": "结束日期",
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                              },
+                              "tbm_name": {
+                                "type": "string",
+                                "description": "盾构机名称"
+                              },
+                              "organization_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "经理部ID"
+                              },
+                              "organization_name": {
+                                "type": "string",
+                                "description": "经理部名称"
+                              },
+                              "project_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "项目ID"
+                              },
+                              "project_name": {
+                                "type": "string",
+                                "description": "项目名称"
+                              },
+                              "engineering_unit_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "工点ID"
+                              },
+                              "engineering_unit_name": {
+                                "type": "string",
+                                "description": "工点名称"
+                              },
+                              "tunnel_name": {
+                                "type": "string",
+                                "description": "隧道名称"
+                              },
+                              "start_ring": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 2147483647,
+                                "description": "起始环号"
+                              },
+                              "end_ring": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 2147483647,
+                                "description": "结束环号"
+                              },
+                              "start_chainage": {
+                                "type": "number",
+                                "description": "起始里程"
+                              },
+                              "end_chainage": {
+                                "type": "number",
+                                "description": "结束里程"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "tbm_code",
+                              "tunnel_id",
+                              "advance_direction",
+                              "start_date",
+                              "end_date",
+                              "tbm_name",
+                              "organization_id",
+                              "organization_name",
+                              "project_id",
+                              "project_name",
+                              "engineering_unit_id",
+                              "engineering_unit_name",
+                              "tunnel_name",
+                              "start_ring",
+                              "end_ring",
+                              "start_chainage",
+                              "end_chainage"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "返回细目"
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "total",
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/tbm/ring-progress": {
+      "post": {
+        "operationId": "get_ring_progress",
+        "summary": "查询盾构机环号",
+        "tags": [
+          "TBM"
+        ],
+        "description": "查询指定时间范围内实际出现的环号数组、最小环号、最大环号及环号跨度。不代表实际完成环数。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tbmCodes": {
+                    "default": [],
+                    "description": "查询环号数组",
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "startTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                    "description": "查询开始时间"
+                  },
+                  "endTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                    "description": "查询结束时间"
+                  }
+                },
+                "required": [
+                  "startTime",
+                  "endTime"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "startTime": {
+                              "type": "string",
+                              "description": "返回开始时间"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "description": "返回结束时间"
+                            }
+                          },
+                          "required": [
+                            "startTime",
+                            "endTime"
+                          ],
+                          "additionalProperties": false,
+                          "description": "返回查询时间范围"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "返回数据数量"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "tbm_code": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50,
+                                "pattern": "^[a-z0-9_-]+$",
+                                "description": "盾构机编码"
+                              },
+                              "tbm_name": {
+                                "type": "string",
+                                "description": "盾构机名称"
+                              },
+                              "project_name": {
+                                "type": "string",
+                                "description": "项目名称"
+                              },
+                              "engineering_unit_name": {
+                                "type": "string",
+                                "description": "工点名称"
+                              },
+                              "tunnel_name": {
+                                "type": "string",
+                                "description": "隧道名称"
+                              },
+                              "ring_numbers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "description": "环号列表"
+                              },
+                              "completed_rings": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "完成环数"
+                              }
+                            },
+                            "required": [
+                              "tbm_code",
+                              "tbm_name",
+                              "project_name",
+                              "engineering_unit_name",
+                              "tunnel_name",
+                              "ring_numbers",
+                              "completed_rings"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "返回细目"
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "total",
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/tbm/ring-phase": {
+      "post": {
+        "operationId": "get_ring_phase",
+        "summary": "查询盾构机施工每环状态时长",
+        "tags": [
+          "TBM"
+        ],
+        "description": "查询指定时间范围内实际出现的环号施工各阶段时长。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tbmCodes": {
+                    "default": [],
+                    "description": "查询环号数组",
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "startTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                    "description": "查询开始时间"
+                  },
+                  "endTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                    "description": "查询结束时间"
+                  }
+                },
+                "required": [
+                  "startTime",
+                  "endTime"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "startTime": {
+                              "type": "string",
+                              "description": "返回开始时间"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "description": "返回结束时间"
+                            }
+                          },
+                          "required": [
+                            "startTime",
+                            "endTime"
+                          ],
+                          "additionalProperties": false,
+                          "description": "返回查询时间范围"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": ""
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "tbm_code": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50,
+                                "pattern": "^[a-z0-9_-]+$",
+                                "description": "盾构机编码"
+                              },
+                              "tbm_name": {
+                                "type": "string",
+                                "description": "盾构机名称"
+                              },
+                              "project_name": {
+                                "type": "string",
+                                "description": "项目名称"
+                              },
+                              "engineering_unit_name": {
+                                "type": "string",
+                                "description": "工点名称"
+                              },
+                              "tunnel_name": {
+                                "type": "string",
+                                "description": "隧道名称"
+                              },
+                              "ring_no": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "环号"
+                              },
+                              "excavation_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "segment_erection_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "waiting_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "stopped_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "fault_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "cutter_change_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "maintenance_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "unknown_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              },
+                              "total_seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "时长"
+                              }
+                            },
+                            "required": [
+                              "tbm_code",
+                              "tbm_name",
+                              "project_name",
+                              "engineering_unit_name",
+                              "tunnel_name",
+                              "ring_no",
+                              "excavation_seconds",
+                              "segment_erection_seconds",
+                              "waiting_seconds",
+                              "stopped_seconds",
+                              "fault_seconds",
+                              "cutter_change_seconds",
+                              "maintenance_seconds",
+                              "unknown_seconds",
+                              "total_seconds"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "返回细目"
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "total",
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/tbm/tbm-alarm": {
+      "post": {
+        "operationId": "get_tbm_alarm",
+        "summary": "查询盾构机施工报警信息,主要是推进参数的报警",
+        "tags": [
+          "TBM"
+        ],
+        "description": "查询指定时间范围内盾构机推进参数报警,及相关隧道工点工程项目经理部等信息。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tbmCodes": {
+                    "description": "盾构机编号列表，不传或空数组表示查询全部盾构机",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 50,
+                      "pattern": "^[a-z0-9_-]+$"
+                    }
+                  },
+                  "startTime": {
+                    "description": "查询开始时间，不传默认北京时间今天00:00",
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "endTime": {
+                    "description": "查询结束时间，不传默认北京时间明天00:00（不包含）",
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "startTime": {
+                              "type": "string",
+                              "description": "返回开始日期"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "description": "返回结束日期"
+                            }
+                          },
+                          "required": [
+                            "startTime",
+                            "endTime"
+                          ],
+                          "additionalProperties": false,
+                          "description": "返回查询日期范围"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": ""
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "maximum": 2147483647
+                              },
+                              "tbm_code": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50,
+                                "pattern": "^[a-z0-9_-]+$"
+                              },
+                              "ring_no": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 2147483647
+                              },
+                              "chainage": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "parameter_code": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 100
+                              },
+                              "rule_snapshot": {
+                                "type": "object",
+                                "properties": {
+                                  "start_ring": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 2147483647
+                                  },
+                                  "end_ring": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 2147483647
+                                  },
+                                  "threshold_type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "upper",
+                                      "lower",
+                                      "deviation"
+                                    ],
+                                    "title": "阈值类型",
+                                    "description": "报警阈值判断方式"
+                                  },
+                                  "reference_value": {
+                                    "nullable": true,
+                                    "type": "number"
+                                  },
+                                  "threshold_value": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "start_ring",
+                                  "end_ring",
+                                  "threshold_type",
+                                  "reference_value",
+                                  "threshold_value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "severity_code": {
+                                "type": "string",
+                                "pattern": "^\\d{8}$"
+                              },
+                              "alarm_value": {
+                                "type": "number"
+                              },
+                              "occurred_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              },
+                              "tbm_name": {
+                                "type": "string",
+                                "description": "盾构机名称"
+                              },
+                              "project_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "项目ID"
+                              },
+                              "project_name": {
+                                "type": "string",
+                                "description": "项目名称"
+                              },
+                              "engineering_unit_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                                "description": "工点ID"
+                              },
+                              "engineering_unit_name": {
+                                "type": "string",
+                                "description": "工点名称"
+                              },
+                              "tunnel_name": {
+                                "type": "string",
+                                "description": "隧道名称"
+                              },
+                              "parameter_name": {
+                                "type": "string",
+                                "description": "参数名称"
+                              },
+                              "severity_name": {
+                                "type": "string",
+                                "description": "报警等级名称"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "tbm_code",
+                              "ring_no",
+                              "chainage",
+                              "parameter_code",
+                              "rule_snapshot",
+                              "severity_code",
+                              "alarm_value",
+                              "occurred_at",
+                              "tbm_name",
+                              "project_id",
+                              "project_name",
+                              "engineering_unit_id",
+                              "engineering_unit_name",
+                              "tunnel_name",
+                              "parameter_name",
+                              "severity_name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "返回细目"
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "total",
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://129.28.39.68:3100"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

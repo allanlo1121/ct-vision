@@ -1,40 +1,62 @@
-
 import "dotenv/config"
 import { buildApp } from "./app"
+import type { FastifyInstance } from "fastify"
 
-console.log("ENV CHECK:", {
-  cwd: process.cwd(),
-  hasApiKey: !!process.env.AGENT_API_KEY,
-  apiKeyLength: process.env.AGENT_API_KEY?.length,
-})
-
-const app = buildApp()
+let app: FastifyInstance | undefined
+let shuttingDown = false
 
 async function main() {
-  try {
-    const port = Number(process.env.PORT ?? 3100)
-    const host = process.env.HOST ?? "0.0.0.0"
+    try {
+        app = await buildApp()
 
-    await app.listen({ port, host })
+        const port = Number(process.env.PORT ?? 3100)
+        const host = process.env.HOST ?? "0.0.0.0"
 
-    app.log.info(`Agent Gateway listening on ${host}:${port}`)
-  } catch (error) {
-    app.log.error(error)
-    process.exit(1)
-  }
+        await app.listen({ port, host })
+
+        app.log.info(`Agent Gateway listening on ${host}:${port}`)
+    } catch (error) {
+        if (app) {
+            app.log.error({ err: error }, "Agent Gateway startup failed")
+            await app.close().catch(() => { })
+        } else {
+            console.error("Agent Gateway startup failed:", error)
+        }
+
+        process.exitCode = 1
+    }
 }
 
-async function shutdown() {
-  try {
-    await app.close()
-    process.exit(0)
-  } catch (error) {
-    app.log.error(error)
-    process.exit(1)
-  }
+async function shutdown(signal: string) {
+    // 防止 SIGINT、SIGTERM 重复触发关闭
+    if (shuttingDown) return
+    shuttingDown = true
+
+    if (!app) {
+        process.exitCode = 0
+        return
+    }
+
+    try {
+        app.log.info({ signal }, "Shutting down Agent Gateway")
+
+        // 等待正在处理的 HTTP 请求完成并关闭服务
+        await app.close()
+
+        app.log.info("Agent Gateway stopped")
+        process.exitCode = 0
+    } catch (error) {
+        app.log.error({ err: error }, "Agent Gateway shutdown failed")
+        process.exitCode = 1
+    }
 }
 
-process.on("SIGINT", shutdown)
-process.on("SIGTERM", shutdown)
+process.once("SIGINT", () => {
+    void shutdown("SIGINT")
+})
+
+process.once("SIGTERM", () => {
+    void shutdown("SIGTERM")
+})
 
 void main()

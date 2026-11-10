@@ -37,22 +37,34 @@ export const notificationSubcriptionRepository: NotificationSubscriptionReposito
   },
 
   async findRecipients(input): Promise<NotificationSubscription[]> {
-    // console.log("findRecipients",input)
     const { data, error } = await supabase
       .schema("system")
       .from("notification_subscriptions")
       .select("*")
       .eq("source_type_code", input.source_type_code)
       .eq("event_type_code", input.event_type_code)
-      .eq("project_id", input.project_id)
+      .or(`project_id.eq.${input.project_id},project_id.is.null`)
       .in("min_level", getMatchingMinLevels(input.level))
       .eq("is_disabled", false)
 
-    // console.log("findRecipients",data,error)
     assertNoError(error)
 
+    const recipients = notificationSubscriptionSchema
+      .array()
+      .parse(data ?? [])
 
-    return data ? notificationSubscriptionSchema.array().parse(data) : []
+    // 同一员工同时订阅指定项目和所有项目时，避免重复通知
+    const uniqueRecipients = new Map<string, NotificationSubscription>()
+
+    for (const recipient of recipients) {
+      const existing = uniqueRecipients.get(recipient.employee_id)
+
+      if (!existing || recipient.project_id !== null) {
+        uniqueRecipients.set(recipient.employee_id, recipient)
+      }
+    }
+
+    return [...uniqueRecipients.values()]
   },
 
 

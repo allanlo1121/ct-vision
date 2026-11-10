@@ -42,3 +42,18 @@ export {
 } from "./assignment.schemas"
 
 export type { TbmAssignmentRepository, TbmAssignmentListRepository } from "./assignment.repository"
+
+
+export type {
+  GetTbmAssignmentDetailInput,
+  GetTbmAssignmentDetailParams,
+  TbmAssignmentDetailItem,
+  TbmAssignmentDetailResult
+} from "./assignment.schemas"
+
+export {
+  tbmAssignmentDetailSchema,
+  tbmAssignmentDetailResultSchema,
+  getTbmAssignmentDetailSchema,
+  TbmAssignmentDetailResponseSchema
+} from "./assignment.schemas"

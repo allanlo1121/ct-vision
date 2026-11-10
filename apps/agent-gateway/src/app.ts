@@ -1,59 +1,71 @@
 import Fastify from "fastify"
+import swagger from "@fastify/swagger"
 import { ZodError } from "zod"
 
 import { healthRoutes } from "./routes/health"
 import { tbmRoutes } from "./routes/tbm"
 
-export function buildApp() {
-    const app = Fastify({
-        logger: true,
-        bodyLimit: 1024 * 1024,
-        requestTimeout: 30_000,
-    })
+import {
+  validatorCompiler,
+  serializerCompiler,
+  jsonSchemaTransform,
+  jsonSchemaTransformObject,
+} from "fastify-type-provider-zod"
 
-    app.register(healthRoutes)
+import { errorHandler } from "./errors/error-handler"
 
-    app.register(tbmRoutes, {
-        prefix: "/api/agent/tbm",
-    })
+export async function buildApp() {
+  const app = Fastify({
+    logger: true,
+    bodyLimit: 1024 * 1024,
+    requestTimeout: 30_000,
 
-    app.setErrorHandler((error, request, reply) => {
-        // 记录完整错误到服务器日志
-        request.log.error({ err: error }, "Request failed")
+    // 防止以后重复注册错误处理器
+    allowErrorHandlerOverride: false,
+  })
 
-        // Zod 参数校验失败
-        if (error instanceof ZodError) {
-            return reply.status(400).send({
-                success: false,
-                message: "请求参数验证失败",
-                errors: error.issues.map((issue) => ({
-                    path: issue.path.join("."),
-                    message: issue.message,
-                })),
-            })
-        }
+  // 1. Zod 校验
+  app.setValidatorCompiler(validatorCompiler)
+  app.setSerializerCompiler(serializerCompiler)
 
-        // 其他异常
-        const status =
-            error instanceof Error &&
-                "statusCode" in error &&
-                typeof error.statusCode === "number"
-                ? error.statusCode
-                : 500
+  // 2. 统一错误处理
+  app.setErrorHandler(errorHandler)
 
-        const statusCode =
-            status >= 400 && status < 500 ? status : 500
+  // 3. Swagger
+  await app.register(swagger, {
+    openapi: {
+      info: {
+        title: "Chengtong Vision Agent API",
+        description: "盾构生产智能体查询接口",
+        version: "1.0.0",
+      },
+      servers: [
+        {
+          url: "http://129.28.39.68:3100",
+        },
+      ],
+      components: {
+        securitySchemes: {
+          ApiKeyAuth: {
+            type: "apiKey",
+            in: "header",
+            name: "X-API-Key",
+          },
+        },
+      },
+      security: [{ ApiKeyAuth: [] }],
+    },
 
-        return reply.status(statusCode).send({
-            success: false,
-            message:
-                statusCode === 500
-                    ? "Internal Server Error"
-                    : error instanceof Error
-                        ? error.message
-                        : "Request failed",
-        })
-    })
+    transform: jsonSchemaTransform,
+    transformObject: jsonSchemaTransformObject,
+  })
 
-    return app
+  // 4. 注册业务路由
+  await app.register(healthRoutes)
+
+  await app.register(tbmRoutes, {
+    prefix: "/api/agent/tbm",
+  })
+
+  return app
 }

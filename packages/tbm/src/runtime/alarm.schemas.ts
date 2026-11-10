@@ -7,11 +7,10 @@ import {
   tbmCodeSchema,
   masterDataCodeSchema,
   timestampSchema,
-  auditSchema,
-  parameterAlarmChangeTypeSchema
+  ApiSuccessSchema
 } from "@workspace/shared/schemas"
 
-import { parameterRuleSnapshotSchema } from "../parameter/threshold.schemas"
+import { parameterRuleSnapshotSchema ,thresholdRuleSchema} from "../parameter/threshold.schemas"
 
 /**
  * 基础字段规则
@@ -28,16 +27,13 @@ export const parameterAlarmBaseSchema = z.object({
 
   parameter_code: codeSchema,
 
-  rule_snapshot: parameterRuleSnapshotSchema,
+  rule_snapshot: thresholdRuleSchema.nullable(),
 
   severity_code: masterDataCodeSchema,
 
   alarm_value: z.number(),
 
   occurred_at: timestampSchema
-
-
-
 
 })
 
@@ -49,12 +45,6 @@ export const parameterAlarmSchema = parameterAlarmBaseSchema.safeExtend({
 export const createParameterAlarmSchema = parameterAlarmBaseSchema.omit({
   id: true,
 })
-
-// export const updateParameterAlarmSchema = parameterAlarmBaseSchema
-//   .omit({
-//     id: true,
-//   })
-//   .partial()
 
 export type ParameterAlarm = z.infer<typeof parameterAlarmSchema>
 
@@ -68,15 +58,7 @@ export type CreateParameterAlarmOutput = z.output<
   typeof createParameterAlarmSchema
 >
 
-// export type UpdateParameterAlarmInput = z.input<
-//   typeof updateParameterAlarmSchema
-// >
-// export type UpdateParameterAlarmOutput = z.output<
-//   typeof updateParameterAlarmSchema
-// >
-
 export type ParameterAlarmFields = keyof z.infer<typeof parameterAlarmSchema>
-
 
 export const applyParameterAlarmSchema = parameterAlarmBaseSchema.pick({
   tbm_code: true,
@@ -96,22 +78,65 @@ export type ApplyParameterAlarmInput =
   z.infer<typeof applyParameterAlarmSchema>
 
 
+export const tbmAlarmDetailSchema = parameterAlarmBaseSchema.omit({ tunnel_id: true }).safeExtend({
+  tbm_name: z.string().describe("盾构机名称"),  
+  project_name: z.string().describe("项目名称"),  
+  engineering_unit_name: z.string().describe("工点名称"),
+  tunnel_name: z.string().describe("隧道名称"),
+  parameter_name: z.string().describe("参数名称"),
+  severity_name: z.string().describe("报警等级名称"),
+})
 
 
-// export const parameterAlarmResultSchema = z.object({
-//   changed: z.boolean(),
+export const getTbmAlarmDetailSchema = z
+  .object({
+    tbmCodes: z.array(tbmCodeSchema)
+      .optional()
+      .describe("盾构机编号列表，不传或空数组表示查询全部盾构机"),
 
-//   changeType: parameterAlarmChangeTypeSchema,
+    startTime: z.iso.datetime({ offset: true })
+      .optional()
+      .describe("查询开始时间，不传默认北京时间今天00:00"),
 
-//   alarmId: z.number().nullable(),
-//   previousAlarmId: z.number().nullable(),
+    endTime: z.iso.datetime({ offset: true })
+      .optional()
+      .describe("查询结束时间，不传默认北京时间明天00:00（不包含）"),
+  })
+  .refine(
+    (data) =>
+      !data.startTime ||
+      !data.endTime ||
+      new Date(data.startTime).getTime() <
+      new Date(data.endTime).getTime(),
+    {
+      path: ["endTime"],
+      message: "结束时间必须晚于开始时间",
+    }
+  )
 
-//   previousSeverity: masterDataCodeSchema.nullable(),
-//   currentSeverity: masterDataCodeSchema.nullable(),
 
-//   previousValue: z.number().nullable(),
-//   recoveryStartedAt: timestampSchema.nullable()
-// })
+export const tbmAlarmDetailResultSchema = z.object({
+  period: z.object({
+    startTime: z.string().describe("返回开始日期"),
+    endTime: z.string().describe("返回结束日期"),
+  }).describe("返回查询日期范围"),
+  total: z.number().int().describe(""),
+  items: z.array(tbmAlarmDetailSchema).describe("返回细目"),
+})
 
-// export type ParameterAlarmResult =
-//   z.infer<typeof parameterAlarmResultSchema>
+export type GetTbmAlarmDetailInput =
+  z.input<typeof getTbmAlarmDetailSchema>
+
+// 解析后的输入类型：tbmCodes 一定是数组
+export type GetTbmAlarmDetailParams =
+  z.output<typeof getTbmAlarmDetailSchema>
+
+export type TbmAlarmDetailItem =
+  z.infer<typeof tbmAlarmDetailSchema>
+
+export type TbmAlarmDetailResult =
+  z.infer<typeof tbmAlarmDetailResultSchema>
+
+export const tbmAlarmDetailResponseSchema =
+  ApiSuccessSchema(tbmAlarmDetailResultSchema)
+

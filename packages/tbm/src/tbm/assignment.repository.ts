@@ -44,9 +44,9 @@ export interface TbmAssignmentListRepository {
 export interface TbmAssignmentCurrentRepository {
   findById(id: string): Promise<TbmAssignmentContext | null>
 
-  findByTbmCode(tbmCode: string): Promise<TbmAssignmentContext| null>
+  findByTbmCode(tbmCode: string): Promise<TbmAssignmentContext | null>
 
-  findByTunnelId(tunnelId: string): Promise<TbmAssignmentContext| null>
+  findByTunnelId(tunnelId: string): Promise<TbmAssignmentContext | null>
 
   list(): Promise<TbmAssignmentContext[]>
 }

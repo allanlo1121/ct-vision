@@ -8,7 +8,8 @@
     "./tbm": "./src/tbm/index.ts",
     "./parameter": "./src/parameter/index.ts",
     "./runtime": "./src/runtime/index.ts",
-    "./event":"./src/event/index.ts"
+    "./event":"./src/event/index.ts",
+    "./ring":"./src/ring/index.ts"
    
   },
   "dependencies": {

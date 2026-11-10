@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { auditSchema, codeSchema,  notificationEventLevelSchema, serialIdSchema, timestampSchema, uuidSchema, isDisabledSchema, scopeTypeSchema,  } from "@workspace/shared"
+import { auditSchema, codeSchema, notificationEventLevelSchema, serialIdSchema, timestampSchema, uuidSchema, isDisabledSchema, scopeTypeSchema, } from "@workspace/shared"
 
 
 /**
@@ -15,7 +15,7 @@ export const notificationSubscriptionBaseSchema = z.object({
   source_type_code: codeSchema,
   event_type_code: codeSchema,
   min_level: notificationEventLevelSchema,
-  project_id: uuidSchema,
+  project_id: uuidSchema.nullable(),
   is_disabled: isDisabledSchema
 
 
