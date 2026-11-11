@@ -5,12 +5,13 @@ import { ColumnDef, createColumnHelper, RowData } from "@tanstack/react-table"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 
 import { type Employee } from "@workspace/hrm/employee"
-import type { CodeNameOption } from "@workspace/shared"
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { formatDateTime } from "@workspace/shared/utils"
 import { Badge } from "@workspace/ui/components/badge"
+import { EmployeeOptions } from "@/lib/hrm/employee/types"
 
 export type DataTableColumn<TData extends RowData> = ColumnDef<
   DataTableFeatures,
@@ -19,10 +20,9 @@ export type DataTableColumn<TData extends RowData> = ColumnDef<
 >
 
 export function createColumns(
-  genderOptions: CodeNameOption[],
-  employmentTypeOptions: CodeNameOption[],
-  statusOptions: CodeNameOption[]
+  options: EmployeeOptions
 ): DataTableColumn<Employee>[] {
+  const { genderOptions, employmentTypeOptions, statusOptions } = options
   const genderMap = new Map(genderOptions.map((x) => [x.code, x.name]))
   const employmentTypeMap = new Map(
     employmentTypeOptions.map((x) => [x.code, x.name])

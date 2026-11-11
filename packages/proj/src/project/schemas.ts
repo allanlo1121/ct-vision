@@ -38,12 +38,12 @@ export const projectBaseSchema = z.object({
     description: "项目机构的简称",
   }),
 
-  overview: z.string().max(500, { message: "项目概述最多500个字符" }).nullable().meta({
+  overview: z.string().max(1000, { message: "项目概述最多500个字符" }).nullable().meta({
     title: "项目概述",
     description: "项目的概述信息",
   }),
 
-  key_points: z.string().max(1000, { message: "项目关键点最多1000个字符" }).nullable().meta({
+  key_points: z.string().max(2000, { message: "项目关键点最多1000个字符" }).nullable().meta({
     title: "项目关键点",
     description: "项目的关键点信息",
   }),
@@ -155,3 +155,25 @@ export type UpdateProjectInput = z.input<typeof updateProjectSchema>
 export type UpdateProjectOutput = z.output<typeof updateProjectSchema>
 
 export type ProjectFields = keyof z.infer<typeof projectSchema>
+
+
+
+export const createProjectDefaults = {
+  code: "",
+  name: "",
+  full_name: "",
+  overview: "",
+  key_points: "",
+  project_type_code: "",
+  project_sub_type_code: "",
+  management_mode_code: "",
+  region_code: "",
+  province_code: "",
+  city_code: "",
+  district_code: "",
+  address: "",
+  country_code: "CN",
+  latitude: null,
+  longitude: null,
+  sort_order: 0,
+} satisfies CreateProjectInput

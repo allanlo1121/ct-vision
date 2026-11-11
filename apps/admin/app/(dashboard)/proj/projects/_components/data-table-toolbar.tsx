@@ -3,7 +3,6 @@
 import { type ReactTable, type RowData } from "@tanstack/react-table"
 import { X } from "lucide-react"
 import { Can } from "@workspace/auth/components"
-import { TITLE } from "../constants"
 
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -15,7 +14,7 @@ import { type DataTableFeatures } from "@/components/data-table/data-table-featu
 import { CreateDrawer } from "./create-drawer"
 
 import { ImportDrawer } from "./import-drawer"
-import { ProjectOptions } from "./types";
+import { ENTITY, type ProjectOptions } from "@/lib/proj/project"
 
 interface DataTableToolbarProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData>
@@ -33,13 +32,26 @@ export function DataTableToolbar<TData extends RowData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
         <Input
-          placeholder={`查找${TITLE}...`}
+          placeholder={`查找${ENTITY.label}...`}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
+
+        {table.getColumn("region_code") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("region_code")}
+            title="片区"
+            options={
+              options.regionOptions?.map((type) => ({
+                value: type.code,
+                label: type.name,
+              })) ?? []
+            }
+          />
+        )}
         {table.getColumn("project_type_code") && (
           <DataTableFacetedFilter
             column={table.getColumn("project_type_code")}
@@ -52,7 +64,19 @@ export function DataTableToolbar<TData extends RowData>({
             }
           />
         )}
-        {(
+          {table.getColumn("project_sub_type_code") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("project_sub_type_code")}
+            title="项目子类型"
+            options={
+              options.projectSubTypeOptions?.map((type) => ({
+                value: type.code,
+                label: type.name,
+              })) ?? []
+            }
+          />
+        )}
+        {
           <DataTableFacetedFilter
             column={table.getColumn("management_mode_code")}
             title="管理模式"
@@ -63,7 +87,7 @@ export function DataTableToolbar<TData extends RowData>({
               })) ?? []
             }
           />
-        )}
+        }
 
         {isFiltered && (
           <Button

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import type { ProjectOptions } from "./types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "@workspace/ui/components/toast"
@@ -43,35 +42,21 @@ import {
   UpdateProjectOutput,
 } from "@workspace/proj/project"
 
-import { updateProject } from "@/lib/proj/project/action"
-import { TITLE } from "../constants"
-
+import { update } from "@/lib/proj/project/action"
+import { ENTITY, type ProjectOptions } from "@/lib/proj/project"
 interface UpdateFormProps {
-  project: Project
+  row: Project
   options: ProjectOptions
   onSuccess?: () => void
   onCancel?: () => void
 }
 
-function getDefaultValues(project: Project): UpdateProjectInput {
-  return {
-    name: project.name,
-    code: project.code,
-    full_name: project.full_name,
-    overview: project.overview,
-    key_points: project.key_points,
-    project_type_code: project.project_type_code,
-    project_sub_type_code: project.project_sub_type_code,
-    management_mode_code: project.management_mode_code,
-    latitude: project.latitude,
-    longitude: project.longitude,
-
-    is_disabled: project.is_disabled,
-  }
+function getDefaultValues(row: Project): UpdateProjectInput {
+  return updateProjectSchema.parse(row)
 }
 
 export default function UpdateForm({
-  project,
+  row,
   options,
   onSuccess,
   onCancel,
@@ -80,27 +65,27 @@ export default function UpdateForm({
 
   const form = useForm<UpdateProjectInput, unknown, UpdateProjectOutput>({
     resolver: zodResolver(updateProjectSchema),
-    defaultValues: getDefaultValues(project),
+    defaultValues: getDefaultValues(row),
   })
 
   const { isSubmitting, isDirty } = form.formState
 
   // 当编辑对象发生变化时，更新表单
   useEffect(() => {
-    form.reset(getDefaultValues(project))
-  }, [project, form.reset])
+    form.reset(getDefaultValues(row))
+  }, [row, form.reset])
 
   async function onSubmit(data: UpdateProjectInput) {
     // console.log("提交的数据:", data)
     try {
-      const result = await updateProject(project.id, data)
+      const result = await update(row.id, data)
 
       // console.log("更新字典类型结果:", result)
 
       if (!result.success) {
         toast.add({
           type: "error",
-          title: `更新${TITLE}失败`,
+          title: `更新${ENTITY.label}失败`,
           description: result.message,
           priority: "high",
         })
@@ -109,8 +94,8 @@ export default function UpdateForm({
 
       toast.add({
         type: "success",
-        title: `更新${TITLE}成功`,
-        description: `${TITLE}信息已更新`,
+        title: `更新${ENTITY.label}成功`,
+        description: `${ENTITY.label}信息已更新`,
       })
 
       form.reset(data)
@@ -118,11 +103,11 @@ export default function UpdateForm({
       router.refresh()
       onSuccess?.()
     } catch (error) {
-      console.error(`更新${TITLE}请求异常:`, error)
+      console.error(`更新${ENTITY.label}请求异常:`, error)
 
       toast.add({
         type: "error",
-        title: `更新${TITLE}失败`,
+        title: `更新${ENTITY.label}失败`,
         description: `发生未知错误，请稍后重试`,
         priority: "high",
       })
@@ -130,13 +115,20 @@ export default function UpdateForm({
   }
 
   function handleReset() {
-    form.reset(getDefaultValues(project))
+    form.reset(getDefaultValues(row))
   }
 
   const projectTypeLabelOptions = options.projectTypeOptions.map((option) => ({
     value: option.code,
     label: `${option.code} ${option.name}`,
   }))
+
+  const projectSubTypeLabelOptions = options.projectSubTypeOptions.map(
+    (option) => ({
+      value: option.code,
+      label: `${option.code} ${option.name}`,
+    })
+  )
 
   const managementModeLabelOptions = options.managementModeOptions.map(
     (option) => ({
@@ -147,7 +139,7 @@ export default function UpdateForm({
 
   return (
     <form
-      id={`update-project-${project.code}`}
+      id={`update-project-${row.id}`}
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <FieldGroup>
@@ -157,13 +149,13 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={`update-project-name-${project.code}`}>
+              <FieldLabel htmlFor={`update-project-${row.id}-name`}>
                 项目名称
               </FieldLabel>
 
               <Input
                 {...field}
-                id={`update-project-name-${project.code}`}
+                id={`update-project-${row.id}-name`}
                 aria-invalid={fieldState.invalid}
                 placeholder="输入项目名称"
                 autoComplete="off"
@@ -179,7 +171,9 @@ export default function UpdateForm({
           render={({ field, fieldState }) => (
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
-                <FieldLabel htmlFor="form-project-project-type-code">
+                <FieldLabel
+                  htmlFor={`update-project-${row.id}-project_type_code`}
+                >
                   项目类型
                 </FieldLabel>
                 <FieldDescription>请选择字典类型。</FieldDescription>
@@ -194,11 +188,51 @@ export default function UpdateForm({
                 items={projectTypeLabelOptions}
               >
                 <SelectTrigger
-                  id="form-project-project-type-code"
+                  id={`update-project-${row.id}-project_type_code`}
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
                   <SelectValue placeholder="请选择项目类型" />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {projectTypeLabelOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
+        />
+        <Controller
+          name="project_sub_type_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field orientation="responsive" data-invalid={fieldState.invalid}>
+              <FieldContent>
+                <FieldLabel
+                  htmlFor={`update-project-${row.id}-project_sub_type_code`}
+                >
+                  项目子类型
+                </FieldLabel>
+                <FieldDescription>请选择项目子类型。</FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </FieldContent>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                items={projectSubTypeLabelOptions}
+              >
+                <SelectTrigger
+                  id={`update-project-${row.id}-project_sub_type_code`}
+                  aria-invalid={fieldState.invalid}
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="请选择项目子类型" />
                 </SelectTrigger>
                 <SelectContent align="start">
                   {projectTypeLabelOptions.map((option) => (
@@ -217,7 +251,9 @@ export default function UpdateForm({
           render={({ field, fieldState }) => (
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
-                <FieldLabel htmlFor="form-project-management-mode-code">
+                <FieldLabel
+                  htmlFor={`update-project-${row.id}-management_mode_code`}
+                >
                   管理模式
                 </FieldLabel>
                 <FieldDescription>请选择字典类型。</FieldDescription>
@@ -232,7 +268,7 @@ export default function UpdateForm({
                 items={managementModeLabelOptions}
               >
                 <SelectTrigger
-                  id="form-project-management-mode-code"
+                  id={`update-project-${row.id}-management_mode_code`}
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
@@ -255,7 +291,7 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={`update-project-overview-${project.code}`}>
+              <FieldLabel htmlFor={`update-project-${row.id}-overview`}>
                 项目概述
               </FieldLabel>
 
@@ -263,7 +299,7 @@ export default function UpdateForm({
                 <InputGroupTextarea
                   {...field}
                   value={field.value ?? ""}
-                  id={`update-project-overview-${project.code}`}
+                  id={`update-project-${row.id}-overview`}
                   rows={4}
                   maxLength={100}
                   className="min-h-24 resize-none"
@@ -287,7 +323,7 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={`update-project-key-points-${project.code}`}>
+              <FieldLabel htmlFor={`update-project-${row.id}-key_points`}>
                 项目要点
               </FieldLabel>
 
@@ -295,9 +331,9 @@ export default function UpdateForm({
                 <InputGroupTextarea
                   {...field}
                   value={field.value ?? ""}
-                  id={`update-project-key-points-${project.code}`}
+                  id={`update-project-${row.id}-key_points`}
                   rows={4}
-                  maxLength={100}
+                  maxLength={500}
                   className="min-h-24 resize-none"
                   placeholder="输入描述（选填）"
                   aria-invalid={fieldState.invalid}
@@ -305,10 +341,183 @@ export default function UpdateForm({
 
                 <InputGroupAddon align="block-end">
                   <InputGroupText className="tabular-nums">
-                    {(field.value ?? "").length}/100
+                    {(field.value ?? "").length}/500
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="country_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-country_code`}>
+                国家
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-project-${row.id}-country_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入国家（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="province_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-province_code`}>
+                省份
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-project-${row.id}-province_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入省份（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="city_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-city_code`}>
+                城市
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-project-${row.id}-city_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入城市（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="district_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-district_code`}>
+                区县
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-project-${row.id}-district_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入区县（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="address"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-address`}>
+                详细地址
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-project-${row.id}-address`}
+                className="min-h-24 resize-none"
+                placeholder="输入详细地址（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="longitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-longitude`}>
+                经度
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`update-project-${row.id}-longitude`}
+                type="number"
+                step="any"
+                min={-180}
+                max={180}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value
+                  field.onChange(value === "" ? null : Number(value))
+                }}
+                aria-invalid={fieldState.invalid}
+                placeholder="请输入经度，如 117.12345678"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="latitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-project-${row.id}-latitude`}>
+                纬度
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`update-project-${row.id}-latitude`}
+                type="number"
+                step="any"
+                min={-90}
+                max={90}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value
+                  field.onChange(value === "" ? null : Number(value))
+                }}
+                aria-invalid={fieldState.invalid}
+                placeholder="请输入纬度，如 36.24552139"
+              />
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -321,14 +530,12 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field orientation="horizontal" data-invalid={fieldState.invalid}>
-              <FieldLabel
-                htmlFor={`update-project-is-disabled-${project.code}`}
-              >
+              <FieldLabel htmlFor={`update-project-${row.id}-is_disabled`}>
                 是否禁用
               </FieldLabel>
 
               <Switch
-                id={`update-project-is-disabled-${project.code}`}
+                id={`update-project-${row.id}-is_disabled`}
                 name={field.name}
                 checked={field.value ?? false}
                 onCheckedChange={field.onChange}
@@ -362,7 +569,7 @@ export default function UpdateForm({
 
         <Button
           type="submit"
-          form={`update-project-${project.code}`}
+          form={`update-project-${row.id}`}
           disabled={!isDirty || isSubmitting}
         >
           {isSubmitting ? "更新中..." : "保存修改"}

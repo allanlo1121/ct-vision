@@ -83,8 +83,23 @@ export const tbmRoutes: FastifyPluginAsync = async (app) => {
             },
         },
         async (request) => {
+            const start = performance.now()
+            request.log.info(
+                {
+                    operationId: "get_tbm_assignment",
+                    body: request.body,
+                },
+                "ADP 工具调用开始"
+            )
             const data = await getTbmAssignmentDetails(request.body)
 
+            request.log.info(
+                {
+                    operationId: "get_tbm_assignment",
+                    durationMs: Math.round(performance.now() - start)
+                },
+                "ADP 工具调用完成"
+            )
             return apiSuccess(data)
         }
     )
@@ -108,13 +123,28 @@ export const tbmRoutes: FastifyPluginAsync = async (app) => {
             },
         },
         async (request) => {
+            const start = performance.now()
+            request.log.info(
+                {
+                    operationId: "get_ring_progress",
+                    body: request.body,
+                },
+                "ADP 工具调用开始"
+            )
             const data = await getRingProgress(request.body)
 
+            request.log.info(
+                {
+                    operationId: "get_ring_progress",
+                    durationMs: Math.round(performance.now() - start)
+                },
+                "ADP 工具调用完成"
+            )
             return apiSuccess(data)
         }
     )
 
-    // 统计完成环数
+    // 统计完成环阶段记录
     router.post(
         "/ring-phase",
         {
@@ -133,7 +163,24 @@ export const tbmRoutes: FastifyPluginAsync = async (app) => {
             },
         },
         async (request) => {
+            const start = performance.now()
+            request.log.info(
+                {
+                    operationId: "get_ring_phase",
+                    body: request.body,
+                },
+                "ADP 工具调用开始"
+            )
             const data = await getRingPhase(request.body)
+
+            request.log.info(
+                {
+                    operationId: "get_ring_phase",
+                    durationMs: Math.round(performance.now() - start)
+                },
+                "ADP 工具调用完成"
+            )
+
 
             return apiSuccess(data)
         }
@@ -158,7 +205,23 @@ export const tbmRoutes: FastifyPluginAsync = async (app) => {
             },
         },
         async (request) => {
+            const start = performance.now()
+            request.log.info(
+                {
+                    operationId: "get_tbm_alarm",
+                    body: request.body,
+                },
+                "ADP 工具调用开始"
+            )
             const data = await getTbmAlarmDetails(request.body)
+
+            request.log.info(
+                {
+                    operationId: "get_tbm_alarm",
+                    durationMs: Math.round(performance.now() - start)
+                },
+                "ADP 工具调用完成"
+            )
 
             return apiSuccess(data)
         }

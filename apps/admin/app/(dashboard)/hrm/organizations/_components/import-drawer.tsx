@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import type { CodeNameOption } from "@workspace/shared"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -16,13 +15,11 @@ import {
 import { useRouter } from "next/navigation"
 import { toast } from "@workspace/ui/components/toast"
 
-import CreateForm from "./create-form"
-import { TITLE } from "../constants"
 import JsonUploader from "@/components/import/json-uploader"
 import JsonPreview from "@/components/import/json-preview"
-import { Organization } from "@workspace/hrm/organization"
-import type { OrganizationImportRow } from "@/lib/hrm/organization"
-import { importOrganizations } from "@/lib/hrm/organization/action"
+
+import { ENTITY, type OrganizationImportRow } from "@/lib/hrm/organization"
+import { imports } from "@/lib/hrm/organization/action"
 
 export function ImportDrawer() {
   const router = useRouter()
@@ -47,9 +44,9 @@ export function ImportDrawer() {
     setIsSubmitting(true)
 
     try {
-      console.log("Importing organizations with rows:", rows)
+      // console.log("Importing organizations with rows:", rows)
       // 服务端完成 Zod 校验、权限检查及数据库写入
-      const result = await importOrganizations(rows)
+      const result = await imports(rows)
 
       if (!result.success) {
         toast.add({
@@ -86,7 +83,7 @@ export function ImportDrawer() {
         render={
           <Button size="sm">
             <Plus className="size-4" />
-            导入{TITLE}
+            导入{ENTITY.label}
           </Button>
         }
       />
@@ -94,20 +91,16 @@ export function ImportDrawer() {
       <DrawerContent>
         <div className="mx-auto flex max-h-[85vh] w-full max-w-4xl flex-col">
           <DrawerHeader>
-            <DrawerTitle>导入{TITLE}</DrawerTitle>
+            <DrawerTitle>导入{ENTITY.label}</DrawerTitle>
             <DrawerDescription>
               上传 JSON 文件，预览并校验组织机构数据。
             </DrawerDescription>
           </DrawerHeader>
 
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-6">
-            <JsonUploader
-              onData={setRows}
-            />
+            <JsonUploader onData={setRows} />
 
-            {rows.length > 0 && (
-              <JsonPreview rows={rows} />
-            )}
+            {rows.length > 0 && <JsonPreview rows={rows} />}
           </div>
 
           <div className="flex shrink-0 justify-end gap-3 border-t px-4 py-4">
@@ -123,9 +116,7 @@ export function ImportDrawer() {
               onClick={handleImport}
               disabled={isSubmitting || rows.length === 0}
             >
-              {isSubmitting
-                ? "导入中..."
-                : `导入 ${rows.length} 条数据`}
+              {isSubmitting ? "导入中..." : `导入 ${rows.length} 条数据`}
             </Button>
           </div>
         </div>

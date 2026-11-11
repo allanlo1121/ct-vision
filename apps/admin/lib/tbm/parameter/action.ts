@@ -28,11 +28,11 @@ export async function create(
 }
 
 export async function update(
-  id: string,
+  code: string,
   input: UpdateParameterInput
 ): Promise<ActionResult> {
   try {
-    await parameterRepository.update(id, input)
+    await parameterRepository.update(code, input)
 
     return {
       success: true,

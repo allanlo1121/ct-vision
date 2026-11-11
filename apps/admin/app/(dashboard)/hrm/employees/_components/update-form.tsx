@@ -5,8 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
-import type { z } from "zod"
-import type { CodeNameOption } from "@workspace/shared"
 
 import {
   Field,
@@ -38,69 +36,57 @@ import {
 } from "@workspace/ui/components/select"
 
 import {
-  updateDictionaryItemSchema,
-  type DictionaryItem,
-} from "@workspace/master-data/dictionary-item"
+  type Employee,
+  UpdateEmployeeInput,
+  UpdateEmployeeOutput,
+  updateEmployeeSchema,
+} from "@workspace/hrm/employee"
 
-import { updateDictionaryItem } from "@/lib/master-data/dictionary-item/action"
-import { TITLE } from "../constants"
-
-type UpdateApplicationInput = z.input<typeof updateDictionaryItemSchema>
-type UpdateApplicationOutput = z.output<typeof updateDictionaryItemSchema>
+import { ENTITY, type EmployeeOptions } from "@/lib/hrm/employee"
+import { update } from "@/lib/hrm/employee/action"
 
 interface UpdateFormProps {
-  dictionaryItem: DictionaryItem
-  dictionaryTypeOptions: CodeNameOption[]
+  row: Employee
+  options: EmployeeOptions
   onSuccess?: () => void
   onCancel?: () => void
 }
 
-function getDefaultValues(
-  dictionaryItem: DictionaryItem
-): UpdateApplicationInput {
-  return {
-    dictionary_type_code: dictionaryItem.dictionary_type_code,
-    name: dictionaryItem.name,
-    description: dictionaryItem.description,
-    is_disabled: dictionaryItem.is_disabled,
-  }
+function getDefaultValues(row: Employee): UpdateEmployeeInput {
+  return updateEmployeeSchema.parse(row)
 }
 
 export default function UpdateForm({
-  dictionaryItem,
-  dictionaryTypeOptions,
+  row,
+  options,
   onSuccess,
   onCancel,
 }: UpdateFormProps) {
   const router = useRouter()
 
-  const form = useForm<
-    UpdateApplicationInput,
-    unknown,
-    UpdateApplicationOutput
-  >({
-    resolver: zodResolver(updateDictionaryItemSchema),
-    defaultValues: getDefaultValues(dictionaryItem),
+  const form = useForm<UpdateEmployeeInput, unknown, UpdateEmployeeOutput>({
+    resolver: zodResolver(updateEmployeeSchema),
+    defaultValues: getDefaultValues(row),
   })
 
   const { isSubmitting, isDirty } = form.formState
 
   // 当编辑对象发生变化时，更新表单
   useEffect(() => {
-    form.reset(getDefaultValues(dictionaryItem))
-  }, [dictionaryItem, form.reset])
+    form.reset(getDefaultValues(row))
+  }, [row, form.reset])
 
-  async function onSubmit(data: UpdateApplicationOutput) {
+  async function onSubmit(data: UpdateEmployeeOutput) {
     // console.log("提交的数据:", data)
     try {
-      const result = await updateDictionaryItem(dictionaryItem.code, data)
+      const result = await update(row.code, data)
 
       // console.log("更新字典类型结果:", result)
 
       if (!result.success) {
         toast.add({
           type: "error",
-          title: `更新${TITLE}失败`,
+          title: `更新${ENTITY.label}失败`,
           description: result.message,
           priority: "high",
         })
@@ -109,8 +95,8 @@ export default function UpdateForm({
 
       toast.add({
         type: "success",
-        title: `更新${TITLE}成功`,
-        description: `${TITLE}信息已更新`,
+        title: `更新${ENTITY.label}成功`,
+        description: `${ENTITY.label}信息已更新`,
       })
 
       form.reset(data)
@@ -118,11 +104,11 @@ export default function UpdateForm({
       router.refresh()
       onSuccess?.()
     } catch (error) {
-      console.error(`更新${TITLE}请求异常:`, error)
+      console.error(`更新${ENTITY.label}请求异常:`, error)
 
       toast.add({
         type: "error",
-        title: `更新${TITLE}失败`,
+        title: `更新${ENTITY.label}失败`,
         description: `发生未知错误，请稍后重试`,
         priority: "high",
       })
@@ -130,30 +116,85 @@ export default function UpdateForm({
   }
 
   function handleReset() {
-    form.reset(getDefaultValues(dictionaryItem))
+    form.reset(getDefaultValues(row))
   }
 
-  const typeOptions = dictionaryTypeOptions.map((option) => ({
-  value: option.code,
-  label: `${option.code} ${option.name}`,
-}))
+  const genderOptions = options.genderOptions.map((option) => ({
+    value: option.code,
+    label: `${option.code} ${option.name}`,
+  }))
+  const typeOptions = options.employmentTypeOptions.map((option) => ({
+    value: option.code,
+    label: `${option.code} ${option.name}`,
+  }))
+
+  const statusOptions = options.statusOptions.map((option) => ({
+    value: option.code,
+    label: `${option.code} ${option.name}`,
+  }))
 
   return (
     <form
-      id={`update-dictionary-item-${dictionaryItem.code}`}
+      id={`update-employee-${row.id}`}
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <FieldGroup>
-          <Controller
-          name="dictionary_type_code"
+        {/* 员工姓名 */}
+        <Controller
+          name="name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-employee-name-${row.id}`}>
+                员工姓名
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`update-employee-name-${row.id}`}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入员工姓名"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* 员工编号 */}
+        <Controller
+          name="code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`update-employee-code-${row.id}`}>
+                员工编号
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`update-employee-code-${row.id}`}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入员工编号"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="employment_type_code"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
-                <FieldLabel htmlFor="form-dictionary-item-dictionary-type-code">
-                  字典类型
+                <FieldLabel
+                  htmlFor={`update-employee-${row.id}-employment_type_code`}
+                >
+                  员工类型
                 </FieldLabel>
-                <FieldDescription>请选择字典类型。</FieldDescription>
+                <FieldDescription>请选择员工类型。</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -162,19 +203,19 @@ export default function UpdateForm({
                 name={field.name}
                 value={field.value}
                 onValueChange={field.onChange}
-                 items={typeOptions}
+                items={typeOptions}
               >
                 <SelectTrigger
-                  id="form-dictionary-item-dictionary-type-code"
+                  id={`update-employee-${row.id}-employment_type_code`}
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
-                  <SelectValue placeholder="请选择字典类型" />
+                  <SelectValue placeholder="请选择员工类型" />
                 </SelectTrigger>
                 <SelectContent align="start">
                   {typeOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
-                       {option.label}
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -182,62 +223,79 @@ export default function UpdateForm({
             </Field>
           )}
         />
-        {/* 字典类型名称 */}
         <Controller
-          name="name"
+          name="status_code"
           control={form.control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel
-                htmlFor={`update-dictionary-item-name-${dictionaryItem.code}`}
+            <Field orientation="responsive" data-invalid={fieldState.invalid}>
+              <FieldContent>
+                <FieldLabel htmlFor={`update-employee-${row.id}-status_code`}>
+                  员工状态
+                </FieldLabel>
+                <FieldDescription>请选择员工状态。</FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </FieldContent>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                items={statusOptions}
               >
-                字典类型名称
-              </FieldLabel>
-
-              <Input
-                {...field}
-                id={`update-dictionary-item-name-${dictionaryItem.code}`}
-                aria-invalid={fieldState.invalid}
-                placeholder="输入字典类型名称"
-                autoComplete="off"
-              />
-
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                <SelectTrigger
+                  id={`update-employee-${row.id}-status_code`}
+                  aria-invalid={fieldState.invalid}
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="请选择员工状态" />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           )}
         />
-
         <Controller
-          name="description"
+          name="gender_code"
           control={form.control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel
-                htmlFor={`update-dictionary-item-description-${dictionaryItem.code}`}
+            <Field orientation="responsive" data-invalid={fieldState.invalid}>
+              <FieldContent>
+                <FieldLabel htmlFor={`update-employee-${row.id}-gender_code`}>
+                  员工性别
+                </FieldLabel>
+                <FieldDescription>请选择员工性别。</FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </FieldContent>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                items={genderOptions}
               >
-                描述
-              </FieldLabel>
-
-              <InputGroup>
-                <InputGroupTextarea
-                  {...field}
-                  value={field.value ?? ""}
-                  id={`update-dictionary-item-description-${dictionaryItem.code}`}
-                  rows={4}
-                  maxLength={100}
-                  className="min-h-24 resize-none"
-                  placeholder="输入描述（选填）"
+                <SelectTrigger
+                  id={`update-employee-${row.id}-gender_code`}
                   aria-invalid={fieldState.invalid}
-                />
-
-                <InputGroupAddon align="block-end">
-                  <InputGroupText className="tabular-nums">
-                    {(field.value ?? "").length}/100
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="请选择员工性别" />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {genderOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           )}
         />
@@ -248,14 +306,12 @@ export default function UpdateForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field orientation="horizontal" data-invalid={fieldState.invalid}>
-              <FieldLabel
-                htmlFor={`update-dictionary-item-is-disabled-${dictionaryItem.code}`}
-              >
+              <FieldLabel htmlFor={`update-employee-is-disabled-${row.id}`}>
                 是否禁用
               </FieldLabel>
 
               <Switch
-                id={`update-dictionary-item-is-disabled-${dictionaryItem.code}`}
+                id={`update-employee-is-disabled-${row.id}`}
                 name={field.name}
                 checked={field.value ?? false}
                 onCheckedChange={field.onChange}
@@ -268,7 +324,7 @@ export default function UpdateForm({
         />
       </FieldGroup>
 
-      <div className="flex justify-end gap-2 mt-6">
+      <div className="mt-6 flex justify-end gap-2">
         <Button
           type="button"
           variant="outline"
@@ -289,7 +345,7 @@ export default function UpdateForm({
 
         <Button
           type="submit"
-          form={`update-dictionary-item-${dictionaryItem.code}`}
+          form={`update-employee-${row.id}`}
           disabled={!isDirty || isSubmitting}
         >
           {isSubmitting ? "更新中..." : "保存修改"}

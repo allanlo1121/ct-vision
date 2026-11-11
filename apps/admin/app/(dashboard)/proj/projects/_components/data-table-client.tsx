@@ -6,7 +6,7 @@ import { createColumns } from "./columns"
 import { DataTableToolbar } from "./data-table-toolbar"
 
 import { Project } from "@workspace/proj/project"
-import { ProjectOptions } from "./types"
+import { ProjectOptions } from "@/lib/proj/project"
 
 interface Props {
   data: Project[]
@@ -21,6 +21,7 @@ export function DataTableClient({ data, options }: Props) {
       data={data}
       toolbar={(table) => <DataTableToolbar table={table} options={options} />}
       initialColumnVisibility={{
+        code: false,
         created_at: false,
         updated_at: false,
         created_by: false,

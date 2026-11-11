@@ -1,14 +1,15 @@
 {
   "name": "@workspace/agent-gateway",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "tsup",
+    "prebuild": "node scripts/generate-build-info.mjs",
+    "build": "tsup src/main.ts --format esm --platform node --out-dir dist",
     "start": "node --env-file=.env.production dist/main.js",
     "typecheck": "tsc --noEmit",
-     "openapi": "tsx scripts/export-openapi.js"
+    "openapi": "tsx scripts/export-openapi.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

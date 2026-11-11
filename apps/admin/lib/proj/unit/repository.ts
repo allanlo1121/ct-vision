@@ -63,13 +63,13 @@ export const engineeringUnitRepository: EngineeringUnitRepository = {
     return data ? data.map((item) => engineeringUnitSchema.parse(item)) : []
   },
 
-  async create(input: CreateEngineeringUnitInput): Promise<void> {
+  async create(project_id: string, input: CreateEngineeringUnitInput): Promise<void> {
     const supabase = await createClient()
    
     const { data, error } = await supabase
       .schema("proj")
       .from("engineering_units")
-      .insert(input)
+      .insert({ ...input, project_id })
       .select("*")
       .maybeSingle()
 

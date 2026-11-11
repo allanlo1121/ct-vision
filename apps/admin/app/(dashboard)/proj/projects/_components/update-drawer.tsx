@@ -7,22 +7,21 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from "@workspace/ui/components/drawer"
-import { TITLE } from "../constants"
+import { ENTITY, type ProjectOptions } from "@/lib/proj/project"
 
 import UpdateForm from "./update-form"
 
 import type { Project } from "@workspace/proj/project"
-import type { ProjectOptions } from "./types"
 
 interface UpdateDrawerProps {
-  project: Project
+  row: Project
   options: ProjectOptions
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function UpdateDrawer({
-  project,
+  row,
   options,
   open,
   onOpenChange,
@@ -32,14 +31,16 @@ export function UpdateDrawer({
       <DrawerContent>
         <div className="mx-auto w-full max-w-3xl">
           <DrawerHeader>
-            <DrawerTitle>更新{TITLE}</DrawerTitle>
-            <DrawerDescription>修改{TITLE}的基本信息及状态。</DrawerDescription>
+            <DrawerTitle>更新{ENTITY.label}</DrawerTitle>
+            <DrawerDescription>
+              修改{ENTITY.label}的基本信息及状态。
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="px-4 pb-6">
             <UpdateForm
-              key={project.id}
-              project={project}
+              key={row.id}
+              row={row}
               options={options}
               onSuccess={() => onOpenChange(false)}
               onCancel={() => onOpenChange(false)}

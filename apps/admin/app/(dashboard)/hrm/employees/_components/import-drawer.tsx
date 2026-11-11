@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import type { CodeNameOption } from "@workspace/shared"
+
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -16,12 +16,12 @@ import {
 import { useRouter } from "next/navigation"
 import { toast } from "@workspace/ui/components/toast"
 
-import { TITLE } from "../constants"
+import { ENTITY } from "@/lib/hrm/employee"
 import JsonUploader from "@/components/import/json-uploader"
 import JsonPreview from "@/components/import/json-preview"
 
 import type { EmployeeImportRow } from "@/lib/hrm/employee"
-import { importEmployees } from "@/lib/hrm/employee/action"
+import { imports } from "@/lib/hrm/employee/action"
 
 export function ImportDrawer() {
   const router = useRouter()
@@ -48,7 +48,7 @@ export function ImportDrawer() {
     try {
       console.log("Importing Employees with rows:", rows)
       // 服务端完成 Zod 校验、权限检查及数据库写入
-      const result = await importEmployees(rows)
+      const result = await imports(rows)
 
       if (!result.success) {
         toast.add({
@@ -85,7 +85,7 @@ export function ImportDrawer() {
         render={
           <Button size="sm">
             <Plus className="size-4" />
-            导入{TITLE}
+            导入{ENTITY.label}
           </Button>
         }
       />
@@ -93,7 +93,7 @@ export function ImportDrawer() {
       <DrawerContent>
         <div className="mx-auto flex max-h-[85vh] w-full max-w-4xl flex-col">
           <DrawerHeader>
-            <DrawerTitle>导入{TITLE}</DrawerTitle>
+            <DrawerTitle>导入{ENTITY.label}</DrawerTitle>
             <DrawerDescription>
               上传 JSON 文件，预览并校验员工数据。
             </DrawerDescription>

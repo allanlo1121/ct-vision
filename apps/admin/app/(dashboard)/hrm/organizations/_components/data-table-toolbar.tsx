@@ -2,8 +2,6 @@
 
 import { type ReactTable, type RowData } from "@tanstack/react-table"
 import { X } from "lucide-react"
-import { Can } from "@workspace/auth/components"
-import { TITLE } from "../constants"
 
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -12,20 +10,17 @@ import { DataTableViewOptions } from "@/components/data-table/data-table-view-op
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 
-import { CreateDrawer } from "./create-drawer"
-import type { CodeNameOption } from "@workspace/shared"
 import { ImportDrawer } from "./import-drawer"
+import { ENTITY, type OrganizationOptions } from "@/lib/hrm/organization"
 
 interface DataTableToolbarProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData>
-  orgTypeOptions: CodeNameOption[]
-  orgCatagoryOptions: CodeNameOption[]
+  options: OrganizationOptions
 }
 
 export function DataTableToolbar<TData extends RowData>({
   table,
-  orgTypeOptions,
-  orgCatagoryOptions,
+  options,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.state.columnFilters.length > 0
   // console.log("orgTypeOptions", orgTypeOptions)
@@ -34,7 +29,7 @@ export function DataTableToolbar<TData extends RowData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
         <Input
-          placeholder={`查找${TITLE}...`}
+          placeholder={`查找${ENTITY.label}...`}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -46,25 +41,25 @@ export function DataTableToolbar<TData extends RowData>({
             column={table.getColumn("org_type_code")}
             title="组织类型"
             options={
-              orgTypeOptions?.map((type) => ({
+              options.orgTypeOptions?.map((type) => ({
                 value: type.code,
                 label: type.name,
               })) ?? []
             }
           />
         )}
-        {(
+        {
           <DataTableFacetedFilter
-            column={table.getColumn("org_catagory_code")}
+            column={table.getColumn("org_category_code")}
             title="组织类别"
             options={
-              orgCatagoryOptions?.map((type) => ({
+              options.orgCategoryOptions?.map((type) => ({
                 value: type.code,
                 label: type.name,
               })) ?? []
             }
           />
-        )}
+        }
 
         {isFiltered && (
           <Button

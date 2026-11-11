@@ -16,15 +16,6 @@
     "schemas": {}
   },
   "paths": {
-    "/health": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      }
-    },
     "/api/agent/tbm/tbm-assignment": {
       "post": {
         "operationId": "get_tbm_assignment",

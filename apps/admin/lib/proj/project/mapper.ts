@@ -1,5 +1,5 @@
 import { ImportProjectInput } from "@workspace/proj/project"
-import type { ProjectImportRow } from "./types"
+import type { ProjectImportRow } from "./import.types"
 
 import { toNullableNumber, toNullableString } from "@/lib/utils"
 

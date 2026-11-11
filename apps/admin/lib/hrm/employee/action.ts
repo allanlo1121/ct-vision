@@ -1,13 +1,14 @@
 "use server"
 
 import type { ActionResult } from "@workspace/shared"
-import { importEmployeeSchema } from "@workspace/hrm/employee"
-import { employeeRepository } from "./repository"
+import type { CreateEmployeeInput, UpdateEmployeeInput } from "@workspace/hrm/employee"
 
-import { EmployeeImportRow } from "./types"
+import { employeeRepository } from "./repository"
+import { ENTITY } from "./constants"
+import { EmployeeImportRow } from "./import.types"
 import { mapEmployeeImportRowsToEntities } from "./mapper"
 
-export async function importEmployees(
+export async function imports(
   inputs: EmployeeImportRow[]
 ): Promise<ActionResult<{ count: number }>> {
   try {
@@ -18,7 +19,7 @@ export async function importEmployees(
       return {
         success: false,
         message: "没有可导入的数据",
-        code: "IMPORT_EMPLOYEE_FAILED",
+        code: `IMPORT_${ENTITY.code}_FAILED`,
       }
     }
 
@@ -46,10 +47,86 @@ export async function importEmployees(
     return {
       success: false,
       message: error instanceof Error ? error.message : "员工导入失败",
-      code: "IMPORT_EMPLOYEE_FAILED",
+      code: `IMPORT_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-// bindEmployeeAuth(input)
-// unbindEmployeeAuth(input)
+
+export async function create(
+  input: CreateEmployeeInput
+): Promise<ActionResult> {
+  try {
+    await employeeRepository.create(input)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `CREATE_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function update(
+  id: string,
+  input: UpdateEmployeeInput
+): Promise<ActionResult> {
+  try {
+    await employeeRepository.update(id, input)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `UPDATE_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function setDisabled(
+  id: string,
+  input: { is_disabled: boolean }
+): Promise<ActionResult> {
+  try {
+    await employeeRepository.update(id, input)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `SETDISABLED_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function remove(
+  id: string
+): Promise<ActionResult> {
+  try {
+    await employeeRepository.delete(id)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `DELETE_${ENTITY.code}_FAILED`,
+    }
+  }
+}

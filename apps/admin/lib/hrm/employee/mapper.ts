@@ -1,7 +1,7 @@
 import { ImportEmployeeInput } from "@workspace/hrm/employee"
-import type { EmployeeImportRow } from "./types"
+import type { EmployeeImportRow } from "./import.types"
 import { employeeRepository } from "./repository"
-import { organizationRepository } from "../organization"
+import { organizationRepository } from "../organization/repository"
 import { toNullableDate, toNullableNumber, toNullableString } from "@/lib/utils"
 
 export async function mapEmployeeImportRowsToEntities(

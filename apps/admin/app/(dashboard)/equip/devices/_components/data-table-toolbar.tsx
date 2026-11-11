@@ -55,7 +55,7 @@ export function DataTableToolbar<TData extends RowData>({
         )}
         {(
           <DataTableFacetedFilter
-            column={table.getColumn("org_catagory_code")}
+            column={table.getColumn("org_category_code")}
             title="组织类别"
             options={
               orgCatagoryOptions?.map((type) => ({

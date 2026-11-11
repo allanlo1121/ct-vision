@@ -133,3 +133,22 @@ export type UpdateOrganizationInput = z.input<typeof updateOrganizationSchema>
 export type UpdateOrganizationOutput = z.output<typeof updateOrganizationSchema>
 
 export type OrganizationFields = keyof z.infer<typeof organizationSchema>
+
+
+
+export const createOrganizationDefaults = {
+  code: "",
+  name: "",
+  full_name: "",
+  parent_id: null,
+  org_category_code: "",
+  org_type_code: "",
+  country_code: "CN",
+  province_code: "",
+  city_code: "",
+  district_code: "",
+  address: "",
+  latitude: null,
+  longitude: null,
+  sort_order: 0,
+} satisfies CreateOrganizationInput

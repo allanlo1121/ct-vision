@@ -87,6 +87,7 @@ export const engineeringUnitSchema = engineeringUnitBaseSchema.safeExtend(auditS
 export const createEngineeringUnitSchema = engineeringUnitBaseSchema
   .omit({
     id: true,
+    project_id: true,
     is_disabled: true,
   })
   .partial({
@@ -129,3 +130,19 @@ export type UpdateEngineeringUnitInput = z.input<typeof updateEngineeringUnitSch
 export type UpdateEngineeringUnitOutput = z.output<typeof updateEngineeringUnitSchema>
 
 export type EngineeringUnitFields = keyof z.infer<typeof engineeringUnitSchema>
+
+
+
+export const createEngineeringUnitDefaults = {
+  name: "",
+  full_name: "",
+  overview: "",
+  engineering_unit_type_code: "",
+  province_code: "",
+  city_code: "",
+  district_code: "",
+  address: "",
+  latitude: null,
+  longitude: null,
+  sort_order: 0,
+} satisfies CreateEngineeringUnitInput

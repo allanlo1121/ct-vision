@@ -1,8 +1,7 @@
 import type {
   EngineeringUnit,
   CreateEngineeringUnitInput,
-  UpdateEngineeringUnitInput,
-  ImportEngineeringUnitInput,
+  UpdateEngineeringUnitInput
 } from "./schemas"
 
 export interface EngineeringUnitRepository {
@@ -12,7 +11,7 @@ export interface EngineeringUnitRepository {
 
   findByProjectId(projectId: string | null): Promise<EngineeringUnit[]>
 
-  create(input: CreateEngineeringUnitInput): Promise<void>
+  create(project_id: string, input: CreateEngineeringUnitInput): Promise<void>
 
   update(id: string, input: UpdateEngineeringUnitInput): Promise<void>
 

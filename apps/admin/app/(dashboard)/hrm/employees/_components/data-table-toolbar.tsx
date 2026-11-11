@@ -2,9 +2,8 @@
 
 import { type ReactTable, type RowData } from "@tanstack/react-table"
 import { X } from "lucide-react"
-import { Can } from "@workspace/auth/components"
-import { TITLE } from "../constants"
 
+import { ENTITY, type EmployeeOptions } from "@/lib/hrm/employee"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options"
@@ -12,31 +11,24 @@ import { DataTableViewOptions } from "@/components/data-table/data-table-view-op
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 
-import { CreateDrawer } from "./create-drawer"
-import type { CodeNameOption } from "@workspace/shared"
 import { ImportDrawer } from "./import-drawer"
 
 interface DataTableToolbarProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData>
-  genderOptions: CodeNameOption[]
-  employmentTypeOptions: CodeNameOption[]
-  statusOptions: CodeNameOption[]
+  options: EmployeeOptions
 }
 
 export function DataTableToolbar<TData extends RowData>({
   table,
-  genderOptions,
-  employmentTypeOptions,
-  statusOptions,
+  options,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.state.columnFilters.length > 0
-
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
         <Input
-          placeholder={`查找${TITLE}...`}
+          placeholder={`查找${ENTITY.label}...`}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -48,7 +40,7 @@ export function DataTableToolbar<TData extends RowData>({
             column={table.getColumn("gender_code")}
             title="性别"
             options={
-              genderOptions?.map((type) => ({
+              options.genderOptions?.map((type) => ({
                 value: type.code,
                 label: type.name,
               })) ?? []
@@ -60,7 +52,7 @@ export function DataTableToolbar<TData extends RowData>({
             column={table.getColumn("employment_type_code")}
             title="用工类型"
             options={
-              employmentTypeOptions?.map((type) => ({
+              options.employmentTypeOptions?.map((type) => ({
                 value: type.code,
                 label: type.name,
               })) ?? []
@@ -72,7 +64,7 @@ export function DataTableToolbar<TData extends RowData>({
             column={table.getColumn("status_code")}
             title="状态"
             options={
-              statusOptions?.map((type) => ({
+              options.statusOptions?.map((type) => ({
                 value: type.code,
                 label: type.name,
               })) ?? []

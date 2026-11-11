@@ -1,9 +1,9 @@
 "use client"
 
 import { type Row, type RowData } from "@tanstack/react-table"
-import type { CodeNameOption } from "@workspace/shared"
+
 import { MoreHorizontal } from "lucide-react"
-import { TITLE } from "../constants"
+import { ENTITY, type OrganizationOptions } from "@/lib/hrm/organization"
 
 import { Button } from "@workspace/ui/components/button"
 import { useState } from "react"
@@ -16,25 +16,25 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
 
-import { dictionaryItemSchema } from "@workspace/master-data/dictionary-item"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 import { UpdateDrawer } from "./update-drawer"
 import { Can } from "@workspace/auth/components"
 import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
-import { deleteDictionaryItem, setDisabled } from "@/lib/master-data/dictionary-item/action";
+import { setDisabled, remove } from "@/lib/hrm/organization/action"
+import { organizationSchema } from "@workspace/hrm/organization"
 // import { setApplicationDisabled ,deleteApplication } from "@/lib/system/permission/permission.action";
 
 interface DataTableRowActionsProps<TData extends RowData> {
   row: Row<DataTableFeatures, TData>
-  dictionaryTypeOptions: CodeNameOption[]
+  options: OrganizationOptions
 }
 
 export function DataTableRowActions<TData extends RowData>({
   row,
-  dictionaryTypeOptions,
+  options,
 }: DataTableRowActionsProps<TData>) {
-  const rowData = dictionaryItemSchema.parse(row.original)
+  const rowData = organizationSchema.parse(row.original)
   const [editOpen, setEditOpen] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -61,17 +61,19 @@ export function DataTableRowActions<TData extends RowData>({
 
       toast.add({
         type: "success",
-        title: rowData.is_disabled ? `${TITLE}已启用` : `${TITLE}已禁用`,
+        title: rowData.is_disabled
+          ? `${ENTITY.label}已启用`
+          : `${ENTITY.label}已禁用`,
       })
 
       router.refresh()
     } catch (error) {
-      console.error(`修改${TITLE}状态失败:`, error)
+      console.error(`修改${ENTITY.label}状态失败:`, error)
 
       toast.add({
         type: "error",
         title: "操作失败",
-        description: `修改${TITLE}状态失败`,
+        description: `修改${ENTITY.label}状态失败`,
       })
     } finally {
       setIsUpdating(false)
@@ -84,7 +86,7 @@ export function DataTableRowActions<TData extends RowData>({
     setIsUpdating(true)
 
     try {
-      const result = await deleteDictionaryItem(rowData.code)
+      const result = await remove(rowData.code)
 
       if (!result.success) {
         toast.add({
@@ -97,17 +99,17 @@ export function DataTableRowActions<TData extends RowData>({
 
       toast.add({
         type: "success",
-        title: `${TITLE}已删除`,
+        title: `${ENTITY.label}已删除`,
       })
 
       router.refresh()
     } catch (error) {
-      console.error(`删除${TITLE}失败:`, error)
+      console.error(`删除${ENTITY.label}失败:`, error)
 
       toast.add({
         type: "error",
         title: "操作失败",
-        description: `删除${TITLE}失败`,
+        description: `删除${ENTITY.label}失败`,
       })
     } finally {
       setIsUpdating(false)
@@ -133,14 +135,13 @@ export function DataTableRowActions<TData extends RowData>({
           <DropdownMenuItem>收藏</DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <Can permission={{ module: "master_data", action: "write" }}>
+          <Can permission={{ module: "hrm", action: "write" }}>
             <DropdownMenuItem onClick={() => setEditOpen(true)}>
               编辑
             </DropdownMenuItem>
-          </Can>       
-  
+          </Can>
 
-          <Can permission={{module: "master_data", action: "write"}}>
+          <Can permission={{ module: "hrm", action: "write" }}>
             <DropdownMenuItem
               disabled={isUpdating}
               onClick={handleToggleDisabled}
@@ -148,7 +149,7 @@ export function DataTableRowActions<TData extends RowData>({
               {rowData.is_disabled ? "启用" : "禁用"}
             </DropdownMenuItem>
           </Can>
-            <Can permission={{module: "master_data", action: "delete"}}>
+          <Can permission={{ module: "hrm", action: "delete" }}>
             <DropdownMenuItem onClick={handleDelete} variant="destructive">
               删除
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
@@ -157,12 +158,11 @@ export function DataTableRowActions<TData extends RowData>({
         </DropdownMenuContent>
       </DropdownMenu>
       <UpdateDrawer
-        dictionaryItem={rowData}
-        dictionaryTypeOptions={dictionaryTypeOptions}
+        row={rowData}
+        options={options}
         open={editOpen}
         onOpenChange={setEditOpen}
       />
     </>
   )
 }
-

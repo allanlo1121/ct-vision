@@ -7,22 +7,21 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from "@workspace/ui/components/drawer"
-import { TITLE } from "../constants"
 
 import UpdateForm from "./update-form"
-import type { DictionaryItem } from "@workspace/master-data/dictionary-item"
-import type { CodeNameOption } from "@workspace/shared"
+import { ENTITY, type EmployeeOptions } from "@/lib/hrm/employee"
+import { Employee } from "@workspace/hrm/employee"
 
 interface UpdateDrawerProps {
-  dictionaryItem: DictionaryItem
-  dictionaryTypeOptions: CodeNameOption[]
+  row: Employee
+  options: EmployeeOptions
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function UpdateDrawer({
-  dictionaryItem,
-  dictionaryTypeOptions,
+  row,
+  options,
   open,
   onOpenChange,
 }: UpdateDrawerProps) {
@@ -31,15 +30,17 @@ export function UpdateDrawer({
       <DrawerContent>
         <div className="mx-auto w-full max-w-3xl">
           <DrawerHeader>
-            <DrawerTitle>更新{TITLE}</DrawerTitle>
-            <DrawerDescription>修改{TITLE}的基本信息及状态。</DrawerDescription>
+            <DrawerTitle>更新{ENTITY.label}</DrawerTitle>
+            <DrawerDescription>
+              修改{ENTITY.label}的基本信息及状态。
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="px-4 pb-6">
             <UpdateForm
-              key={dictionaryItem.code}
-              dictionaryItem={dictionaryItem}
-              dictionaryTypeOptions={dictionaryTypeOptions}
+              key={row.id}
+              row={row}
+              options={options}
               onSuccess={() => onOpenChange(false)}
               onCancel={() => onOpenChange(false)}
             />

@@ -1,38 +1,46 @@
 import React from "react"
 import { DataTableClient } from "./_components/data-table-client"
 import { PageHeader } from "@/components/layout/page-header"
-import type { ProjectOptions } from "./_components/types"
 
 import { projectRepository } from "@/lib/proj/project/repository"
 
-import { TITLE } from "./constants"
+import { ENTITY, type ProjectOptions } from "@/lib/proj/project"
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
 import { dictionaryItemRepository } from "@/lib/master-data/dictionary-item/repository"
-import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: ENTITY.label,
 }
 
 export default async function Page() {
-  const data = await projectRepository.findAll()
+  const [
+    data,
+    projectTypeOptions,
+    managementModeOptions,
+    regionOptions,
+    projectSubTypeOptions,
+    unitTypeOptions,
+  ] = await Promise.all([
+    projectRepository.findAll(),
 
-  const projectTypeOptions =
-    await dictionaryItemRepository.findOptionsByType("1011")
-  const managementModeOptions =
-    await dictionaryItemRepository.findOptionsByType("1021")
-  const unitTypeOptions =
-    await dictionaryItemRepository.findOptionsByType("2072")
+    dictionaryItemRepository.findOptionsByType("1011"),
+    dictionaryItemRepository.findOptionsByType("1021"),
+    dictionaryItemRepository.findOptionsByType("1009"),
+    dictionaryItemRepository.findOptionsByType("2055"),
+    dictionaryItemRepository.findOptionsByType("2072"),
+  ])
 
   const options: ProjectOptions = {
     projectTypeOptions,
     managementModeOptions,
+    regionOptions,
+    projectSubTypeOptions,
     unitTypeOptions,
   }
 
   return (
     <div className="h-full w-full flex-col">
-      <PageHeader title={`${TITLE}管理`} />
+      <PageHeader title={`${ENTITY.label}管理`} />
 
       {/* 表格 */}
 

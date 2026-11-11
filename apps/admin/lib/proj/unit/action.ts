@@ -1,15 +1,20 @@
 "use server"
 
 import type { ActionResult } from "@workspace/shared"
-import type { CreateEngineeringUnitInput } from "@workspace/proj/unit"
-import { engineeringUnitRepository } from "./repository"
-import type { UpdateEngineeringUnitInput } from "@workspace/proj/unit"
+import type {
+  CreateEngineeringUnitInput,
+  UpdateEngineeringUnitInput
+} from "@workspace/proj/unit"
 
-export async function createEngineeringUnit(
+import { ENTITY } from "./constants"
+import { engineeringUnitRepository } from "./repository"
+
+export async function create(
+  project_id: string,
   input: CreateEngineeringUnitInput
 ): Promise<ActionResult> {
   try {
-    await engineeringUnitRepository.create(input)
+    await engineeringUnitRepository.create(project_id, input)
 
     return {
       success: true,
@@ -24,7 +29,7 @@ export async function createEngineeringUnit(
   }
 }
 
-export async function updateEngineeringUnit(
+export async function update(
   id: string,
   input: UpdateEngineeringUnitInput
 ): Promise<ActionResult> {
@@ -38,12 +43,12 @@ export async function updateEngineeringUnit(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_ENGINEERING_UNIT_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function setEngineeringUnitDisabled(
+export async function setDisabled(
   id: string,
   input: { is_disabled: boolean }
 ): Promise<ActionResult> {
@@ -58,12 +63,12 @@ export async function setEngineeringUnitDisabled(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_ENGINEERING_UNIT_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function deleteEngineeringUnit(id: string): Promise<ActionResult> {
+export async function remove(id: string): Promise<ActionResult> {
   try {
     await engineeringUnitRepository.delete(id)
     return {
@@ -74,7 +79,7 @@ export async function deleteEngineeringUnit(id: string): Promise<ActionResult> {
     return {
       success: false,
       message: (error as Error).message,
-      code: "DELETE_ENGINEERING_UNIT_FAILED",
+      code: `DELETE_${ENTITY.code}_FAILED`,
     }
   }
 }

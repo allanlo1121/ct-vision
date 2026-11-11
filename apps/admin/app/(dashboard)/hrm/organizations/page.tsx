@@ -1,16 +1,15 @@
 import React from "react"
 import { DataTableClient } from "./_components/data-table-client"
+import { ENTITY, type OrganizationOptions } from "@/lib/hrm/organization"
 import { PageHeader } from "@/components/layout/page-header"
 
 import { organizationRepository } from "@/lib/hrm/organization/repository"
 
-import { TITLE } from "./constants"
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
 import { dictionaryItemRepository } from "@/lib/master-data/dictionary-item/repository"
-import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: ENTITY.label,
 }
 interface PageProps {
   searchParams: Promise<{
@@ -25,20 +24,21 @@ export default async function Page({ searchParams }: PageProps) {
 
   const orgTypeOptions =
     await dictionaryItemRepository.findOptionsByType("1023")
-  const orgCatagoryOptions =
+  const orgCategoryOptions =
     await dictionaryItemRepository.findOptionsByType("1025")
+
+  const options: OrganizationOptions = {
+    orgTypeOptions,
+    orgCategoryOptions,
+  }
 
   return (
     <div className="h-full w-full flex-col">
-      <PageHeader title={`${TITLE}管理`} />
+      <PageHeader title={`${ENTITY.label}管理`} />
 
       {/* 表格 */}
 
-      <DataTableClient
-        data={data}
-        orgTypeOptions={orgTypeOptions}
-        orgCatagoryOptions={orgCatagoryOptions}
-      />
+      <DataTableClient data={data} options={options} />
     </div>
   )
 }

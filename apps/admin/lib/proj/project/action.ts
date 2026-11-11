@@ -1,17 +1,18 @@
 "use server"
 
 import type { ActionResult } from "@workspace/shared"
-import { importProjectSchema } from "@workspace/proj/project"
+import { ENTITY } from "./constants"
+
 import type {
   CreateProjectInput,
   UpdateProjectInput,
 } from "@workspace/proj/project"
 import { projectRepository } from "./repository"
 
-import { ProjectImportRow } from "./types"
+import { ProjectImportRow } from "./import.types"
 import { mapProjectImportRowsToEntities } from "./mapper"
 
-export async function importProjects(
+export async function imports(
   inputs: ProjectImportRow[]
 ): Promise<ActionResult> {
   try {
@@ -24,7 +25,7 @@ export async function importProjects(
       return {
         success: false,
         message: "没有可导入的数据",
-        code: "IMPORT_PROJECT_FAILED",
+        code: `IMPORT_${ENTITY.code}_FAILED`,
       }
     }
 
@@ -38,12 +39,12 @@ export async function importProjects(
     return {
       success: false,
       message: (error as Error).message,
-      code: "IMPORT_PROJECT_FAILED",
+      code: `IMPORT_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function createProject(
+export async function create(
   input: CreateProjectInput
 ): Promise<ActionResult> {
   try {
@@ -57,12 +58,12 @@ export async function createProject(
     return {
       success: false,
       message: (error as Error).message,
-      code: "CREATE_PROJECT_FAILED",
+      code: `CREATE_${ENTITY.code}_FAILED`,
     }
   }
 }
 
-export async function updateProject(
+export async function update(
   id: string,
   input: UpdateProjectInput
 ): Promise<ActionResult> {
@@ -76,7 +77,46 @@ export async function updateProject(
     return {
       success: false,
       message: (error as Error).message,
-      code: "UPDATE_PROJECT_FAILED",
+      code: `UPDATE_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function setDisabled(
+  id: string,
+  input: { is_disabled: boolean }
+): Promise<ActionResult> {
+  try {
+    await projectRepository.update(id, input)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `SETDISABLED_${ENTITY.code}_FAILED`,
+    }
+  }
+}
+
+export async function remove(
+  id: string
+): Promise<ActionResult> {
+  try {
+    await projectRepository.delete(id)
+
+    return {
+      success: true,
+      data: undefined,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message,
+      code: `DELETE_${ENTITY.code}_FAILED`,
     }
   }
 }

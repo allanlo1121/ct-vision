@@ -5,8 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "@workspace/ui/components/toast"
 import { useRouter } from "next/navigation"
-import * as z from "zod"
-import type { CodeNameOption } from "@workspace/shared"
 
 import {
   Field,
@@ -18,13 +16,6 @@ import {
 } from "@workspace/ui/components/field"
 
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from "@workspace/ui/components/input-group"
-
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -33,38 +24,37 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 
-import { createDictionaryItemSchema } from "@workspace/master-data/dictionary-item"
 import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 
-import { createDictionaryItem } from "@/lib/master-data/dictionary-item/action"
-import { TITLE } from "../constants"
+import { create } from "@/lib/hrm/organization/action"
+import { ENTITY, type OrganizationOptions } from "@/lib/hrm/organization"
+import {
+  CreateOrganizationInput,
+  createOrganizationSchema,
+  CreateOrganizationOutput,
+  createOrganizationDefaults,
+} from "@workspace/hrm/organization"
 
 interface CreateFormProps {
-  dictionaryTypeOptions: CodeNameOption[]
+  options: OrganizationOptions
   onSuccess?: () => void
 }
 
-export default function CreateForm({
-  dictionaryTypeOptions,
-  onSuccess  
-}: CreateFormProps) {
+export default function CreateForm({ options, onSuccess }: CreateFormProps) {
   const router = useRouter()
-  const form = useForm<z.infer<typeof createDictionaryItemSchema>>({
-    resolver: zodResolver(createDictionaryItemSchema),
-    defaultValues: {
-      code: "",
-      name: "",
-      dictionary_type_code: "",
-      description: "",
-    },
+  const form = useForm<
+    CreateOrganizationInput,
+    unknown,
+    CreateOrganizationOutput
+  >({
+    resolver: zodResolver(createOrganizationSchema),
+    defaultValues: createOrganizationDefaults,
   })
 
-  async function onSubmit(data: z.infer<typeof createDictionaryItemSchema>) {
+  async function onSubmit(data: CreateOrganizationOutput) {
     try {
-      const result = await createDictionaryItem(data)
-
-      // console.log("Create application result:", result)
+      const result = await create(data)
 
       if (!result.success) {
         toast.add({
@@ -77,35 +67,135 @@ export default function CreateForm({
 
       toast.add({
         type: "success",
-        description: `${TITLE}创建成功`,
+        description: `${ENTITY.label}创建成功`,
       })
 
       form.reset()
       router.refresh()
       onSuccess?.()
     } catch (error) {
-      console.error(`创建${TITLE}请求异常:`, error)
+      console.error(`创建${ENTITY.label}请求异常:`, error)
       toast.add({
         type: "error",
-        description: `创建${TITLE}失败`,
+        description: `创建${ENTITY.label}失败`,
         priority: "high",
       })
     }
   }
 
+  const typeOptions = options.orgTypeOptions?.map((option) => ({
+    value: option.code,
+    label: `${option.code} ${option.name}`,
+  }))
+
+  const categoryOptions = options.orgCategoryOptions?.map((option) => ({
+    value: option.code,
+    label: `${option.code} ${option.name}`,
+  }))
+
   return (
-    <form id="form-dictionary-item" onSubmit={form.handleSubmit(onSubmit)}>
+    <form id="create-organization-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
+        {/* 组织机构简称 */}
         <Controller
-          name="dictionary_type_code"
+          name="name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-name`}>
+                组织机构名称
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`create-organization-name`}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入组织机构名称"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* 组织机构编码 */}
+        <Controller
+          name="code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-code`}>
+                组织机构编码
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`create-organization-code`}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入组织机构编码"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* 组织机构全称 */}
+        <Controller
+          name="full_name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-full_name`}>
+                组织机构全称
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`create-organization-full_name`}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入组织机构全称"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {/* 上级组织机构 */}
+        <Controller
+          name="parent_id"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-parent_id`}>
+                上级组织机构
+              </FieldLabel>
+
+              <Input
+                {...field}
+                id={`create-organization-parent_id`}
+                value={field.value ?? ""}
+                aria-invalid={fieldState.invalid}
+                placeholder="输入上级组织机构"
+                autoComplete="off"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="org_type_code"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field orientation="responsive" data-invalid={fieldState.invalid}>
               <FieldContent>
-                <FieldLabel htmlFor="form-dictionary-item-dictionary-type-code">
-                  字典类型
+                <FieldLabel htmlFor="create-organization-org_type_code">
+                  组织类型
                 </FieldLabel>
-                <FieldDescription>请选择字典类型。</FieldDescription>
+                <FieldDescription>请选择组织类型。</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -114,18 +204,19 @@ export default function CreateForm({
                 name={field.name}
                 value={field.value}
                 onValueChange={field.onChange}
+                items={typeOptions}
               >
                 <SelectTrigger
-                  id="form-dictionary-item-dictionary-type-code"
+                  id="create-organization-org_type_code"
                   aria-invalid={fieldState.invalid}
                   className="min-w-[120px]"
                 >
-                  <SelectValue placeholder="请选择字典类型" />
+                  <SelectValue placeholder="请选择组织类型" />
                 </SelectTrigger>
                 <SelectContent align="start">
-                  {dictionaryTypeOptions.map((option) => (
-                    <SelectItem key={option.code} value={option.code}>
-                      {option.name}
+                  {typeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -133,73 +224,209 @@ export default function CreateForm({
             </Field>
           )}
         />
-        <Controller
-          name="code"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-dictionary-item-code">
-                字典项编码
-              </FieldLabel>
-              <Input
-                {...field}
-                id="form-dictionary-item-code"
-                aria-invalid={fieldState.invalid}
-                placeholder="输入字典项编码"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
 
         <Controller
-          name="name"
+          name="org_category_code"
           control={form.control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-dictionary-item-name">
-                字典项名称
-              </FieldLabel>
-              <Input
-                {...field}
-                id="form-dictionary-item-name"
-                aria-invalid={fieldState.invalid}
-                placeholder="输入字典项名称"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="description"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-dictionary-item-description">
-                描述
-              </FieldLabel>
-
-              <InputGroup>
-                <InputGroupTextarea
-                  {...field}
-                  value={field.value ?? ""}
-                  id="form-dictionary-item-description"
-                  rows={4}
-                  maxLength={100}
-                  className="min-h-24 resize-none"
-                  placeholder="输入描述（选填）"
+            <Field orientation="responsive" data-invalid={fieldState.invalid}>
+              <FieldContent>
+                <FieldLabel htmlFor="create-organization-org_category_code">
+                  组织目录
+                </FieldLabel>
+                <FieldDescription>请选择组织目录。</FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </FieldContent>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                items={categoryOptions}
+              >
+                <SelectTrigger
+                  id="create-organization-org_category_code"
                   aria-invalid={fieldState.invalid}
-                />
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="请选择组织目录" />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {categoryOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
+        />
 
-                <InputGroupAddon align="block-end">
-                  <InputGroupText className="tabular-nums">
-                    {(field.value ?? "").length}/100
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
+        <Controller
+          name="country_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-country_code`}>
+                国家
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`create-organization-country_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入国家（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="province_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-province_code`}>
+                省份
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`create-organization-province_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入省份（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="city_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-city_code`}>
+                城市
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`create-organization-city_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入城市（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="district_code"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-district_code`}>
+                区县
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`create-organization-district_code`}
+                className="min-h-24 resize-none"
+                placeholder="输入区县（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="address"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={`create-organization-address`}>
+                详细地址
+              </FieldLabel>
+
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                id={`update-organization-address`}
+                className="min-h-24 resize-none"
+                placeholder="输入详细地址（选填）"
+                aria-invalid={fieldState.invalid}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="longitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-risk-longitude">经度</FieldLabel>
+
+              <Input
+                {...field}
+                id="form-risk-longitude"
+                type="number"
+                step="any"
+                min={-180}
+                max={180}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value
+                  field.onChange(value === "" ? null : Number(value))
+                }}
+                aria-invalid={fieldState.invalid}
+                placeholder="请输入经度，如 117.12345678"
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="latitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-risk-latitude">纬度</FieldLabel>
+
+              <Input
+                {...field}
+                id="form-risk-latitude"
+                type="number"
+                step="any"
+                min={-90}
+                max={90}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value
+                  field.onChange(value === "" ? null : Number(value))
+                }}
+                aria-invalid={fieldState.invalid}
+                placeholder="请输入纬度，如 36.24552139"
+              />
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -214,10 +441,10 @@ export default function CreateForm({
 
         <Button
           type="submit"
-          form="form-dictionary-item"
+          form="create-organization-form"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "创建中..." : `创建${TITLE}`}
+          {form.formState.isSubmitting ? "创建中..." : `创建${ENTITY.label}`}
         </Button>
       </div>
     </form>

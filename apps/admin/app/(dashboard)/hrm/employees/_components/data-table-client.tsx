@@ -5,38 +5,29 @@ import { DataTable } from "@/components/data-table/data-table"
 import { createColumns } from "./columns"
 import { DataTableToolbar } from "./data-table-toolbar"
 
-import type { CodeNameOption } from "@workspace/shared"
+
 import { Employee } from "@workspace/hrm/employee"
+import { type EmployeeOptions } from "@/lib/hrm/employee"
 
 interface Props {
   data: Employee[]
-  genderOptions: CodeNameOption[]
-  employmentTypeOptions: CodeNameOption[]
-  statusOptions: CodeNameOption[]
+  options: EmployeeOptions
 }
 
-export function DataTableClient({
-  data,
-  genderOptions,
-  employmentTypeOptions,
-  statusOptions,
-}: Props) {
-  const columns = React.useMemo(
-    () => createColumns(genderOptions, employmentTypeOptions, statusOptions),
-    [genderOptions, employmentTypeOptions, statusOptions]
-  )
+export function DataTableClient({ data, options }: Props) {
+  const columns = React.useMemo(() => createColumns(options), [options])
   return (
     <DataTable
       columns={columns}
       data={data}
-      toolbar={(table) => (
-        <DataTableToolbar
-          table={table}
-          genderOptions={genderOptions}
-          employmentTypeOptions={employmentTypeOptions}
-          statusOptions={statusOptions}
-        />
-      )}
+      toolbar={(table) => <DataTableToolbar table={table} options={options} />}
+      initialColumnVisibility={{
+        code: false,
+        created_at: false,
+        updated_at: false,
+        created_by: false,
+        updated_by: false,
+      }}
     />
   )
 }

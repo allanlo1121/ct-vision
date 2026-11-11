@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import type { CodeNameOption } from "@workspace/shared"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -15,13 +14,9 @@ import {
 } from "@workspace/ui/components/drawer"
 
 import CreateForm from "./create-form"
-import { TITLE } from "../constants"
+import { ENTITY, type OrganizationOptions } from "@/lib/hrm/organization"
 
-export function CreateDrawer({
-  dictionaryTypeOptions,
-}: {
-  dictionaryTypeOptions: CodeNameOption[]
-}) {
+export function CreateDrawer({ options }: { options: OrganizationOptions }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -30,7 +25,7 @@ export function CreateDrawer({
         render={
           <Button size="sm">
             <Plus className="size-4" />
-            新增{TITLE}
+            新增{ENTITY.label}
           </Button>
         }
       ></DrawerTrigger>
@@ -38,15 +33,14 @@ export function CreateDrawer({
       <DrawerContent>
         <div className="mx-auto w-full max-w-3xl">
           <DrawerHeader>
-            <DrawerTitle>新增{TITLE}</DrawerTitle>
-            <DrawerDescription>配置{TITLE}的相关信息。</DrawerDescription>
+            <DrawerTitle>新增{ENTITY.label}</DrawerTitle>
+            <DrawerDescription>
+              配置{ENTITY.label}的相关信息。
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="px-4 pb-6">
-            <CreateForm
-              dictionaryTypeOptions={dictionaryTypeOptions}
-              onSuccess={() => setOpen(false)}
-            />
+            <CreateForm options={options} onSuccess={() => setOpen(false)} />
           </div>
         </div>
       </DrawerContent>

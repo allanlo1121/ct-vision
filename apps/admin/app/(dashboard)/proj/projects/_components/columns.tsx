@@ -11,7 +11,7 @@ import { type DataTableFeatures } from "@/components/data-table/data-table-featu
 import { DataTableRowActions } from "./data-table-row-actions"
 import { formatDateTime } from "@workspace/shared/utils"
 import { Badge } from "@workspace/ui/components/badge"
-import { ProjectOptions } from "./types"
+import { ProjectOptions } from "@/lib/proj/project"
 
 export type DataTableColumn<TData extends RowData> = ColumnDef<
   DataTableFeatures,
@@ -28,6 +28,12 @@ export function createColumns(
   const managementModeMap = new Map(
     options.managementModeOptions.map((x) => [x.code, x.name])
   )
+  const regionMap = new Map(options.regionOptions.map((x) => [x.code, x.name]))
+
+  const projectSubTypeMap = new Map(
+    options.projectSubTypeOptions.map((x) => [x.code, x.name])
+  )
+
   const unitTypeMap = new Map(
     options.unitTypeOptions.map((x) => [x.code, x.name])
   )
@@ -58,6 +64,15 @@ export function createColumns(
       ),
       enableSorting: false,
       enableHiding: false,
+    }),
+    columnHelper.accessor("region_code", {
+      meta: {
+        label: "片区",
+      },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="地区" />
+      ),
+      cell: ({ getValue }) => regionMap.get(getValue()) ?? getValue(),
     }),
 
     columnHelper.accessor("name", {
@@ -108,6 +123,15 @@ export function createColumns(
         <DataTableColumnHeader column={column} title="管理模式" />
       ),
       cell: ({ getValue }) => managementModeMap.get(getValue()) ?? getValue(),
+    }),
+    columnHelper.accessor("project_sub_type_code", {
+      meta: {
+        label: "项目子类型",
+      },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="项目子类型" />
+      ),
+      cell: ({ getValue }) => projectSubTypeMap.get(getValue()) ?? getValue(),
     }),
     columnHelper.accessor("key_points", {
       meta: {

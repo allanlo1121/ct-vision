@@ -85,6 +85,7 @@ export const employeeSchema = employeeBaseSchema.safeExtend(auditSchema.shape)
 export const createEmployeeSchema = employeeBaseSchema
   .omit({
     id: true,
+    auth_id: true,
     external_id: true,
     external_version: true,
     is_disabled: true,
@@ -141,3 +142,21 @@ export const BindEmployeeAuthSchema = z.object({
 export const UnbindEmployeeAuthSchema = z.object({
   employeeId: uuidSchema,
 })
+
+export const createEmployeeDefaults = {
+  code: "",
+  name: "",
+  organization_id: "",
+  employment_type_code: "",
+  status_code: "",
+  gender_code: "",
+  phone: "",
+  birth_date: null,
+  id_card: null,
+  email: null,
+  hire_date: null,
+  leave_date: null,
+  sort_order: 0,
+} satisfies CreateEmployeeInput
+
+

@@ -1,6 +1,7 @@
 export {
   employeeSchema,
   createEmployeeSchema,
+  createEmployeeDefaults,
   updateEmployeeSchema,
   importEmployeeSchema,
 } from "./schemas"

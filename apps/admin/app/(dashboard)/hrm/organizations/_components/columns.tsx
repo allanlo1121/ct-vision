@@ -5,12 +5,12 @@ import { ColumnDef, createColumnHelper, RowData } from "@tanstack/react-table"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 
 import { type Organization } from "@workspace/hrm/organization"
-import type { CodeNameOption } from "@workspace/shared"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { type DataTableFeatures } from "@/components/data-table/data-table-features"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { formatDateTime } from "@workspace/shared/utils"
 import { Badge } from "@workspace/ui/components/badge"
+import { OrganizationOptions } from "@/lib/hrm/organization"
 
 export type DataTableColumn<TData extends RowData> = ColumnDef<
   DataTableFeatures,
@@ -19,12 +19,13 @@ export type DataTableColumn<TData extends RowData> = ColumnDef<
 >
 
 export function createColumns(
-  orgTypeOptions: CodeNameOption[],
-  orgCategoryOptions: CodeNameOption[]
+  options: OrganizationOptions
 ): DataTableColumn<Organization>[] {
-  const orgTypeMap = new Map(orgTypeOptions.map((x) => [x.code, x.name]))
+  const orgTypeMap = new Map(
+    options.orgTypeOptions.map((x) => [x.code, x.name])
+  )
   const orgCategoryMap = new Map(
-    orgCategoryOptions.map((x) => [x.code, x.name])
+    options.orgCategoryOptions.map((x) => [x.code, x.name])
   )
 
   // Use `accessor` for data columns and `display` for columns without one.
