@@ -2,20 +2,26 @@ import React from "react"
 import { DataTableClient } from "./_components/data-table-client"
 import { PageHeader } from "@/components/layout/page-header"
 
-import { TITLE } from "./constants"
+import { ENTITY, type EngineeringUnitOptions } from "@/lib/proj/unit"
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
 import { dictionaryItemRepository } from "@/lib/master-data/dictionary-item/repository"
-import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
-import { engineeringUnitRepository } from "@/lib/proj/unit"
 
-import { EngineeringUnitOptions } from "./_components/types"
+import { engineeringUnitRepository } from "@/lib/proj/unit/repository"
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: ENTITY.label,
 }
 
-export default async function Page() {
-  const data = await engineeringUnitRepository.findAll()
+interface PageProps {
+  searchParams: Promise<{
+    projectId?: string
+  }>
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  const { projectId } = await searchParams
+
+  const data = await engineeringUnitRepository.findByProjectId(projectId)
 
   const unitTypeOptions =
     await dictionaryItemRepository.findOptionsByType("2072")
@@ -25,8 +31,8 @@ export default async function Page() {
   }
 
   return (
-    <div className="h-full w-full flex-col">
-      <PageHeader title={`${TITLE}管理`} />
+    <div className="flex h-full w-full flex-col">
+      <PageHeader title={`${ENTITY.label}管理`} />
 
       {/* 表格 */}
 

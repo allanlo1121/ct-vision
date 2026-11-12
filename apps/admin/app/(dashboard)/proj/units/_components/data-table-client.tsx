@@ -6,7 +6,7 @@ import { createColumns } from "./columns"
 import { DataTableToolbar } from "./data-table-toolbar"
 
 import type { EngineeringUnit } from "@workspace/proj/unit"
-import { EngineeringUnitOptions } from "./types"
+import { type EngineeringUnitOptions } from "@/lib/proj/unit"
 
 interface Props {
   data: EngineeringUnit[]

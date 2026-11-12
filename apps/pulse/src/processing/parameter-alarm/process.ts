@@ -1,7 +1,7 @@
 
 import { TbmParameterValues } from "../../types"
 import { toNumber } from "../../utils"
-import { TbmPhaseType } from "@workspace/shared"
+import { TbmPhaseType,toNotificationLevel,AlertSeverityCode } from "@workspace/shared"
 import { evaluateThresholds } from "./evaluate-threshold"
 import { parameterAlarmRepository } from "./repository"
 import { thresholdRuleSchema } from "@workspace/tbm/parameter"
@@ -103,10 +103,10 @@ export async function processAlarm({
     } satisfies ParameterAlarmPayload
 
     await notificationEventRepository.create({
-      source_type_code: "tbm",
+      source_type_code: "parameter",
       source_id: String(alarmId),
-      event_type_code: "parameter_alarm",
-      level: "warning",
+      event_type_code: alarmResult.rule.subsystem_code,
+      level: toNotificationLevel(alarmResult.severityCode as AlertSeverityCode),
       organization_id: assignment.organization_id,
       project_id: assignment.project_id,
       occurred_at: input.occurred_at,
@@ -115,7 +115,7 @@ export async function processAlarm({
       retry_count: 0,
       processing_error: null
     })
-    
+
     console.log("[Pulse][Notification] Created", {
       alarmId,
       tbmCode: tbm_code,

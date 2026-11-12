@@ -3,7 +3,7 @@
 import { type ReactTable, type RowData } from "@tanstack/react-table"
 import { X } from "lucide-react"
 import { Can } from "@workspace/auth/components"
-import { TITLE } from "../constants"
+
 
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -14,7 +14,7 @@ import { type DataTableFeatures } from "@/components/data-table/data-table-featu
 
 import { CreateDrawer } from "./create-drawer"
 
-import { EngineeringUnitOptions } from "./types"
+import { ENTITY, type EngineeringUnitOptions } from "@/lib/proj/unit"
 
 interface DataTableToolbarProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData>
@@ -32,7 +32,7 @@ export function DataTableToolbar<TData extends RowData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
         <Input
-          placeholder={`查找${TITLE}...`}
+          placeholder={`查找${ENTITY.label}...`}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -65,10 +65,9 @@ export function DataTableToolbar<TData extends RowData>({
       </div>
       <div className="flex items-center gap-2">
         <DataTableViewOptions table={table} />
-        {/* <Can permission={{ module: "hrm", action: "write" }}>
-          <CreateDrawer orgTypeOptions={orgTypeOptions} bussinessTypeOptions={bussinessTypeOptions} orgCatagoryOptions={orgCatagoryOptions} />
-        </Can> */}
-        <ImportDrawer />
+        <Can permission={{ module: "proj", action: "write" }}>
+          <CreateDrawer options={options} />
+        </Can>
       </div>
     </div>
   )

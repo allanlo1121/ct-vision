@@ -35,6 +35,46 @@ export const notificationLevelOrder = {
     critical: 3,
 } as const
 
+export const ALERT_SEVERITY = {
+  WARNING: "52010001",
+  ERROR: "52010002",
+  CRITICAL: "52010003",
+} as const
+
+export type AlertSeverityCode =
+  (typeof ALERT_SEVERITY)[keyof typeof ALERT_SEVERITY]
+
+export const NOTIFICATION_LEVEL_TO_SEVERITY: Record<
+  Exclude<NotificationEventLevel, "info">,
+  AlertSeverityCode
+> = {
+  warning: ALERT_SEVERITY.WARNING,
+  error: ALERT_SEVERITY.ERROR,
+  critical: ALERT_SEVERITY.CRITICAL,
+}
+
+export function toAlertSeverity(
+  level: NotificationEventLevel
+): AlertSeverityCode | null {
+  if (level === "info") return null
+
+  return NOTIFICATION_LEVEL_TO_SEVERITY[level]
+}
+
+export const SEVERITY_TO_NOTIFICATION_LEVEL: Record<
+  AlertSeverityCode,
+  NotificationEventLevel
+> = {
+  [ALERT_SEVERITY.WARNING]: "warning",
+  [ALERT_SEVERITY.ERROR]: "error",
+  [ALERT_SEVERITY.CRITICAL]: "critical",
+}
+
+export function toNotificationLevel(
+  severity: AlertSeverityCode
+): NotificationEventLevel {
+  return SEVERITY_TO_NOTIFICATION_LEVEL[severity]
+}
 
 
 export function isLevelMatched(

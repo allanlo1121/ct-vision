@@ -17,6 +17,7 @@ export function buildTbmThresholdRules(
     result[parameterCode][severityCode].push({
       start_ring: row.start_ring,
       end_ring: row.end_ring,
+      subsystem_code: row.subsystem_code,
       parameter_code: row.parameter_code,
       parameter_name: row.parameter_name,
       parameter_unit: row.parameter_unit,
@@ -56,6 +57,7 @@ export function buildMultiTbmThresholdRules(
     result[tbmCode][parameterCode][severityCode].push({
       start_ring: row.start_ring,
       end_ring: row.end_ring,
+      subsystem_code: row.subsystem_code,
       parameter_code: row.parameter_code,
       parameter_name: row.parameter_name,
       parameter_unit: row.parameter_unit,

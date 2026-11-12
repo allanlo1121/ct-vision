@@ -210,6 +210,9 @@ export const parameterRuleSnapshotSchema = tbmParameterThresholdBaseSchema.pick(
   threshold_type: true,
   reference_value: true,
   threshold_value: true,
+}).extend({
+    start_ring: ringSchema.nullable(),
+    end_ring: ringSchema.nullable()
 })
 
 export const thresholdRuleSchema = tbmParameterThresholdBaseSchema
@@ -225,6 +228,7 @@ export const thresholdRuleSchema = tbmParameterThresholdBaseSchema
   }).extend({
     start_ring: ringSchema.nullable(),
     end_ring: ringSchema.nullable(),
+    subsystem_code: codeSchema,
     parameter_code: codeSchema,
     parameter_name: z.string(),
     parameter_unit: z.string(),

@@ -1,6 +1,5 @@
 "use client"
 
-
 import type { Project } from "@workspace/proj/project"
 import {
   Drawer,
@@ -12,8 +11,7 @@ import {
 } from "@workspace/ui/components/drawer"
 
 import CreateForm from "./create-form"
-import { TITLE } from "../constants"
-import { EngineeringUnitOptions } from "./types";
+import { ENTITY, type EngineeringUnitOptions } from "@/lib/proj/unit"
 
 interface CreateDrawerProps {
   project: Project
@@ -30,12 +28,13 @@ export function CreateDrawer({
 }: CreateDrawerProps) {
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-
       <DrawerContent>
         <div className="mx-auto w-full max-w-3xl">
           <DrawerHeader>
-            <DrawerTitle>新增{TITLE}</DrawerTitle>
-            <DrawerDescription>配置{TITLE}的相关信息。</DrawerDescription>
+            <DrawerTitle>新增{ENTITY.label}</DrawerTitle>
+            <DrawerDescription>
+              配置{ENTITY.label}的相关信息。
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="px-4 pb-6">
